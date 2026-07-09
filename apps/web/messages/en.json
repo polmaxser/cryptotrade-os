@@ -1,0 +1,47 @@
+{
+  "common": {
+    "appName": "CryptoTrade OS",
+    "tagline": "Modern crypto trading platform",
+    "getStarted": "Get started",
+    "learnMore": "Learn more",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your trading command center",
+    "capital": {
+      "title": "Current Capital",
+      "current": "Current Capital",
+      "goal": "Goal",
+      "progress": "Progress"
+    },
+    "stats": {
+      "winRate": "Win Rate",
+      "profitFactor": "Profit Factor",
+      "maxDrawdown": "Max Drawdown",
+      "todayRisk": "Today's Risk"
+    },
+    "recentTrades": {
+      "title": "Recent Trades"
+    },
+    "aiCoach": {
+      "title": "AI Coach",
+      "volatileMarket": "Today's market is volatile.",
+      "riskLimit": "Do not risk more than 1%."
+    },
+    "checklist": {
+      "title": "Daily Checklist",
+      "tradingPlan": "Trading plan",
+      "sleep": "Sleep",
+      "maxTrades": "Max 3 trades",
+      "noRevenge": "No revenge trading"
+    }
+  },
+  "footer": {
+    "copyright": "© {year} CryptoTrade OS. All rights reserved."
+  }
+}

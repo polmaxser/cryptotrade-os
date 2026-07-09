@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////////////////
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+//////////////////////////////////////////////////////////////
+// USER
+//////////////////////////////////////////////////////////////
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships WorkspaceMember[]
+
+  trades Trade[]
+
+  @@index([email])
+  @@map("users")
+}
+
+//////////////////////////////////////////////////////////////
+// WORKSPACE
+//////////////////////////////////////////////////////////////
+
+model Workspace {
+  id          String   @id @default(cuid())
+
+  name        String
+  slug        String   @unique
+
+  description String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members WorkspaceMember[]
+
+  @@index([slug])
+  @@map("workspaces")
+}
+
+//////////////////////////////////////////////////////////////
+// WORKSPACE MEMBER
+//////////////////////////////////////////////////////////////
+
+model WorkspaceMember {
+  id String @id @default(cuid())
+
+  role WorkspaceRole @default(MEMBER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workspaceId String
+  userId      String
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+
+  @@index([workspaceId])
+
+  @@index([userId])
+
+  @@map("workspace_members")
+}
+
+//////////////////////////////////////////////////////////////
+// TRADE
+//////////////////////////////////////////////////////////////
+
+model Trade {
+  id String @id @default(cuid())
+
+  symbol String
+
+  side String
+
+  strategy String?
+
+  entryPrice Decimal @db.Decimal(20, 8)
+
+  exitPrice Decimal? @db.Decimal(20, 8)
+
+  quantity Decimal @db.Decimal(20, 8)
+
+  pnl Decimal? @db.Decimal(20, 8)
+
+  pnlPercent Decimal? @db.Decimal(10, 4)
+
+  status String @default("OPEN")
+
+  notes String?
+
+  openedAt DateTime
+
+  closedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  userId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+
+  @@index([symbol])
+
+  @@index([status])
+
+  @@map("trades")
+}

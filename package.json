@@ -1,0 +1,45 @@
+{
+  "name": "cryptotrade-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CryptoTrade OS — crypto trading platform monorepo",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,yml,yaml}\"",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "db:generate": "pnpm --filter @cryptotrade/database db:generate",
+    "db:migrate": "pnpm --filter @cryptotrade/database db:migrate",
+    "db:push": "pnpm --filter @cryptotrade/database db:push",
+    "db:studio": "pnpm --filter @cryptotrade/database db:studio",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@cryptotrade/eslint-config": "workspace:*",
+    "@cryptotrade/typescript-config": "workspace:*",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.2"
+  },
+  "packageManager": "pnpm@10.6.5",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

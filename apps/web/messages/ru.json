@@ -1,0 +1,47 @@
+{
+  "common": {
+    "appName": "CryptoTrade OS",
+    "tagline": "Современная платформа для криптотрейдинга",
+    "getStarted": "Начать",
+    "learnMore": "Подробнее",
+    "language": "Язык",
+    "theme": "Тема",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "subtitle": "Ваш торговый командный центр",
+    "capital": {
+      "title": "Текущий капитал",
+      "current": "Текущий капитал",
+      "goal": "Цель",
+      "progress": "Прогресс"
+    },
+    "stats": {
+      "winRate": "Win Rate",
+      "profitFactor": "Profit Factor",
+      "maxDrawdown": "Max Drawdown",
+      "todayRisk": "Риск сегодня"
+    },
+    "recentTrades": {
+      "title": "Последние сделки"
+    },
+    "aiCoach": {
+      "title": "AI Coach",
+      "volatileMarket": "Сегодня рынок волатилен.",
+      "riskLimit": "Не рискуйте более чем 1%."
+    },
+    "checklist": {
+      "title": "Ежедневный чеклист",
+      "tradingPlan": "Торговый план",
+      "sleep": "Сон",
+      "maxTrades": "Макс. 3 сделки",
+      "noRevenge": "Без revenge trading"
+    }
+  },
+  "footer": {
+    "copyright": "© {year} CryptoTrade OS. Все права защищены."
+  }
+}
