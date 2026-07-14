@@ -4,10 +4,13 @@ import type { Request, Response } from 'express';
 
 import { PublicUser } from '@/modules/users/types/public-user';
 
-import { AuthService, RequestMeta } from './auth.service';
+import { AuthService, RequestMeta, TwoFactorChallenge, TwoFactorSetup } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { TwoFactorCodeDto } from './dto/two-factor-code.dto';
+import { TwoFactorVerifyDto } from './dto/two-factor-verify.dto';
 import { Public } from './decorators/public.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 const REFRESH_TOKEN_COOKIE = 'refreshToken';
 const REFRESH_TOKEN_PATH = '/api/v1/auth';
@@ -44,12 +47,63 @@ export class AuthController {
     @Body() dto: LoginDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseBody | TwoFactorChallenge> {
+    const result = await this.authService.login(dto, this.extractMeta(req));
+
+    if ('requiresTwoFactor' in result) {
+      return result;
+    }
+
+    this.setRefreshTokenCookie(
+      res,
+      result.tokens.refreshToken,
+      result.tokens.refreshTokenExpiresAt,
+    );
+
+    return { user: result.user, accessToken: result.tokens.accessToken };
+  }
+
+  @Public()
+  @Post('2fa/verify')
+  async verifyTwoFactor(
+    @Body() dto: TwoFactorVerifyDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponseBody> {
-    const { user, tokens } = await this.authService.login(dto, this.extractMeta(req));
+    const { user, tokens } = await this.authService.verifyTwoFactor(
+      dto.challengeToken,
+      dto.code,
+      this.extractMeta(req),
+    );
 
     this.setRefreshTokenCookie(res, tokens.refreshToken, tokens.refreshTokenExpiresAt);
 
     return { user, accessToken: tokens.accessToken };
+  }
+
+  @Post('2fa/setup')
+  async setupTwoFactor(@CurrentUser('id') userId: string): Promise<TwoFactorSetup> {
+    return this.authService.setupTwoFactor(userId);
+  }
+
+  @Post('2fa/enable')
+  async enableTwoFactor(
+    @CurrentUser('id') userId: string,
+    @Body() dto: TwoFactorCodeDto,
+  ): Promise<{ success: true }> {
+    await this.authService.enableTwoFactor(userId, dto.code);
+
+    return { success: true };
+  }
+
+  @Post('2fa/disable')
+  async disableTwoFactor(
+    @CurrentUser('id') userId: string,
+    @Body() dto: TwoFactorCodeDto,
+  ): Promise<{ success: true }> {
+    await this.authService.disableTwoFactor(userId, dto.code);
+
+    return { success: true };
   }
 
   @Public()

@@ -49,4 +49,12 @@ export class UsersService {
   ): Promise<User> {
     return this.userRepository.create(data, tx);
   }
+
+  /**
+   * Raw internal update for auth-owned fields (2FA secret/flag). Never
+   * exposed via UpdateUserDto — reserved for the auth module.
+   */
+  async updateAuthFields(id: string, data: Prisma.UserUncheckedUpdateInput): Promise<User> {
+    return this.userRepository.update(id, data);
+  }
 }

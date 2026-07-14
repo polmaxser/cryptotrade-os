@@ -10,7 +10,8 @@
     "dark": "Тёмная",
     "system": "Системная",
     "logout": "Выйти",
-    "accountMenu": "Меню аккаунта"
+    "accountMenu": "Меню аккаунта",
+    "settings": "Настройки"
   },
   "auth": {
     "login": {
@@ -34,8 +35,34 @@
       "haveAccount": "Уже есть аккаунт?",
       "loginLink": "Войти"
     },
+    "twoFactor": {
+      "loginPrompt": "Введите 6-значный код из приложения-аутентификатора.",
+      "codeLabel": "Код подтверждения",
+      "verify": "Подтвердить",
+      "backToLogin": "Назад ко входу"
+    },
     "errors": {
       "generic": "Что-то пошло не так. Попробуйте ещё раз."
+    }
+  },
+  "settings": {
+    "title": "Настройки",
+    "subtitle": "Управление безопасностью аккаунта",
+    "twoFactor": {
+      "title": "Двухфакторная аутентификация",
+      "description": "Добавьте дополнительный уровень защиты для вашего аккаунта.",
+      "statusEnabled": "Включена",
+      "statusDisabled": "Выключена",
+      "enableButton": "Включить 2FA",
+      "disableButton": "Выключить 2FA",
+      "settingUp": "Подготовка...",
+      "confirming": "Подтверждение...",
+      "confirmButton": "Подтвердить",
+      "cancel": "Отмена",
+      "scanPrompt": "Отсканируйте этот QR-код в приложении-аутентификаторе (Google Authenticator, Authy, 1Password...).",
+      "manualEntryLabel": "Или введите код вручную:",
+      "codeLabel": "Код подтверждения",
+      "disablePrompt": "Введите текущий код из приложения-аутентификатора, чтобы выключить двухфакторную аутентификацию."
     }
   },
   "trades": {

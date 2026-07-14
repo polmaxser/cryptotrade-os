@@ -10,7 +10,8 @@
     "dark": "Dark",
     "system": "System",
     "logout": "Log out",
-    "accountMenu": "Account menu"
+    "accountMenu": "Account menu",
+    "settings": "Settings"
   },
   "auth": {
     "login": {
@@ -34,8 +35,34 @@
       "haveAccount": "Already have an account?",
       "loginLink": "Sign in"
     },
+    "twoFactor": {
+      "loginPrompt": "Enter the 6-digit code from your authenticator app.",
+      "codeLabel": "Verification Code",
+      "verify": "Verify",
+      "backToLogin": "Back to login"
+    },
     "errors": {
       "generic": "Something went wrong. Please try again."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account security",
+    "twoFactor": {
+      "title": "Two-Factor Authentication",
+      "description": "Add an extra layer of security to your account.",
+      "statusEnabled": "Enabled",
+      "statusDisabled": "Disabled",
+      "enableButton": "Enable 2FA",
+      "disableButton": "Disable 2FA",
+      "settingUp": "Preparing...",
+      "confirming": "Confirming...",
+      "confirmButton": "Confirm",
+      "cancel": "Cancel",
+      "scanPrompt": "Scan this QR code with your authenticator app (Google Authenticator, Authy, 1Password...).",
+      "manualEntryLabel": "Or enter this code manually:",
+      "codeLabel": "Verification Code",
+      "disablePrompt": "Enter a current code from your authenticator app to disable two-factor authentication."
     }
   },
   "trades": {

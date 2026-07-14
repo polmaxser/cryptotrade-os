@@ -1,7 +1,14 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
+import { authenticator } from 'otplib';
+import * as qrcode from 'qrcode';
 import { createHash, randomBytes } from 'node:crypto';
 
 import { UsersService } from '@/modules/users/users.service';
@@ -12,8 +19,11 @@ import { PrismaService } from '@/common/database/prisma.service';
 import { RefreshTokenRepository } from './repositories/refresh-token.repository';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { AccessTokenPayload, TwoFactorChallengePayload } from './types/jwt-payload';
 
 const DEFAULT_PORTFOLIO_NAME = 'Default Portfolio';
+const TWO_FACTOR_CHALLENGE_TTL = '5m';
+const TWO_FACTOR_ISSUER = 'CryptoTrade OS';
 
 export interface RequestMeta {
   userAgent?: string;
@@ -29,6 +39,17 @@ export interface TokenPair {
 export interface AuthResult {
   user: PublicUser;
   tokens: TokenPair;
+}
+
+export interface TwoFactorChallenge {
+  requiresTwoFactor: true;
+  challengeToken: string;
+}
+
+export interface TwoFactorSetup {
+  secret: string;
+  otpauthUrl: string;
+  qrCodeDataUrl: string;
 }
 
 const REFRESH_TOKEN_BYTES = 64;
@@ -80,7 +101,7 @@ export class AuthService {
     return { user: toPublicUser(user), tokens };
   }
 
-  async login(dto: LoginDto, meta: RequestMeta): Promise<AuthResult> {
+  async login(dto: LoginDto, meta: RequestMeta): Promise<AuthResult | TwoFactorChallenge> {
     const user = await this.usersService.findAuthUserByEmail(dto.email);
 
     if (!user || !(await argon2.verify(user.passwordHash, dto.password))) {
@@ -91,9 +112,102 @@ export class AuthService {
       throw new UnauthorizedException('This account has been deactivated');
     }
 
+    if (user.twoFactorEnabled) {
+      const challengePayload: TwoFactorChallengePayload = {
+        sub: user.id,
+        purpose: '2fa_challenge',
+      };
+
+      const challengeToken = await this.jwtService.signAsync(challengePayload, {
+        expiresIn: TWO_FACTOR_CHALLENGE_TTL,
+      });
+
+      return { requiresTwoFactor: true, challengeToken };
+    }
+
     const tokens = await this.issueTokenPair(user.id, meta);
 
     return { user: toPublicUser(user), tokens };
+  }
+
+  async verifyTwoFactor(
+    challengeToken: string,
+    code: string,
+    meta: RequestMeta,
+  ): Promise<AuthResult> {
+    let payload: TwoFactorChallengePayload;
+
+    try {
+      payload = await this.jwtService.verifyAsync<TwoFactorChallengePayload>(challengeToken);
+    } catch {
+      throw new UnauthorizedException('Challenge expired, please log in again');
+    }
+
+    if (payload.purpose !== '2fa_challenge') {
+      throw new UnauthorizedException('Challenge expired, please log in again');
+    }
+
+    const user = await this.usersService.findAuthUserById(payload.sub);
+
+    if (!user || !user.isActive || !user.twoFactorEnabled || !user.twoFactorSecret) {
+      throw new UnauthorizedException('Challenge expired, please log in again');
+    }
+
+    if (!authenticator.verify({ token: code, secret: user.twoFactorSecret })) {
+      throw new UnauthorizedException('Invalid verification code');
+    }
+
+    const tokens = await this.issueTokenPair(user.id, meta);
+
+    return { user: toPublicUser(user), tokens };
+  }
+
+  async setupTwoFactor(userId: string): Promise<TwoFactorSetup> {
+    const user = await this.usersService.findAuthUserById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    const secret = authenticator.generateSecret();
+
+    await this.usersService.updateAuthFields(userId, { twoFactorSecret: secret });
+
+    const otpauthUrl = authenticator.keyuri(user.email, TWO_FACTOR_ISSUER, secret);
+    const qrCodeDataUrl = await qrcode.toDataURL(otpauthUrl);
+
+    return { secret, otpauthUrl, qrCodeDataUrl };
+  }
+
+  async enableTwoFactor(userId: string, code: string): Promise<void> {
+    const user = await this.usersService.findAuthUserById(userId);
+
+    if (!user?.twoFactorSecret) {
+      throw new BadRequestException('Run 2FA setup before enabling it');
+    }
+
+    if (!authenticator.verify({ token: code, secret: user.twoFactorSecret })) {
+      throw new UnauthorizedException('Invalid verification code');
+    }
+
+    await this.usersService.updateAuthFields(userId, { twoFactorEnabled: true });
+  }
+
+  async disableTwoFactor(userId: string, code: string): Promise<void> {
+    const user = await this.usersService.findAuthUserById(userId);
+
+    if (!user?.twoFactorEnabled || !user.twoFactorSecret) {
+      throw new BadRequestException('Two-factor authentication is not enabled');
+    }
+
+    if (!authenticator.verify({ token: code, secret: user.twoFactorSecret })) {
+      throw new UnauthorizedException('Invalid verification code');
+    }
+
+    await this.usersService.updateAuthFields(userId, {
+      twoFactorEnabled: false,
+      twoFactorSecret: null,
+    });
   }
 
   async refresh(rawRefreshToken: string, meta: RequestMeta): Promise<AuthResult> {
@@ -121,7 +235,8 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token is invalid or expired');
     }
 
-    const accessToken = await this.jwtService.signAsync({ sub: user.id });
+    const accessTokenPayload: AccessTokenPayload = { sub: user.id, purpose: 'access' };
+    const accessToken = await this.jwtService.signAsync(accessTokenPayload);
     const rawNewRefreshToken = randomBytes(REFRESH_TOKEN_BYTES).toString('hex');
     const refreshTokenExpiresAt = this.computeRefreshExpiry();
 
@@ -154,7 +269,8 @@ export class AuthService {
   }
 
   private async issueTokenPair(userId: string, meta: RequestMeta): Promise<TokenPair> {
-    const accessToken = await this.jwtService.signAsync({ sub: userId });
+    const accessTokenPayload: AccessTokenPayload = { sub: userId, purpose: 'access' };
+    const accessToken = await this.jwtService.signAsync(accessTokenPayload);
 
     const rawRefreshToken = randomBytes(REFRESH_TOKEN_BYTES).toString('hex');
     const refreshTokenExpiresAt = this.computeRefreshExpiry();

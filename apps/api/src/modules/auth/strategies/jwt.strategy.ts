@@ -6,9 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '@/modules/users/users.service';
 import { PublicUser, toPublicUser } from '@/modules/users/types/public-user';
 
-interface JwtPayload {
-  sub: string;
-}
+import { AccessTokenPayload } from '../types/jwt-payload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -26,7 +24,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<PublicUser> {
+  async validate(payload: AccessTokenPayload): Promise<PublicUser> {
+    // Rejects 2FA challenge tokens (and anything else) masquerading as an access token —
+    // without this check a stolen/leaked challenge token would bypass the second factor entirely.
+    if (payload.purpose !== 'access') {
+      throw new UnauthorizedException();
+    }
+
     const user = await this.usersService.findAuthUserById(payload.sub);
 
     if (!user || !user.isActive) {
