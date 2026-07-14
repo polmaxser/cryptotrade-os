@@ -23,8 +23,11 @@ export class UserRepository {
     });
   }
 
-  async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
-    return this.prisma.user.create({
+  async create(
+    data: Prisma.UserUncheckedCreateInput,
+    tx?: Prisma.TransactionClient,
+  ): Promise<User> {
+    return (tx ?? this.prisma).user.create({
       data,
     });
   }

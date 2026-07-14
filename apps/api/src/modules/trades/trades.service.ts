@@ -5,9 +5,14 @@ import { TradeRepository } from './repositories/trade.repository';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
 
+import { PortfoliosService } from '@/modules/portfolios/portfolios.service';
+
 @Injectable()
 export class TradesService {
-  constructor(private readonly tradeRepository: TradeRepository) {}
+  constructor(
+    private readonly tradeRepository: TradeRepository,
+    private readonly portfoliosService: PortfoliosService,
+  ) {}
 
   async findAll(userId: string): Promise<Trade[]> {
     return this.tradeRepository.findAllByUser(userId);
@@ -26,14 +31,21 @@ export class TradesService {
   }
 
   async create(userId: string, dto: CreateTradeDto): Promise<Trade> {
+    const portfolioId = await this.resolvePortfolioId(userId, dto.portfolioId);
+
     return this.tradeRepository.create({
       ...dto,
+      portfolioId,
       userId,
     });
   }
 
   async update(id: string, userId: string, dto: UpdateTradeDto): Promise<Trade> {
     await this.findOne(id, userId);
+
+    if (dto.portfolioId) {
+      await this.portfoliosService.findOne(dto.portfolioId, userId);
+    }
 
     return this.tradeRepository.update(id, dto);
   }
@@ -48,5 +60,20 @@ export class TradesService {
     if (trade.userId !== userId) {
       throw new ForbiddenException('You do not have access to this trade');
     }
+  }
+
+  private async resolvePortfolioId(
+    userId: string,
+    requestedPortfolioId?: string,
+  ): Promise<string | null> {
+    if (requestedPortfolioId) {
+      const portfolio = await this.portfoliosService.findOne(requestedPortfolioId, userId);
+
+      return portfolio.id;
+    }
+
+    const defaultPortfolio = await this.portfoliosService.getDefaultForUser(userId);
+
+    return defaultPortfolio?.id ?? null;
   }
 }

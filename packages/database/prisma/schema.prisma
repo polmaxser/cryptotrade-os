@@ -18,6 +18,10 @@ enum WorkspaceRole {
   VIEWER
 }
 
+enum PortfolioType {
+  SPOT
+}
+
 //////////////////////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////////////////////
@@ -38,7 +42,8 @@ model User {
   memberships   WorkspaceMember[]
   refreshTokens RefreshToken[]
 
-  trades Trade[]
+  trades     Trade[]
+  portfolios Portfolio[]
 
   @@index([email])
   @@map("users")
@@ -120,6 +125,33 @@ model RefreshToken {
 }
 
 //////////////////////////////////////////////////////////////
+// PORTFOLIO
+//////////////////////////////////////////////////////////////
+
+model Portfolio {
+  id String @id @default(cuid())
+
+  name        String
+  description String?
+
+  type         PortfolioType @default(SPOT)
+  baseCurrency String        @default("USDT")
+
+  isDefault Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trades Trade[]
+
+  @@index([userId])
+  @@map("portfolios")
+}
+
+//////////////////////////////////////////////////////////////
 // TRADE
 //////////////////////////////////////////////////////////////
 
@@ -158,7 +190,13 @@ model Trade {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  portfolioId String?
+
+  portfolio Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: Restrict)
+
   @@index([userId])
+
+  @@index([portfolioId])
 
   @@index([symbol])
 

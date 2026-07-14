@@ -13,11 +13,13 @@ import { RefreshTokenRepository } from './repositories/refresh-token.repository'
 
 import { DatabaseModule } from '@/common/database/database.module';
 import { UsersModule } from '@/modules/users/users.module';
+import { PortfoliosModule } from '@/modules/portfolios/portfolios.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UsersModule,
+    PortfoliosModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

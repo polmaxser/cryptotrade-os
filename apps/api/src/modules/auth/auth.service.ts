@@ -6,10 +6,14 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import { UsersService } from '@/modules/users/users.service';
 import { PublicUser, toPublicUser } from '@/modules/users/types/public-user';
+import { PortfolioRepository } from '@/modules/portfolios/repositories/portfolio.repository';
+import { PrismaService } from '@/common/database/prisma.service';
 
 import { RefreshTokenRepository } from './repositories/refresh-token.repository';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+
+const DEFAULT_PORTFOLIO_NAME = 'Default Portfolio';
 
 export interface RequestMeta {
   userAgent?: string;
@@ -34,8 +38,10 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
+    private readonly portfolioRepository: PortfolioRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async register(dto: RegisterDto, meta: RequestMeta): Promise<AuthResult> {
@@ -47,10 +53,26 @@ export class AuthService {
 
     const passwordHash = await argon2.hash(dto.password);
 
-    const user = await this.usersService.createUser({
-      email: dto.email,
-      passwordHash,
-      name: dto.name,
+    const user = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await this.usersService.createUser(
+        {
+          email: dto.email,
+          passwordHash,
+          name: dto.name,
+        },
+        tx,
+      );
+
+      await this.portfolioRepository.create(
+        {
+          userId: createdUser.id,
+          name: DEFAULT_PORTFOLIO_NAME,
+          isDefault: true,
+        },
+        tx,
+      );
+
+      return createdUser;
     });
 
     const tokens = await this.issueTokenPair(user.id, meta);

@@ -56,4 +56,8 @@ export class CreateTradeDto {
   @IsOptional()
   @IsDateString()
   closedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  portfolioId?: string;
 }

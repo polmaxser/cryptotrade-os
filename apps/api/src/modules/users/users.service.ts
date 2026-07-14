@@ -43,7 +43,10 @@ export class UsersService {
     return this.userRepository.findById(id);
   }
 
-  async createUser(data: Prisma.UserUncheckedCreateInput): Promise<User> {
-    return this.userRepository.create(data);
+  async createUser(
+    data: Prisma.UserUncheckedCreateInput,
+    tx?: Prisma.TransactionClient,
+  ): Promise<User> {
+    return this.userRepository.create(data, tx);
   }
 }
