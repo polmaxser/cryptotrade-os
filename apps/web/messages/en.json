@@ -11,7 +11,8 @@
     "system": "System",
     "logout": "Log out",
     "accountMenu": "Account menu",
-    "settings": "Settings"
+    "settings": "Settings",
+    "workspaces": "Workspaces"
   },
   "auth": {
     "login": {
@@ -98,6 +99,56 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
+    }
+  },
+  "workspaces": {
+    "title": "Workspaces",
+    "subtitle": "Collaborate with your team",
+    "empty": "You're not part of any workspace yet.",
+    "create": {
+      "trigger": "New Workspace",
+      "title": "Create Workspace",
+      "nameLabel": "Name",
+      "descriptionLabel": "Description",
+      "submit": "Create Workspace",
+      "submitting": "Creating..."
+    },
+    "invite": {
+      "trigger": "Invite",
+      "title": "Invite Member",
+      "emailLabel": "Email",
+      "roleLabel": "Role",
+      "submit": "Send Invite",
+      "submitting": "Sending...",
+      "linkGenerated": "Share this link with the person you're inviting:",
+      "linkNote": "There's no email delivery yet — copy the link and send it yourself.",
+      "done": "Done"
+    },
+    "detail": {
+      "membersTitle": "Members",
+      "pendingInvitationsTitle": "Pending Invitations",
+      "remove": "Remove",
+      "revoke": "Revoke",
+      "deleteWorkspace": "Delete Workspace",
+      "leaveWorkspace": "Leave Workspace",
+      "notFound": "Workspace not found."
+    },
+    "roles": {
+      "OWNER": "Owner",
+      "ADMIN": "Admin",
+      "MEMBER": "Member",
+      "VIEWER": "Viewer"
+    },
+    "acceptInvitation": {
+      "title": "Workspace Invitation",
+      "description": "You've been invited to join {workspace} as {role} by {inviter}.",
+      "notFound": "This invitation link is invalid.",
+      "expired": "This invitation has expired or was already used.",
+      "accept": "Accept Invitation",
+      "accepting": "Joining...",
+      "needAuth": "Log in or create an account with the invited email to accept.",
+      "login": "Sign in",
+      "register": "Create account"
     }
   },
   "dashboard": {

@@ -9,4 +9,10 @@ export const QUERY_KEYS = {
   analyticsSummary: ['analytics', 'summary'] as const,
   trades: ['trades'] as const,
   portfolios: ['portfolios'] as const,
+  workspaces: ['workspaces'] as const,
+  workspace: (workspaceId: string) => ['workspaces', workspaceId] as const,
+  workspaceMembers: (workspaceId: string) => ['workspaces', workspaceId, 'members'] as const,
+  workspaceInvitations: (workspaceId: string) =>
+    ['workspaces', workspaceId, 'invitations'] as const,
+  invitationPreview: (token: string) => ['invitations', token] as const,
 };

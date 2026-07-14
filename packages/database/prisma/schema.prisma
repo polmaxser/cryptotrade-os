@@ -42,8 +42,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  memberships   WorkspaceMember[]
-  refreshTokens RefreshToken[]
+  memberships       WorkspaceMember[]
+  sentInvitations   WorkspaceInvitation[]
+  refreshTokens     RefreshToken[]
 
   trades     Trade[]
   portfolios Portfolio[]
@@ -67,7 +68,8 @@ model Workspace {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  members WorkspaceMember[]
+  members     WorkspaceMember[]
+  invitations WorkspaceInvitation[]
 
   @@index([slug])
   @@map("workspaces")
@@ -99,6 +101,35 @@ model WorkspaceMember {
   @@index([userId])
 
   @@map("workspace_members")
+}
+
+//////////////////////////////////////////////////////////////
+// WORKSPACE INVITATION
+//////////////////////////////////////////////////////////////
+
+model WorkspaceInvitation {
+  id String @id @default(cuid())
+
+  email String
+  role  WorkspaceRole @default(MEMBER)
+
+  tokenHash String @unique
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  invitedByUserId String
+  invitedBy       User   @relation(fields: [invitedByUserId], references: [id], onDelete: Cascade)
+
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  revokedAt  DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([workspaceId])
+  @@index([email])
+  @@map("workspace_invitations")
 }
 
 //////////////////////////////////////////////////////////////

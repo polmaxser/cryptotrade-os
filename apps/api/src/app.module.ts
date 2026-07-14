@@ -11,6 +11,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PortfoliosModule } from './modules/portfolios/portfolios.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { WorkspacesModule } from './modules/workspaces/workspaces.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     PortfoliosModule,
     TradesModule,
     AnalyticsModule,
+    WorkspacesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
