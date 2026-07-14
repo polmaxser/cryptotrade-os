@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { hasLocale } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { AppShell } from '@/components/layout';
-import { HomeHero } from '@/components/home/home-hero';
 import { routing } from '@/i18n/routing';
 import { AppProviders } from '@/providers';
 
