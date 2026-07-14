@@ -48,4 +48,53 @@ export class TradeRepository {
       },
     });
   }
+
+  async findClosedForAnalytics(where: Prisma.TradeWhereInput): Promise<ClosedTradeAnalyticsRow[]> {
+    return this.prisma.trade.findMany({
+      where: {
+        ...where,
+        status: 'CLOSED',
+      },
+      select: {
+        pnl: true,
+        entryPrice: true,
+        quantity: true,
+      },
+    });
+  }
+
+  async countByStatus(where: Prisma.TradeWhereInput): Promise<TradeStatusCounts> {
+    const [open, closed] = await Promise.all([
+      this.prisma.trade.count({
+        where: {
+          ...where,
+          status: 'OPEN',
+        },
+      }),
+      this.prisma.trade.count({
+        where: {
+          ...where,
+          status: 'CLOSED',
+        },
+      }),
+    ]);
+
+    return {
+      open,
+      closed,
+      total: open + closed,
+    };
+  }
+}
+
+export interface ClosedTradeAnalyticsRow {
+  pnl: Prisma.Decimal | null;
+  entryPrice: Prisma.Decimal;
+  quantity: Prisma.Decimal;
+}
+
+export interface TradeStatusCounts {
+  open: number;
+  closed: number;
+  total: number;
 }

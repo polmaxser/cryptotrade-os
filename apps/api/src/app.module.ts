@@ -10,6 +10,7 @@ import { TradesModule } from './modules/trades/trades.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PortfoliosModule } from './modules/portfolios/portfolios.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PortfoliosModule } from './modules/portfolios/portfolios.module';
     AuthModule,
     PortfoliosModule,
     TradesModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
