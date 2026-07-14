@@ -38,6 +38,41 @@
       "generic": "Что-то пошло не так. Попробуйте ещё раз."
     }
   },
+  "trades": {
+    "new": {
+      "trigger": "Новая сделка",
+      "title": "Новая сделка",
+      "symbolLabel": "Символ",
+      "sideLabel": "Направление",
+      "sideLong": "Long",
+      "sideShort": "Short",
+      "entryPriceLabel": "Цена входа",
+      "quantityLabel": "Количество",
+      "openedAtLabel": "Дата открытия",
+      "portfolioLabel": "Портфель",
+      "portfolioDefault": "Портфель по умолчанию",
+      "strategyLabel": "Стратегия",
+      "notesLabel": "Заметки",
+      "submit": "Создать сделку",
+      "submitting": "Создание..."
+    },
+    "edit": {
+      "title": "Редактирование сделки",
+      "statusLabel": "Статус",
+      "statusOpen": "Открыта",
+      "statusClosed": "Закрыта",
+      "exitPriceLabel": "Цена выхода",
+      "closedAtLabel": "Дата закрытия",
+      "pnlLabel": "PnL",
+      "pnlPercentLabel": "PnL %",
+      "notesLabel": "Заметки",
+      "submit": "Сохранить",
+      "submitting": "Сохранение..."
+    },
+    "errors": {
+      "generic": "Что-то пошло не так. Попробуйте ещё раз."
+    }
+  },
   "dashboard": {
     "title": "Панель управления",
     "subtitle": "Ваш торговый командный центр",

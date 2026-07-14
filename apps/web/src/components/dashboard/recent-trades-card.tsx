@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge';
+import { EditTradeDialog } from '@/components/trades';
 import { formatSignedPnl } from '@/lib/dashboard/formatters';
 import type { Trade } from '@/types/trade';
 import { DashboardCard, DashboardCardContent, DashboardCardHeader } from './dashboard-card';
@@ -25,28 +26,32 @@ export function RecentTradesCard({ trades, title, openLabel }: RecentTradesCardP
             const isNegative = pnl !== null && pnl < 0;
 
             return (
-              <li
-                key={trade.id}
-                className="border-border/50 bg-background/30 flex items-center justify-between rounded-xl border px-4 py-3"
-              >
-                <Badge variant="secondary" className="font-mono text-xs">
-                  {trade.symbol}
-                </Badge>
-                {pnl !== null ? (
-                  <span
-                    className={
-                      isPositive
-                        ? 'font-semibold tabular-nums text-emerald-400'
-                        : isNegative
-                          ? 'font-semibold tabular-nums text-red-400'
-                          : 'text-muted-foreground font-semibold tabular-nums'
-                    }
+              <li key={trade.id}>
+                <EditTradeDialog trade={trade}>
+                  <button
+                    type="button"
+                    className="border-border/50 bg-background/30 hover:bg-background/50 flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors"
                   >
-                    {formatSignedPnl(pnl)}
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground text-sm">{openLabel}</span>
-                )}
+                    <Badge variant="secondary" className="font-mono text-xs">
+                      {trade.symbol}
+                    </Badge>
+                    {pnl !== null ? (
+                      <span
+                        className={
+                          isPositive
+                            ? 'font-semibold tabular-nums text-emerald-400'
+                            : isNegative
+                              ? 'font-semibold tabular-nums text-red-400'
+                              : 'text-muted-foreground font-semibold tabular-nums'
+                        }
+                      >
+                        {formatSignedPnl(pnl)}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">{openLabel}</span>
+                    )}
+                  </button>
+                </EditTradeDialog>
               </li>
             );
           })}

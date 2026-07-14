@@ -38,6 +38,41 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "trades": {
+    "new": {
+      "trigger": "New Trade",
+      "title": "New Trade",
+      "symbolLabel": "Symbol",
+      "sideLabel": "Side",
+      "sideLong": "Long",
+      "sideShort": "Short",
+      "entryPriceLabel": "Entry Price",
+      "quantityLabel": "Quantity",
+      "openedAtLabel": "Opened At",
+      "portfolioLabel": "Portfolio",
+      "portfolioDefault": "Default portfolio",
+      "strategyLabel": "Strategy",
+      "notesLabel": "Notes",
+      "submit": "Create Trade",
+      "submitting": "Creating..."
+    },
+    "edit": {
+      "title": "Edit Trade",
+      "statusLabel": "Status",
+      "statusOpen": "Open",
+      "statusClosed": "Closed",
+      "exitPriceLabel": "Exit Price",
+      "closedAtLabel": "Closed At",
+      "pnlLabel": "PnL",
+      "pnlPercentLabel": "PnL %",
+      "notesLabel": "Notes",
+      "submit": "Save Changes",
+      "submitting": "Saving..."
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Your trading command center",

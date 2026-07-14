@@ -8,4 +8,5 @@ export const QUERY_KEYS = {
   health: ['health'] as const,
   analyticsSummary: ['analytics', 'summary'] as const,
   trades: ['trades'] as const,
+  portfolios: ['portfolios'] as const,
 };

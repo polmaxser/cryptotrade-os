@@ -20,3 +20,21 @@ export type Trade = {
   userId: string;
   portfolioId: string | null;
 };
+
+export type CreateTradePayload = {
+  symbol: string;
+  side: TradeSide;
+  strategy?: string;
+  entryPrice: number;
+  exitPrice?: number;
+  quantity: number;
+  pnl?: number;
+  pnlPercent?: number;
+  status?: TradeStatus;
+  notes?: string;
+  openedAt: string;
+  closedAt?: string;
+  portfolioId?: string;
+};
+
+export type UpdateTradePayload = Partial<CreateTradePayload>;

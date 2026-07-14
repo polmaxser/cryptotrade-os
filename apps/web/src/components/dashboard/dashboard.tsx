@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useAnalyticsSummaryQuery } from '@/hooks/use-analytics-summary-query';
 import { useTradesQuery } from '@/hooks/use-trades-query';
+import { NewTradeDialog } from '@/components/trades';
 import { PerformanceCard } from './performance-card';
 import { RecentTradesCard } from './recent-trades-card';
 import { StatsGrid } from './stats-grid';
@@ -22,9 +23,12 @@ export function Dashboard() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_60%_40%_at_80%_0%,rgba(56,189,248,0.08),transparent)]" />
 
       <div className="relative mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('title')}</h1>
-          <p className="text-muted-foreground text-sm sm:text-base">{t('subtitle')}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('title')}</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">{t('subtitle')}</p>
+          </div>
+          <NewTradeDialog />
         </div>
 
         {isLoading ? (
