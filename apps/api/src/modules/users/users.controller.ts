@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Patch } from '@nestjs/common';
 
-import { type UsersService } from './users.service';
-import { type UpdateUserDto } from './dto/update-user.dto';
-import { type PublicUser } from './types/public-user';
+import { UsersService } from './users.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { PublicUser } from './types/public-user';
 
 import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
 

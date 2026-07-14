@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { type WorkspaceRole } from '@cryptotrade/database';
+import { WorkspaceRole } from '@cryptotrade/database';
 
 export const ROLES_KEY = 'roles';
 

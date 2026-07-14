@@ -1,16 +1,11 @@
-import {
-  type CanActivate,
-  type ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import { type Reflector } from '@nestjs/core';
-import { type WorkspaceRole } from '@cryptotrade/database';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { WorkspaceRole } from '@cryptotrade/database';
 
-import { type PrismaService } from '@/common/database/prisma.service';
+import { PrismaService } from '@/common/database/prisma.service';
 
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { type AuthenticatedRequest } from '../types/authenticated-request';
+import { AuthenticatedRequest } from '../types/authenticated-request';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

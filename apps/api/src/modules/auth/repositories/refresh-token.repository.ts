@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { type Prisma, type RefreshToken } from '@cryptotrade/database';
+import { Prisma, RefreshToken } from '@cryptotrade/database';
 
-import { type PrismaService } from '@/common/database/prisma.service';
+import { PrismaService } from '@/common/database/prisma.service';
 
 @Injectable()
 export class RefreshTokenRepository {

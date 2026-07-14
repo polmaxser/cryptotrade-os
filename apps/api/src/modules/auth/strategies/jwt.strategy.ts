@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { type ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { type UsersService } from '@/modules/users/users.service';
-import { type PublicUser, toPublicUser } from '@/modules/users/types/public-user';
+import { UsersService } from '@/modules/users/users.service';
+import { PublicUser, toPublicUser } from '@/modules/users/types/public-user';
 
 interface JwtPayload {
   sub: string;

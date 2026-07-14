@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { type Trade } from '@cryptotrade/database';
+import { Trade } from '@cryptotrade/database';
 
-import { type TradesService } from './trades.service';
-import { type CreateTradeDto } from './dto/create-trade.dto';
-import { type UpdateTradeDto } from './dto/update-trade.dto';
+import { TradesService } from './trades.service';
+import { CreateTradeDto } from './dto/create-trade.dto';
+import { UpdateTradeDto } from './dto/update-trade.dto';
 
 import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
 

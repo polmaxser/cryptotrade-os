@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { type Prisma, type User } from '@cryptotrade/database';
+import { Prisma, User } from '@cryptotrade/database';
 
-import { type UserRepository } from './repositories/user.repository';
-import { type UpdateUserDto } from './dto/update-user.dto';
-import { type PublicUser, toPublicUser } from './types/public-user';
+import { UserRepository } from './repositories/user.repository';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { PublicUser, toPublicUser } from './types/public-user';
 
 @Injectable()
 export class UsersService {

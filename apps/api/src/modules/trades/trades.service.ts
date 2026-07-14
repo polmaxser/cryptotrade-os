@@ -1,9 +1,9 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { type Trade } from '@cryptotrade/database';
+import { Trade } from '@cryptotrade/database';
 
-import { type TradeRepository } from './repositories/trade.repository';
-import { type CreateTradeDto } from './dto/create-trade.dto';
-import { type UpdateTradeDto } from './dto/update-trade.dto';
+import { TradeRepository } from './repositories/trade.repository';
+import { CreateTradeDto } from './dto/create-trade.dto';
+import { UpdateTradeDto } from './dto/update-trade.dto';
 
 @Injectable()
 export class TradesService {

@@ -1,4 +1,4 @@
-import { type User } from '@cryptotrade/database';
+import { User } from '@cryptotrade/database';
 
 export type PublicUser = Omit<User, 'passwordHash'>;
 

@@ -1,12 +1,12 @@
 import { Body, Controller, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
-import { type ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 
-import { type PublicUser } from '@/modules/users/types/public-user';
+import { PublicUser } from '@/modules/users/types/public-user';
 
-import { type AuthService, type RequestMeta } from './auth.service';
-import { type RegisterDto } from './dto/register.dto';
-import { type LoginDto } from './dto/login.dto';
+import { AuthService, RequestMeta } from './auth.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 import { Public } from './decorators/public.decorator';
 
 const REFRESH_TOKEN_COOKIE = 'refreshToken';
