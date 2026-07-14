@@ -8,37 +8,55 @@
     "theme": "Тема",
     "light": "Светлая",
     "dark": "Тёмная",
-    "system": "Системная"
+    "system": "Системная",
+    "logout": "Выйти",
+    "accountMenu": "Меню аккаунта"
+  },
+  "auth": {
+    "login": {
+      "title": "С возвращением",
+      "subtitle": "Войдите в свой аккаунт CryptoTrade OS",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "submit": "Войти",
+      "submitting": "Выполняется вход...",
+      "noAccount": "Нет аккаунта?",
+      "registerLink": "Создать"
+    },
+    "register": {
+      "title": "Создайте аккаунт",
+      "subtitle": "Начните вести учёт сделок за пару минут",
+      "nameLabel": "Имя",
+      "emailLabel": "Email",
+      "passwordLabel": "Пароль",
+      "submit": "Создать аккаунт",
+      "submitting": "Создание аккаунта...",
+      "haveAccount": "Уже есть аккаунт?",
+      "loginLink": "Войти"
+    },
+    "errors": {
+      "generic": "Что-то пошло не так. Попробуйте ещё раз."
+    }
   },
   "dashboard": {
     "title": "Панель управления",
     "subtitle": "Ваш торговый командный центр",
-    "capital": {
-      "title": "Текущий капитал",
-      "current": "Текущий капитал",
-      "goal": "Цель",
-      "progress": "Прогресс"
+    "loadError": "Не удалось загрузить данные дашборда. Попробуйте позже.",
+    "performance": {
+      "totalPnl": "Общий PnL",
+      "roi": "ROI",
+      "winRate": "Win Rate"
     },
     "stats": {
       "winRate": "Win Rate",
-      "profitFactor": "Profit Factor",
-      "maxDrawdown": "Max Drawdown",
-      "todayRisk": "Риск сегодня"
+      "winningTrades": "Прибыльные сделки",
+      "losingTrades": "Убыточные сделки",
+      "openTrades": "Открытые сделки"
     },
     "recentTrades": {
-      "title": "Последние сделки"
-    },
-    "aiCoach": {
-      "title": "AI Coach",
-      "volatileMarket": "Сегодня рынок волатилен.",
-      "riskLimit": "Не рискуйте более чем 1%."
-    },
-    "checklist": {
-      "title": "Ежедневный чеклист",
-      "tradingPlan": "Торговый план",
-      "sleep": "Сон",
-      "maxTrades": "Макс. 3 сделки",
-      "noRevenge": "Без revenge trading"
+      "title": "Последние сделки",
+      "open": "Открыта",
+      "empty": "Пока нет сделок."
     }
   },
   "footer": {

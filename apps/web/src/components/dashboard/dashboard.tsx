@@ -1,24 +1,20 @@
-import { getTranslations } from 'next-intl/server';
-import type { DashboardData } from '@/types/dashboard';
-import { AiCoachCard } from './ai-coach-card';
-import { CapitalCard } from './capital-card';
-import { DailyChecklistCard } from './daily-checklist-card';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useAnalyticsSummaryQuery } from '@/hooks/use-analytics-summary-query';
+import { useTradesQuery } from '@/hooks/use-trades-query';
+import { PerformanceCard } from './performance-card';
 import { RecentTradesCard } from './recent-trades-card';
 import { StatsGrid } from './stats-grid';
 
-type DashboardProps = {
-  data: DashboardData;
-};
+export function Dashboard() {
+  const t = useTranslations('dashboard');
 
-export async function Dashboard({ data }: DashboardProps) {
-  const t = await getTranslations('dashboard');
+  const analyticsQuery = useAnalyticsSummaryQuery();
+  const tradesQuery = useTradesQuery();
 
-  const checklistLabels = {
-    tradingPlan: t('checklist.tradingPlan'),
-    sleep: t('checklist.sleep'),
-    maxTrades: t('checklist.maxTrades'),
-    noRevenge: t('checklist.noRevenge'),
-  };
+  const isLoading = analyticsQuery.isLoading || tradesQuery.isLoading;
+  const isError = analyticsQuery.isError || tradesQuery.isError;
 
   return (
     <div className="relative">
@@ -31,45 +27,52 @@ export async function Dashboard({ data }: DashboardProps) {
           <p className="text-muted-foreground text-sm sm:text-base">{t('subtitle')}</p>
         </div>
 
-        <section>
-          <CapitalCard
-            capital={data.capital}
-            labels={{
-              current: t('capital.current'),
-              goal: t('capital.goal'),
-              progress: t('capital.progress'),
-            }}
-          />
-        </section>
+        {isLoading ? (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <div className="border-muted-foreground/30 border-t-foreground h-8 w-8 animate-spin rounded-full border-2" />
+          </div>
+        ) : isError ? (
+          <p className="text-muted-foreground py-12 text-center text-sm">{t('loadError')}</p>
+        ) : (
+          <>
+            <section>
+              <PerformanceCard
+                summary={analyticsQuery.data!}
+                labels={{
+                  totalPnl: t('performance.totalPnl'),
+                  roi: t('performance.roi'),
+                  winRate: t('performance.winRate'),
+                }}
+              />
+            </section>
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatsGrid
-            stats={data.stats}
-            labels={{
-              winRate: t('stats.winRate'),
-              profitFactor: t('stats.profitFactor'),
-              maxDrawdown: t('stats.maxDrawdown'),
-              todayRisk: t('stats.todayRisk'),
-            }}
-          />
-        </section>
+            <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <StatsGrid
+                summary={analyticsQuery.data!}
+                labels={{
+                  winRate: t('stats.winRate'),
+                  winningTrades: t('stats.winningTrades'),
+                  losingTrades: t('stats.losingTrades'),
+                  openTrades: t('stats.openTrades'),
+                }}
+              />
+            </section>
 
-        <section className="grid gap-4 lg:grid-cols-2">
-          <RecentTradesCard trades={data.recentTrades} title={t('recentTrades.title')} />
-          <AiCoachCard
-            title={t('aiCoach.title')}
-            headline={t(`aiCoach.${data.aiCoach.headline}`)}
-            advice={t(`aiCoach.${data.aiCoach.advice}`)}
-          />
-        </section>
-
-        <section>
-          <DailyChecklistCard
-            items={data.checklist}
-            title={t('checklist.title')}
-            itemLabels={checklistLabels}
-          />
-        </section>
+            <section>
+              {tradesQuery.data!.length > 0 ? (
+                <RecentTradesCard
+                  trades={tradesQuery.data!}
+                  title={t('recentTrades.title')}
+                  openLabel={t('recentTrades.open')}
+                />
+              ) : (
+                <p className="text-muted-foreground py-8 text-center text-sm">
+                  {t('recentTrades.empty')}
+                </p>
+              )}
+            </section>
+          </>
+        )}
       </div>
     </div>
   );

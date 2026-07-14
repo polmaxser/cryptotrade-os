@@ -8,37 +8,55 @@
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "logout": "Log out",
+    "accountMenu": "Account menu"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your CryptoTrade OS account",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Create one"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start tracking your trades in minutes",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "dashboard": {
     "title": "Dashboard",
     "subtitle": "Your trading command center",
-    "capital": {
-      "title": "Current Capital",
-      "current": "Current Capital",
-      "goal": "Goal",
-      "progress": "Progress"
+    "loadError": "Couldn't load your dashboard data. Please try again later.",
+    "performance": {
+      "totalPnl": "Total PnL",
+      "roi": "ROI",
+      "winRate": "Win Rate"
     },
     "stats": {
       "winRate": "Win Rate",
-      "profitFactor": "Profit Factor",
-      "maxDrawdown": "Max Drawdown",
-      "todayRisk": "Today's Risk"
+      "winningTrades": "Winning Trades",
+      "losingTrades": "Losing Trades",
+      "openTrades": "Open Trades"
     },
     "recentTrades": {
-      "title": "Recent Trades"
-    },
-    "aiCoach": {
-      "title": "AI Coach",
-      "volatileMarket": "Today's market is volatile.",
-      "riskLimit": "Do not risk more than 1%."
-    },
-    "checklist": {
-      "title": "Daily Checklist",
-      "tradingPlan": "Trading plan",
-      "sleep": "Sleep",
-      "maxTrades": "Max 3 trades",
-      "noRevenge": "No revenge trading"
+      "title": "Recent Trades",
+      "open": "Open",
+      "empty": "No trades yet."
     }
   },
   "footer": {

@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { UserMenu } from '@/components/layout/user-menu';
 
 export async function DashboardHeader() {
   const t = await getTranslations('common');
@@ -21,11 +21,7 @@ export async function DashboardHeader() {
         <div className="flex items-center gap-2 sm:gap-3">
           <LocaleSwitcher />
           <ThemeToggle />
-          <Avatar className="ring-border/60 h-9 w-9 ring-1">
-            <AvatarFallback className="bg-gradient-to-br from-violet-500/20 to-blue-500/20 text-xs font-semibold text-violet-200">
-              CT
-            </AvatarFallback>
-          </Avatar>
+          <UserMenu />
         </div>
       </div>
     </header>

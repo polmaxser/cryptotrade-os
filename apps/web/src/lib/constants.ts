@@ -6,5 +6,6 @@ export const APP_CONFIG = {
 
 export const QUERY_KEYS = {
   health: ['health'] as const,
-  dashboard: ['dashboard'] as const,
+  analyticsSummary: ['analytics', 'summary'] as const,
+  trades: ['trades'] as const,
 };

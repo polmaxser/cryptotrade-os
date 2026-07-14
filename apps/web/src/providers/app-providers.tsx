@@ -2,6 +2,7 @@
 
 import { NextIntlClientProvider } from 'next-intl';
 import type { ReactNode } from 'react';
+import { AuthProvider } from './auth-provider';
 import { QueryProvider } from './query-provider';
 import { ThemeProvider } from './theme-provider';
 
@@ -15,7 +16,9 @@ export function AppProviders({ children, locale, messages }: AppProvidersProps) 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <ThemeProvider>
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </ThemeProvider>
     </NextIntlClientProvider>
   );

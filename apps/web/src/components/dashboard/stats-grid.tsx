@@ -1,31 +1,24 @@
-import {
-  formatCurrency,
-  formatDecimal,
-  formatPercent,
-} from '@/lib/dashboard/formatters';
-import type { DashboardStats } from '@/types/dashboard';
+import { formatPercent } from '@/lib/dashboard/formatters';
+import type { AnalyticsSummary } from '@/types/analytics';
 import { StatCard } from './stat-card';
 
 type StatsGridProps = {
-  stats: DashboardStats;
+  summary: AnalyticsSummary;
   labels: {
     winRate: string;
-    profitFactor: string;
-    maxDrawdown: string;
-    todayRisk: string;
+    winningTrades: string;
+    losingTrades: string;
+    openTrades: string;
   };
 };
 
-export function StatsGrid({ stats, labels }: StatsGridProps) {
+export function StatsGrid({ summary, labels }: StatsGridProps) {
   return (
     <>
-      <StatCard label={labels.winRate} value={formatPercent(stats.winRate, 0)} />
-      <StatCard label={labels.profitFactor} value={formatDecimal(stats.profitFactor)} />
-      <StatCard label={labels.maxDrawdown} value={formatPercent(stats.maxDrawdown, 1)} />
-      <StatCard
-        label={labels.todayRisk}
-        value={formatCurrency(stats.todayRisk, stats.currency)}
-      />
+      <StatCard label={labels.winRate} value={formatPercent(summary.winRate, 0)} />
+      <StatCard label={labels.winningTrades} value={String(summary.winningTrades)} />
+      <StatCard label={labels.losingTrades} value={String(summary.losingTrades)} />
+      <StatCard label={labels.openTrades} value={String(summary.openTrades)} />
     </>
   );
 }
