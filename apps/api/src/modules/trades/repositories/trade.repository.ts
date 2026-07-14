@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@cryptotrade/database';
+import { type Prisma, type Trade } from '@cryptotrade/database';
 
-import { PrismaService } from '@/common/database/prisma.service';
+import { type PrismaService } from '@/common/database/prisma.service';
 
 @Injectable()
 export class TradeRepository {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<any[]> {
+  async findAllByUser(userId: string): Promise<Trade[]> {
     return this.prisma.trade.findMany({
+      where: {
+        userId,
+      },
       orderBy: {
         openedAt: 'desc',
       },
     });
   }
 
-  async findById(id: string): Promise<any | null> {
+  async findById(id: string): Promise<Trade | null> {
     return this.prisma.trade.findUnique({
       where: {
         id,
@@ -25,15 +26,22 @@ export class TradeRepository {
     });
   }
 
-  async create(
-    data: Prisma.TradeUncheckedCreateInput,
-  ): Promise<any> {
+  async create(data: Prisma.TradeUncheckedCreateInput): Promise<Trade> {
     return this.prisma.trade.create({
       data,
     });
   }
 
-  async delete(id: string): Promise<any> {
+  async update(id: string, data: Prisma.TradeUncheckedUpdateInput): Promise<Trade> {
+    return this.prisma.trade.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
+
+  async delete(id: string): Promise<Trade> {
     return this.prisma.trade.delete({
       where: {
         id,

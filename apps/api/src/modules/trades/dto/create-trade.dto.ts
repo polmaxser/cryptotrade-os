@@ -1,11 +1,4 @@
-import {
-  IsDateString,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsDateString, IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export enum TradeSide {
   LONG = 'LONG',
@@ -63,7 +56,4 @@ export class CreateTradeDto {
   @IsOptional()
   @IsDateString()
   closedAt?: string;
-
-  @IsString()
-  userId!: string;
 }

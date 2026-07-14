@@ -1,40 +1,42 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { type Trade } from '@cryptotrade/database';
 
-import { TradesService } from './trades.service';
+import { type TradesService } from './trades.service';
+import { type CreateTradeDto } from './dto/create-trade.dto';
+import { type UpdateTradeDto } from './dto/update-trade.dto';
+
+import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
 
 @Controller('trades')
 export class TradesController {
-  constructor(
-    private readonly tradesService: TradesService,
-  ) {}
+  constructor(private readonly tradesService: TradesService) {}
 
   @Get()
-  async findAll(): Promise<any[]> {
-    return this.tradesService.findAll();
+  async findAll(@CurrentUser('id') userId: string): Promise<Trade[]> {
+    return this.tradesService.findAll(userId);
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-  ): Promise<any> {
-    return this.tradesService.findOne(id);
+  async findOne(@Param('id') id: string, @CurrentUser('id') userId: string): Promise<Trade> {
+    return this.tradesService.findOne(id, userId);
   }
 
   @Post()
-  async create(): Promise<any> {
-    return this.tradesService.create();
+  async create(@CurrentUser('id') userId: string, @Body() dto: CreateTradeDto): Promise<Trade> {
+    return this.tradesService.create(userId, dto);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @CurrentUser('id') userId: string,
+    @Body() dto: UpdateTradeDto,
+  ): Promise<Trade> {
+    return this.tradesService.update(id, userId, dto);
   }
 
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-  ): Promise<any> {
-    return this.tradesService.remove(id);
+  async remove(@Param('id') id: string, @CurrentUser('id') userId: string): Promise<Trade> {
+    return this.tradesService.remove(id, userId);
   }
 }

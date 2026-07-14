@@ -23,17 +23,20 @@ enum WorkspaceRole {
 //////////////////////////////////////////////////////////////
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  avatarUrl String?
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String?
+  avatarUrl    String?
 
-  isActive  Boolean  @default(true)
+  isActive        Boolean   @default(true)
+  emailVerifiedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  memberships WorkspaceMember[]
+  memberships   WorkspaceMember[]
+  refreshTokens RefreshToken[]
 
   trades Trade[]
 
@@ -88,6 +91,32 @@ model WorkspaceMember {
   @@index([userId])
 
   @@map("workspace_members")
+}
+
+//////////////////////////////////////////////////////////////
+// REFRESH TOKEN
+//////////////////////////////////////////////////////////////
+
+model RefreshToken {
+  id String @id @default(cuid())
+
+  tokenHash String @unique
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userAgent String?
+  ipAddress String?
+
+  expiresAt DateTime
+  revokedAt DateTime?
+
+  replacedByTokenHash String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
 }
 
 //////////////////////////////////////////////////////////////
