@@ -14,7 +14,11 @@
     "settings": "Settings",
     "workspaces": "Workspaces",
     "pricing": "Pricing",
-    "journal": "Journal"
+    "journal": "Journal",
+    "calendar": "Calendar",
+    "watchlist": "Watchlist",
+    "alerts": "Alerts",
+    "notes": "Notes"
   },
   "auth": {
     "login": {
@@ -217,6 +221,60 @@
       "screenshotsLabel": "Screenshots",
       "screenshotsHint": "Save the entry first to attach screenshots."
     }
+  },
+  "watchlist": {
+    "title": "Watchlist",
+    "subtitle": "Track live prices for the coins you care about.",
+    "empty": "Your watchlist is empty.",
+    "remove": "Remove",
+    "add": {
+      "trigger": "Add Coin",
+      "title": "Add to Watchlist",
+      "searchPlaceholder": "Search by name or symbol..."
+    }
+  },
+  "alerts": {
+    "title": "Alerts",
+    "subtitle": "Get notified in-app when a price crosses your threshold.",
+    "empty": "You have no price alerts yet.",
+    "remove": "Remove",
+    "active": "Active",
+    "triggered": "Triggered",
+    "aboveLabel": "Above",
+    "belowLabel": "Below",
+    "create": {
+      "trigger": "New Alert",
+      "title": "New Price Alert",
+      "searchPlaceholder": "Search by name or symbol...",
+      "change": "Change",
+      "directionLabel": "Direction",
+      "above": "Above",
+      "below": "Below",
+      "targetPriceLabel": "Target Price (USD)",
+      "create": "Create Alert",
+      "creating": "Creating..."
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Freeform notes — ideas, plans, reminders.",
+    "empty": "No notes yet.",
+    "newNote": "New Note",
+    "edit": "Edit",
+    "delete": "Delete",
+    "dialog": {
+      "createTitle": "New Note",
+      "editTitle": "Edit Note",
+      "titleLabel": "Title",
+      "contentLabel": "Content",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "create": "Create Note"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "subtitle": "Daily PnL from your closed trades."
   },
   "dashboard": {
     "title": "Dashboard",

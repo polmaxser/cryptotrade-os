@@ -66,6 +66,20 @@ export class TradeRepository {
     });
   }
 
+  async findClosedInRange(userId: string, from: Date, to: Date): Promise<ClosedTradeCalendarRow[]> {
+    return this.prisma.trade.findMany({
+      where: {
+        userId,
+        status: 'CLOSED',
+        closedAt: { gte: from, lte: to },
+      },
+      select: {
+        pnl: true,
+        closedAt: true,
+      },
+    });
+  }
+
   async countByStatus(where: Prisma.TradeWhereInput): Promise<TradeStatusCounts> {
     const [open, closed] = await Promise.all([
       this.prisma.trade.count({
@@ -97,6 +111,11 @@ export interface ClosedTradeAnalyticsRow {
   stopLossPrice: Prisma.Decimal | null;
   closedAt: Date | null;
   openedAt: Date;
+}
+
+export interface ClosedTradeCalendarRow {
+  pnl: Prisma.Decimal | null;
+  closedAt: Date | null;
 }
 
 export interface TradeStatusCounts {

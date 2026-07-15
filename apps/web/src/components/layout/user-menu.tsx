@@ -54,6 +54,14 @@ export function UserMenu() {
           {user.email}
         </DropdownMenuLabel>
         <DropdownMenuItem onSelect={() => router.push('/journal')}>{t('journal')}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/calendar')}>
+          {t('calendar')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/watchlist')}>
+          {t('watchlist')}
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/alerts')}>{t('alerts')}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/notes')}>{t('notes')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/workspaces')}>
           {t('workspaces')}
         </DropdownMenuItem>

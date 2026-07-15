@@ -69,6 +69,10 @@ model User {
   journalEntries JournalEntry[]
   journalTags    JournalTag[]
 
+  watchlistItems WatchlistItem[]
+  priceAlerts    PriceAlert[]
+  notes          Note[]
+
   @@index([email])
   @@map("users")
 }
@@ -387,4 +391,81 @@ model JournalTag {
   @@unique([userId, category, name])
   @@index([userId])
   @@map("journal_tags")
+}
+
+//////////////////////////////////////////////////////////////
+// WATCHLIST
+//////////////////////////////////////////////////////////////
+
+model WatchlistItem {
+  id String @id @default(cuid())
+
+  /// CoinGecko coin id — the canonical key for price lookups.
+  coinId String
+  symbol String
+  name   String
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, coinId])
+  @@index([userId])
+  @@map("watchlist_items")
+}
+
+//////////////////////////////////////////////////////////////
+// ALERTS
+//////////////////////////////////////////////////////////////
+
+enum AlertDirection {
+  ABOVE
+  BELOW
+}
+
+enum AlertStatus {
+  ACTIVE
+  TRIGGERED
+}
+
+model PriceAlert {
+  id String @id @default(cuid())
+
+  coinId      String
+  symbol      String
+  direction   AlertDirection
+  targetPrice Decimal        @db.Decimal(20, 8)
+  status      AlertStatus    @default(ACTIVE)
+
+  triggeredAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("price_alerts")
+}
+
+//////////////////////////////////////////////////////////////
+// NOTES
+//////////////////////////////////////////////////////////////
+
+model Note {
+  id String @id @default(cuid())
+
+  title   String
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notes")
 }

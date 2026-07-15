@@ -21,4 +21,9 @@ export const QUERY_KEYS = {
   journalEntries: (filters?: { tradeId?: string; tagId?: string }) =>
     ['journal', 'entries', filters?.tradeId ?? 'any', filters?.tagId ?? 'any'] as const,
   journalTags: (category?: string) => ['journal', 'tags', category ?? 'all'] as const,
+  watchlist: ['watchlist'] as const,
+  coinSearch: (query: string) => ['watchlist', 'search', query] as const,
+  alerts: ['alerts'] as const,
+  notes: ['notes'] as const,
+  calendarMonth: (month: string) => ['calendar', month] as const,
 };

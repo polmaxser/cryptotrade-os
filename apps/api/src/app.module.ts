@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -14,6 +15,10 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { JournalModule } from './modules/journal/journal.module';
+import { WatchlistModule } from './modules/watchlist/watchlist.module';
+import { AlertsModule } from './modules/alerts/alerts.module';
+import { NotesModule } from './modules/notes/notes.module';
+import { CalendarModule } from './modules/calendar/calendar.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -23,6 +28,7 @@ import configuration from './config/configuration';
       envFilePath: ['.env.local', '.env'],
       load: [configuration],
     }),
+    ScheduleModule.forRoot(),
 
     DatabaseModule,
     HealthModule,
@@ -34,6 +40,10 @@ import configuration from './config/configuration';
     WorkspacesModule,
     BillingModule,
     JournalModule,
+    WatchlistModule,
+    AlertsModule,
+    NotesModule,
+    CalendarModule,
   ],
   controllers: [AppController],
   providers: [AppService],

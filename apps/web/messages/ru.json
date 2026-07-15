@@ -14,7 +14,11 @@
     "settings": "Настройки",
     "workspaces": "Рабочие пространства",
     "pricing": "Тарифы",
-    "journal": "Журнал"
+    "journal": "Журнал",
+    "calendar": "Календарь",
+    "watchlist": "Watchlist",
+    "alerts": "Алерты",
+    "notes": "Заметки"
   },
   "auth": {
     "login": {
@@ -217,6 +221,60 @@
       "screenshotsLabel": "Скриншоты",
       "screenshotsHint": "Сначала сохраните запись, чтобы прикрепить скриншоты."
     }
+  },
+  "watchlist": {
+    "title": "Watchlist",
+    "subtitle": "Следите за живыми ценами интересующих вас монет.",
+    "empty": "Watchlist пуст.",
+    "remove": "Удалить",
+    "add": {
+      "trigger": "Добавить монету",
+      "title": "Добавить в Watchlist",
+      "searchPlaceholder": "Поиск по названию или тикеру..."
+    }
+  },
+  "alerts": {
+    "title": "Алерты",
+    "subtitle": "Уведомление в приложении, когда цена пересечёт порог.",
+    "empty": "У вас пока нет ценовых алертов.",
+    "remove": "Удалить",
+    "active": "Активен",
+    "triggered": "Сработал",
+    "aboveLabel": "Выше",
+    "belowLabel": "Ниже",
+    "create": {
+      "trigger": "Новый алерт",
+      "title": "Новый ценовой алерт",
+      "searchPlaceholder": "Поиск по названию или тикеру...",
+      "change": "Изменить",
+      "directionLabel": "Направление",
+      "above": "Выше",
+      "below": "Ниже",
+      "targetPriceLabel": "Целевая цена (USD)",
+      "create": "Создать алерт",
+      "creating": "Создание..."
+    }
+  },
+  "notes": {
+    "title": "Заметки",
+    "subtitle": "Свободные заметки — идеи, планы, напоминания.",
+    "empty": "Пока нет заметок.",
+    "newNote": "Новая заметка",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "dialog": {
+      "createTitle": "Новая заметка",
+      "editTitle": "Редактирование заметки",
+      "titleLabel": "Заголовок",
+      "contentLabel": "Содержание",
+      "saving": "Сохранение...",
+      "saveChanges": "Сохранить",
+      "create": "Создать заметку"
+    }
+  },
+  "calendar": {
+    "title": "Календарь",
+    "subtitle": "Дневной PnL по закрытым сделкам."
   },
   "dashboard": {
     "title": "Панель управления",
