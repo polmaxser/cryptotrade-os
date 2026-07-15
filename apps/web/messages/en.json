@@ -109,6 +109,7 @@
       "sideLong": "Long",
       "sideShort": "Short",
       "entryPriceLabel": "Entry Price",
+      "stopLossPriceLabel": "Stop Loss (optional)",
       "quantityLabel": "Quantity",
       "openedAtLabel": "Opened At",
       "portfolioLabel": "Portfolio",
@@ -123,6 +124,7 @@
       "statusLabel": "Status",
       "statusOpen": "Open",
       "statusClosed": "Closed",
+      "stopLossPriceLabel": "Stop Loss (optional)",
       "exitPriceLabel": "Exit Price",
       "closedAtLabel": "Closed At",
       "pnlLabel": "PnL",
@@ -204,6 +206,28 @@
       "title": "Recent Trades",
       "open": "Open",
       "empty": "No trades yet."
+    },
+    "portfolioFilter": {
+      "label": "Portfolio",
+      "all": "All portfolios"
+    },
+    "riskPerformance": {
+      "title": "Risk & Performance",
+      "description": "Deeper metrics from your closed trades.",
+      "profitFactor": "Profit Factor",
+      "expectancy": "Expectancy",
+      "avgWin": "Avg Win",
+      "avgLoss": "Avg Loss",
+      "rMultiple": "R-Multiple",
+      "rMultipleCaption": "Avg over {count, plural, one {# trade} other {# trades}} with a stop-loss set",
+      "rMultipleEmpty": "Set a stop-loss on your trades to see this",
+      "sharpe": "Sharpe Ratio",
+      "sharpeCaption": "Per trade, not annualized",
+      "maxDrawdown": "Max Drawdown",
+      "balancePlaceholder": "Starting balance",
+      "balanceSubmit": "Save",
+      "balanceSaving": "Saving...",
+      "percentHint": "Select a single portfolio and set a starting balance to see % drawdown."
     }
   },
   "footer": {

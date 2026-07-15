@@ -4,6 +4,7 @@ export type Portfolio = {
   description: string | null;
   type: 'SPOT';
   baseCurrency: string;
+  startingBalance: string | null;
   isDefault: boolean;
   createdAt: string;
   updatedAt: string;
@@ -11,4 +12,8 @@ export type Portfolio = {
   _count: {
     trades: number;
   };
+};
+
+export type UpdatePortfolioPayload = {
+  startingBalance?: number;
 };

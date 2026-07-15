@@ -1,21 +1,34 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAnalyticsSummaryQuery } from '@/hooks/use-analytics-summary-query';
+import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
 import { useTradesQuery } from '@/hooks/use-trades-query';
 import { NewTradeDialog } from '@/components/trades';
 import { PerformanceCard } from './performance-card';
 import { RecentTradesCard } from './recent-trades-card';
+import { RiskPerformanceCard } from './risk-performance-card';
 import { StatsGrid } from './stats-grid';
 
 export function Dashboard() {
   const t = useTranslations('dashboard');
 
-  const analyticsQuery = useAnalyticsSummaryQuery();
+  const portfoliosQuery = usePortfoliosQuery();
+  const portfolios = portfoliosQuery.data ?? [];
+
+  const [selectedPortfolioId, setSelectedPortfolioId] = useState<string | undefined>(undefined);
+  const solePortfolio = portfolios.length === 1 ? portfolios[0] : undefined;
+  const effectivePortfolioId = selectedPortfolioId ?? solePortfolio?.id;
+  const scopedPortfolio = effectivePortfolioId
+    ? portfolios.find((portfolio) => portfolio.id === effectivePortfolioId)
+    : undefined;
+
+  const analyticsQuery = useAnalyticsSummaryQuery(effectivePortfolioId, !portfoliosQuery.isLoading);
   const tradesQuery = useTradesQuery();
 
-  const isLoading = analyticsQuery.isLoading || tradesQuery.isLoading;
-  const isError = analyticsQuery.isError || tradesQuery.isError;
+  const isLoading = analyticsQuery.isLoading || tradesQuery.isLoading || portfoliosQuery.isLoading;
+  const isError = analyticsQuery.isError || tradesQuery.isError || portfoliosQuery.isError;
 
   return (
     <div className="relative">
@@ -28,7 +41,24 @@ export function Dashboard() {
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('title')}</h1>
             <p className="text-muted-foreground text-sm sm:text-base">{t('subtitle')}</p>
           </div>
-          <NewTradeDialog />
+          <div className="flex items-center gap-2">
+            {portfolios.length > 1 ? (
+              <select
+                aria-label={t('portfolioFilter.label')}
+                value={selectedPortfolioId ?? ''}
+                onChange={(event) => setSelectedPortfolioId(event.target.value || undefined)}
+                className="border-input bg-background ring-offset-background focus-visible:ring-ring h-9 rounded-md border px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              >
+                <option value="">{t('portfolioFilter.all')}</option>
+                {portfolios.map((portfolio) => (
+                  <option key={portfolio.id} value={portfolio.id}>
+                    {portfolio.name}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+            <NewTradeDialog />
+          </div>
         </div>
 
         {isLoading ? (
@@ -60,6 +90,10 @@ export function Dashboard() {
                   openTrades: t('stats.openTrades'),
                 }}
               />
+            </section>
+
+            <section>
+              <RiskPerformanceCard summary={analyticsQuery.data!} portfolio={scopedPortfolio} />
             </section>
 
             <section>

@@ -188,6 +188,9 @@ model Portfolio {
   type         PortfolioType @default(SPOT)
   baseCurrency String        @default("USDT")
 
+  /// Used to express Max Drawdown as a percentage of equity, not just $. Null until the user sets it.
+  startingBalance Decimal? @db.Decimal(20, 8)
+
   isDefault Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -218,6 +221,9 @@ model Trade {
   entryPrice Decimal @db.Decimal(20, 8)
 
   exitPrice Decimal? @db.Decimal(20, 8)
+
+  /// Planned exit if the trade goes against the position — the risk basis for R-Multiple. Null when not set.
+  stopLossPrice Decimal? @db.Decimal(20, 8)
 
   quantity Decimal @db.Decimal(20, 8)
 

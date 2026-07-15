@@ -59,6 +59,9 @@ export class TradeRepository {
         pnl: true,
         entryPrice: true,
         quantity: true,
+        stopLossPrice: true,
+        closedAt: true,
+        openedAt: true,
       },
     });
   }
@@ -91,6 +94,9 @@ export interface ClosedTradeAnalyticsRow {
   pnl: Prisma.Decimal | null;
   entryPrice: Prisma.Decimal;
   quantity: Prisma.Decimal;
+  stopLossPrice: Prisma.Decimal | null;
+  closedAt: Date | null;
+  openedAt: Date;
 }
 
 export interface TradeStatusCounts {

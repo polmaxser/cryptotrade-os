@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, Min, MaxLength } from 'class-validator';
 import { PortfolioType } from '@cryptotrade/database';
 
 export class CreatePortfolioDto {
@@ -23,4 +23,9 @@ export class CreatePortfolioDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  startingBalance?: number;
 }

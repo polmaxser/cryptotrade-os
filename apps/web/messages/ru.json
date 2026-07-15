@@ -109,6 +109,7 @@
       "sideLong": "Long",
       "sideShort": "Short",
       "entryPriceLabel": "Цена входа",
+      "stopLossPriceLabel": "Stop Loss (необязательно)",
       "quantityLabel": "Количество",
       "openedAtLabel": "Дата открытия",
       "portfolioLabel": "Портфель",
@@ -123,6 +124,7 @@
       "statusLabel": "Статус",
       "statusOpen": "Открыта",
       "statusClosed": "Закрыта",
+      "stopLossPriceLabel": "Stop Loss (необязательно)",
       "exitPriceLabel": "Цена выхода",
       "closedAtLabel": "Дата закрытия",
       "pnlLabel": "PnL",
@@ -204,6 +206,28 @@
       "title": "Последние сделки",
       "open": "Открыта",
       "empty": "Пока нет сделок."
+    },
+    "portfolioFilter": {
+      "label": "Портфель",
+      "all": "Все портфели"
+    },
+    "riskPerformance": {
+      "title": "Риск и результативность",
+      "description": "Расширенные метрики по закрытым сделкам.",
+      "profitFactor": "Profit Factor",
+      "expectancy": "Expectancy",
+      "avgWin": "Средняя прибыльная",
+      "avgLoss": "Средняя убыточная",
+      "rMultiple": "R-Multiple",
+      "rMultipleCaption": "В среднем по {count, plural, one {# сделке} few {# сделкам} many {# сделкам} other {# сделкам}} с заданным stop-loss",
+      "rMultipleEmpty": "Задайте stop-loss в сделках, чтобы увидеть эту метрику",
+      "sharpe": "Коэффициент Шарпа",
+      "sharpeCaption": "На сделку, без аннуализации",
+      "maxDrawdown": "Макс. просадка",
+      "balancePlaceholder": "Стартовый баланс",
+      "balanceSubmit": "Сохранить",
+      "balanceSaving": "Сохранение...",
+      "percentHint": "Выберите один портфель и задайте стартовый баланс, чтобы увидеть % просадки."
     }
   },
   "footer": {

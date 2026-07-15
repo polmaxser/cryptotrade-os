@@ -34,6 +34,7 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<TradeStatus>(trade.status);
   const [exitPrice, setExitPrice] = useState(trade.exitPrice ?? '');
+  const [stopLossPrice, setStopLossPrice] = useState(trade.stopLossPrice ?? '');
   const [pnl, setPnl] = useState(trade.pnl ?? '');
   const [pnlPercent, setPnlPercent] = useState(trade.pnlPercent ?? '');
   const [closedAt, setClosedAt] = useState(() =>
@@ -46,7 +47,7 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
     mutationFn: (payload: Parameters<typeof updateTrade>[1]) => updateTrade(trade.id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trades });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.analyticsSummary });
+      queryClient.invalidateQueries({ queryKey: ['analytics', 'summary'] });
       setOpen(false);
     },
     onError: (err) => {
@@ -61,6 +62,7 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
     mutation.mutate({
       status,
       notes: notes.trim() || undefined,
+      stopLossPrice: stopLossPrice === '' ? undefined : Number(stopLossPrice),
       ...(status === 'CLOSED'
         ? {
             exitPrice: exitPrice === '' ? undefined : Number(exitPrice),
@@ -103,6 +105,18 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
                 {t('statusClosed')}
               </Button>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="stopLossPrice">{t('stopLossPriceLabel')}</Label>
+            <Input
+              id="stopLossPrice"
+              type="number"
+              step="any"
+              min="0"
+              value={stopLossPrice}
+              onChange={(event) => setStopLossPrice(event.target.value)}
+            />
           </div>
 
           {status === 'CLOSED' ? (

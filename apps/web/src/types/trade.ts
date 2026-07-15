@@ -8,6 +8,7 @@ export type Trade = {
   strategy: string | null;
   entryPrice: string;
   exitPrice: string | null;
+  stopLossPrice: string | null;
   quantity: string;
   pnl: string | null;
   pnlPercent: string | null;
@@ -27,6 +28,7 @@ export type CreateTradePayload = {
   strategy?: string;
   entryPrice: number;
   exitPrice?: number;
+  stopLossPrice?: number;
   quantity: number;
   pnl?: number;
   pnlPercent?: number;

@@ -6,7 +6,8 @@ export const APP_CONFIG = {
 
 export const QUERY_KEYS = {
   health: ['health'] as const,
-  analyticsSummary: ['analytics', 'summary'] as const,
+  analyticsSummary: (portfolioId?: string) =>
+    ['analytics', 'summary', portfolioId ?? 'all'] as const,
   trades: ['trades'] as const,
   portfolios: ['portfolios'] as const,
   workspaces: ['workspaces'] as const,

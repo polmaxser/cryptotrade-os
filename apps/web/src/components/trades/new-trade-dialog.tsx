@@ -33,6 +33,7 @@ export function NewTradeDialog() {
   const [symbol, setSymbol] = useState('');
   const [side, setSide] = useState<TradeSide>('LONG');
   const [entryPrice, setEntryPrice] = useState('');
+  const [stopLossPrice, setStopLossPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [openedAt, setOpenedAt] = useState(() => toDatetimeLocalValue(new Date()));
   const [portfolioId, setPortfolioId] = useState<string>('');
@@ -46,6 +47,7 @@ export function NewTradeDialog() {
     setSymbol('');
     setSide('LONG');
     setEntryPrice('');
+    setStopLossPrice('');
     setQuantity('');
     setOpenedAt(toDatetimeLocalValue(new Date()));
     setPortfolioId('');
@@ -58,7 +60,7 @@ export function NewTradeDialog() {
     mutationFn: createTrade,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trades });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.analyticsSummary });
+      queryClient.invalidateQueries({ queryKey: ['analytics', 'summary'] });
       setOpen(false);
       resetForm();
     },
@@ -75,6 +77,7 @@ export function NewTradeDialog() {
       symbol: symbol.trim().toUpperCase(),
       side,
       entryPrice: Number(entryPrice),
+      stopLossPrice: stopLossPrice === '' ? undefined : Number(stopLossPrice),
       quantity: Number(quantity),
       openedAt: fromDatetimeLocalValue(openedAt),
       portfolioId: portfolioId || undefined,
@@ -166,6 +169,18 @@ export function NewTradeDialog() {
                 onChange={(event) => setQuantity(event.target.value)}
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="stopLossPrice">{t('stopLossPriceLabel')}</Label>
+            <Input
+              id="stopLossPrice"
+              type="number"
+              step="any"
+              min="0"
+              value={stopLossPrice}
+              onChange={(event) => setStopLossPrice(event.target.value)}
+            />
           </div>
 
           <div className="space-y-2">

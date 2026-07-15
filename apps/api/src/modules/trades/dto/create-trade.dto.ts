@@ -30,6 +30,11 @@ export class CreateTradeDto {
   @Min(0)
   exitPrice?: number;
 
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  stopLossPrice?: number;
+
   @IsNumber()
   @Min(0)
   quantity!: number;
