@@ -13,6 +13,7 @@ import { PortfoliosModule } from './modules/portfolios/portfolios.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
 import { BillingModule } from './modules/billing/billing.module';
+import { JournalModule } from './modules/journal/journal.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -32,6 +33,7 @@ import configuration from './config/configuration';
     AnalyticsModule,
     WorkspacesModule,
     BillingModule,
+    JournalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

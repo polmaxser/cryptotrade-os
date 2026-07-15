@@ -18,4 +18,7 @@ export const QUERY_KEYS = {
   invitationPreview: (token: string) => ['invitations', token] as const,
   billingPlans: ['billing', 'plans'] as const,
   subscription: ['billing', 'subscription'] as const,
+  journalEntries: (filters?: { tradeId?: string; tagId?: string }) =>
+    ['journal', 'entries', filters?.tradeId ?? 'any', filters?.tagId ?? 'any'] as const,
+  journalTags: (category?: string) => ['journal', 'tags', category ?? 'all'] as const,
 };

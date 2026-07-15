@@ -13,7 +13,8 @@
     "accountMenu": "Account menu",
     "settings": "Settings",
     "workspaces": "Workspaces",
-    "pricing": "Pricing"
+    "pricing": "Pricing",
+    "journal": "Journal"
   },
   "auth": {
     "login": {
@@ -185,6 +186,36 @@
       "needAuth": "Log in or create an account with the invited email to accept.",
       "login": "Sign in",
       "register": "Create account"
+    }
+  },
+  "journal": {
+    "title": "Journal",
+    "subtitle": "Reflect on your trades — mistakes, emotions, and what worked.",
+    "newEntry": "New Entry",
+    "allTags": "All tags",
+    "empty": "No journal entries yet.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "tags": {
+      "categories": {
+        "EMOTION": "Emotions",
+        "MISTAKE": "Mistakes",
+        "STRATEGY": "Strategy"
+      },
+      "addPlaceholder": "New tag",
+      "addButton": "Add"
+    },
+    "dialog": {
+      "createTitle": "New Journal Entry",
+      "editTitle": "Edit Journal Entry",
+      "contentLabel": "What happened?",
+      "tradeLabel": "Linked Trade",
+      "noTrade": "No trade — general reflection",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "create": "Create Entry",
+      "screenshotsLabel": "Screenshots",
+      "screenshotsHint": "Save the entry first to attach screenshots."
     }
   },
   "dashboard": {

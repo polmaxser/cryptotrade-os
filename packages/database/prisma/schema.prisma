@@ -66,6 +66,9 @@ model User {
 
   promoCodeRedemptions PromoCodeRedemption[]
 
+  journalEntries JournalEntry[]
+  journalTags    JournalTag[]
+
   @@index([email])
   @@map("users")
 }
@@ -251,6 +254,8 @@ model Trade {
 
   portfolio Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: Restrict)
 
+  journalEntries JournalEntry[]
+
   @@index([userId])
 
   @@index([portfolioId])
@@ -329,4 +334,57 @@ model PromoCodeRedemption {
   @@unique([promoCodeId, userId])
   @@index([promoCodeId])
   @@map("promo_code_redemptions")
+}
+
+//////////////////////////////////////////////////////////////
+// JOURNAL
+//////////////////////////////////////////////////////////////
+
+enum JournalTagCategory {
+  MISTAKE
+  EMOTION
+  STRATEGY
+}
+
+model JournalEntry {
+  id String @id @default(cuid())
+
+  content String
+
+  /// Public URLs of uploaded screenshots — no per-image metadata needed yet.
+  screenshotUrls String[] @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Optional — an entry can reflect on a specific trade or stand alone (e.g. a daily reflection).
+  tradeId String?
+  trade   Trade?  @relation(fields: [tradeId], references: [id], onDelete: SetNull)
+
+  tags JournalTag[]
+
+  @@index([userId])
+  @@index([tradeId])
+  @@map("journal_entries")
+}
+
+model JournalTag {
+  id String @id @default(cuid())
+
+  name     String
+  category JournalTagCategory
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  entries JournalEntry[]
+
+  @@unique([userId, category, name])
+  @@index([userId])
+  @@map("journal_tags")
 }

@@ -53,6 +53,7 @@ export function UserMenu() {
         <DropdownMenuLabel className="text-muted-foreground max-w-[220px] truncate font-normal">
           {user.email}
         </DropdownMenuLabel>
+        <DropdownMenuItem onSelect={() => router.push('/journal')}>{t('journal')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/workspaces')}>
           {t('workspaces')}
         </DropdownMenuItem>

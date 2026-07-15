@@ -39,7 +39,11 @@ export async function apiFetch<T>(
     ...options,
     credentials: 'include',
     headers: {
-      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      // FormData bodies need the browser to set their own multipart boundary —
+      // forcing application/json here would corrupt the upload.
+      ...(options.body && !(options.body instanceof FormData)
+        ? { 'Content-Type': 'application/json' }
+        : {}),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...options.headers,
     },

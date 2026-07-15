@@ -26,4 +26,13 @@ export default () => ({
       process.env.BILLING_CHECKOUT_CANCEL_URL ?? 'http://localhost:3000/pricing?checkout=cancelled',
     portalReturnUrl: process.env.BILLING_PORTAL_RETURN_URL ?? 'http://localhost:3000/settings',
   },
+  storage: {
+    endpoint: process.env.STORAGE_ENDPOINT,
+    region: process.env.STORAGE_REGION ?? 'us-east-1',
+    bucket: process.env.STORAGE_BUCKET,
+    accessKeyId: process.env.STORAGE_ACCESS_KEY_ID,
+    secretAccessKey: process.env.STORAGE_SECRET_ACCESS_KEY,
+    forcePathStyle: process.env.STORAGE_FORCE_PATH_STYLE === 'true',
+    publicUrlBase: process.env.STORAGE_PUBLIC_URL_BASE,
+  },
 });
