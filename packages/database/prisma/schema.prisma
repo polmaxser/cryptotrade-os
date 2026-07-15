@@ -22,6 +22,20 @@ enum PortfolioType {
   SPOT
 }
 
+enum SubscriptionPlan {
+  FREE
+  STANDARD
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+}
+
 //////////////////////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////////////////////
@@ -46,8 +60,11 @@ model User {
   sentInvitations   WorkspaceInvitation[]
   refreshTokens     RefreshToken[]
 
-  trades     Trade[]
-  portfolios Portfolio[]
+  trades       Trade[]
+  portfolios   Portfolio[]
+  subscription Subscription?
+
+  promoCodeRedemptions PromoCodeRedemption[]
 
   @@index([email])
   @@map("users")
@@ -237,4 +254,73 @@ model Trade {
   @@index([status])
 
   @@map("trades")
+}
+
+//////////////////////////////////////////////////////////////
+// SUBSCRIPTION
+//////////////////////////////////////////////////////////////
+
+model Subscription {
+  id String @id @default(cuid())
+
+  plan   SubscriptionPlan   @default(FREE)
+  status SubscriptionStatus @default(ACTIVE)
+
+  stripeCustomerId     String? @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId        String?
+
+  currentPeriodEnd  DateTime?
+  cancelAtPeriodEnd Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([stripeCustomerId])
+  @@map("subscriptions")
+}
+
+//////////////////////////////////////////////////////////////
+// PROMO CODE
+//////////////////////////////////////////////////////////////
+
+model PromoCode {
+  id String @id @default(cuid())
+
+  code        String  @unique
+  description String?
+
+  grantsPlan SubscriptionPlan
+  freeDays   Int
+
+  maxRedemptions  Int?
+  redemptionCount Int  @default(0)
+  isActive        Boolean @default(true)
+  expiresAt       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  redemptions PromoCodeRedemption[]
+
+  @@map("promo_codes")
+}
+
+model PromoCodeRedemption {
+  id String @id @default(cuid())
+
+  promoCodeId String
+  promoCode   PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  redeemedAt DateTime @default(now())
+
+  @@unique([promoCodeId, userId])
+  @@index([promoCodeId])
+  @@map("promo_code_redemptions")
 }

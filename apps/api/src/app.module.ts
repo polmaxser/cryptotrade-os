@@ -12,12 +12,15 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PortfoliosModule } from './modules/portfolios/portfolios.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
+import { BillingModule } from './modules/billing/billing.module';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
+      load: [configuration],
     }),
 
     DatabaseModule,
@@ -28,6 +31,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     TradesModule,
     AnalyticsModule,
     WorkspacesModule,
+    BillingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

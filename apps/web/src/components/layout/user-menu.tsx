@@ -59,6 +59,7 @@ export function UserMenu() {
         <DropdownMenuItem onSelect={() => router.push('/settings')}>
           {t('settings')}
         </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/pricing')}>{t('pricing')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={handleLogout}>{t('logout')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -6,13 +6,18 @@ import {
 } from '@nestjs/common';
 import { Portfolio } from '@cryptotrade/database';
 
+import { BillingService } from '@/modules/billing/billing.service';
+
 import { PortfolioRepository, PortfolioWithTradeCount } from './repositories/portfolio.repository';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 
 @Injectable()
 export class PortfoliosService {
-  constructor(private readonly portfolioRepository: PortfolioRepository) {}
+  constructor(
+    private readonly portfolioRepository: PortfolioRepository,
+    private readonly billingService: BillingService,
+  ) {}
 
   async findAll(userId: string): Promise<PortfolioWithTradeCount[]> {
     return this.portfolioRepository.findAllByUser(userId);
@@ -35,6 +40,8 @@ export class PortfoliosService {
   }
 
   async create(userId: string, dto: CreatePortfolioDto): Promise<Portfolio> {
+    await this.billingService.assertCanCreatePortfolio(userId);
+
     if (dto.isDefault) {
       await this.portfolioRepository.unsetDefaultForUser(userId);
     }

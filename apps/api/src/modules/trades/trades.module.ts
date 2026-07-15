@@ -5,11 +5,12 @@ import { TradesService } from './trades.service';
 
 import { DatabaseModule } from '@/common/database/database.module';
 import { PortfoliosModule } from '@/modules/portfolios/portfolios.module';
+import { BillingModule } from '@/modules/billing/billing.module';
 
 import { TradeRepository } from './repositories/trade.repository';
 
 @Module({
-  imports: [DatabaseModule, PortfoliosModule],
+  imports: [DatabaseModule, PortfoliosModule, BillingModule],
 
   controllers: [TradesController],
 

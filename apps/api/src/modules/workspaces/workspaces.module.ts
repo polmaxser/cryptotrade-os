@@ -7,9 +7,10 @@ import { WorkspaceInvitationRepository } from './repositories/workspace-invitati
 
 import { DatabaseModule } from '@/common/database/database.module';
 import { UsersModule } from '@/modules/users/users.module';
+import { BillingModule } from '@/modules/billing/billing.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule],
+  imports: [DatabaseModule, UsersModule, BillingModule],
 
   controllers: [WorkspacesController],
 

@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AuthGuard } from '@/components/auth';
+import { BillingCard } from '@/components/settings/billing-card';
 import { TwoFactorCard } from '@/components/settings/two-factor-card';
 
 type SettingsPageProps = {
@@ -20,6 +21,7 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
           <p className="text-muted-foreground text-sm sm:text-base">{t('subtitle')}</p>
         </div>
 
+        <BillingCard />
         <TwoFactorCard />
       </div>
     </AuthGuard>

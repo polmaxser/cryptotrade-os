@@ -12,7 +12,8 @@
     "logout": "Выйти",
     "accountMenu": "Меню аккаунта",
     "settings": "Настройки",
-    "workspaces": "Рабочие пространства"
+    "workspaces": "Рабочие пространства",
+    "pricing": "Тарифы"
   },
   "auth": {
     "login": {
@@ -64,6 +65,39 @@
       "manualEntryLabel": "Или введите код вручную:",
       "codeLabel": "Код подтверждения",
       "disablePrompt": "Введите текущий код из приложения-аутентификатора, чтобы выключить двухфакторную аутентификацию."
+    },
+    "billing": {
+      "title": "Оплата",
+      "description": "Управляйте тарифным планом и лимитами использования.",
+      "plans": {
+        "FREE": "Free",
+        "STANDARD": "Standard",
+        "PREMIUM": "Premium"
+      },
+      "status": {
+        "ACTIVE": "Активна",
+        "TRIALING": "Пробный период",
+        "PAST_DUE": "Просрочена",
+        "CANCELED": "Отменена",
+        "INCOMPLETE": "Не завершена"
+      },
+      "usage": {
+        "portfolios": "Портфели",
+        "tradesThisMonth": "Сделок в этом месяце",
+        "unlimited": "Без ограничений"
+      },
+      "renewsOn": "Продление {date}",
+      "cancelsOn": "Отмена {date}",
+      "viewPlans": "Смотреть тарифы",
+      "managePortal": "Управление подпиской",
+      "openingPortal": "Открытие...",
+      "promoCode": {
+        "label": "Промокод",
+        "placeholder": "например, LAUNCH30",
+        "submit": "Применить",
+        "redeeming": "Применение...",
+        "success": "Промокод применён!"
+      }
     }
   },
   "trades": {
@@ -174,5 +208,14 @@
   },
   "footer": {
     "copyright": "© {year} CryptoTrade OS. Все права защищены."
+  },
+  "pricing": {
+    "title": "Простые и понятные тарифы",
+    "subtitle": "Выберите план под свой стиль торговли. Апгрейд или отмена в любой момент.",
+    "perMonth": "/ месяц",
+    "currentPlan": "Текущий план",
+    "upgradeButton": "Улучшить",
+    "redirecting": "Перенаправление...",
+    "includedByDefault": "Включено по умолчанию"
   }
 }

@@ -14,12 +14,14 @@ import { RefreshTokenRepository } from './repositories/refresh-token.repository'
 import { DatabaseModule } from '@/common/database/database.module';
 import { UsersModule } from '@/modules/users/users.module';
 import { PortfoliosModule } from '@/modules/portfolios/portfolios.module';
+import { BillingModule } from '@/modules/billing/billing.module';
 
 @Module({
   imports: [
     DatabaseModule,
     UsersModule,
     PortfoliosModule,
+    BillingModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

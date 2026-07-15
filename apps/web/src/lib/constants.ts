@@ -15,4 +15,6 @@ export const QUERY_KEYS = {
   workspaceInvitations: (workspaceId: string) =>
     ['workspaces', workspaceId, 'invitations'] as const,
   invitationPreview: (token: string) => ['invitations', token] as const,
+  billingPlans: ['billing', 'plans'] as const,
+  subscription: ['billing', 'subscription'] as const,
 };

@@ -12,7 +12,8 @@
     "logout": "Log out",
     "accountMenu": "Account menu",
     "settings": "Settings",
-    "workspaces": "Workspaces"
+    "workspaces": "Workspaces",
+    "pricing": "Pricing"
   },
   "auth": {
     "login": {
@@ -64,6 +65,39 @@
       "manualEntryLabel": "Or enter this code manually:",
       "codeLabel": "Verification Code",
       "disablePrompt": "Enter a current code from your authenticator app to disable two-factor authentication."
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Manage your subscription plan and usage.",
+      "plans": {
+        "FREE": "Free",
+        "STANDARD": "Standard",
+        "PREMIUM": "Premium"
+      },
+      "status": {
+        "ACTIVE": "Active",
+        "TRIALING": "Trialing",
+        "PAST_DUE": "Past due",
+        "CANCELED": "Canceled",
+        "INCOMPLETE": "Incomplete"
+      },
+      "usage": {
+        "portfolios": "Portfolios",
+        "tradesThisMonth": "Trades this month",
+        "unlimited": "Unlimited"
+      },
+      "renewsOn": "Renews on {date}",
+      "cancelsOn": "Cancels on {date}",
+      "viewPlans": "View plans",
+      "managePortal": "Manage Billing",
+      "openingPortal": "Opening...",
+      "promoCode": {
+        "label": "Promo code",
+        "placeholder": "e.g. LAUNCH30",
+        "submit": "Redeem",
+        "redeeming": "Redeeming...",
+        "success": "Promo code applied!"
+      }
     }
   },
   "trades": {
@@ -174,5 +208,14 @@
   },
   "footer": {
     "copyright": "© {year} CryptoTrade OS. All rights reserved."
+  },
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Pick the plan that fits how you trade. Upgrade or cancel anytime.",
+    "perMonth": "/ month",
+    "currentPlan": "Current plan",
+    "upgradeButton": "Upgrade",
+    "redirecting": "Redirecting...",
+    "includedByDefault": "Included by default"
   }
 }

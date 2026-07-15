@@ -9,6 +9,7 @@ import { createHash, randomBytes } from 'node:crypto';
 
 import { PrismaService } from '@/common/database/prisma.service';
 import { UsersService } from '@/modules/users/users.service';
+import { BillingService } from '@/modules/billing/billing.service';
 
 import { WorkspaceRepository, WorkspaceMemberWithUser } from './repositories/workspace.repository';
 import { WorkspaceInvitationRepository } from './repositories/workspace-invitation.repository';
@@ -33,10 +34,13 @@ export class WorkspacesService {
     private readonly workspaceRepository: WorkspaceRepository,
     private readonly invitationRepository: WorkspaceInvitationRepository,
     private readonly usersService: UsersService,
+    private readonly billingService: BillingService,
     private readonly prisma: PrismaService,
   ) {}
 
   async create(userId: string, dto: CreateWorkspaceDto): Promise<WorkspaceWithRole> {
+    await this.billingService.assertCanCreateWorkspace(userId);
+
     const slug = await this.resolveUniqueSlug(dto.slug ?? dto.name);
 
     const workspace = await this.prisma.$transaction(async (tx) => {

@@ -14,6 +14,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { UsersService } from '@/modules/users/users.service';
 import { PublicUser, toPublicUser } from '@/modules/users/types/public-user';
 import { PortfolioRepository } from '@/modules/portfolios/repositories/portfolio.repository';
+import { BillingService } from '@/modules/billing/billing.service';
 import { PrismaService } from '@/common/database/prisma.service';
 
 import { RefreshTokenRepository } from './repositories/refresh-token.repository';
@@ -60,6 +61,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly portfolioRepository: PortfolioRepository,
+    private readonly billingService: BillingService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
@@ -92,6 +94,8 @@ export class AuthService {
         },
         tx,
       );
+
+      await this.billingService.createFreeSubscription(createdUser.id, tx);
 
       return createdUser;
     });

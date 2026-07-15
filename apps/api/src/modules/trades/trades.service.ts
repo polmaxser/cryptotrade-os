@@ -6,12 +6,14 @@ import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
 
 import { PortfoliosService } from '@/modules/portfolios/portfolios.service';
+import { BillingService } from '@/modules/billing/billing.service';
 
 @Injectable()
 export class TradesService {
   constructor(
     private readonly tradeRepository: TradeRepository,
     private readonly portfoliosService: PortfoliosService,
+    private readonly billingService: BillingService,
   ) {}
 
   async findAll(userId: string): Promise<Trade[]> {
@@ -31,6 +33,8 @@ export class TradesService {
   }
 
   async create(userId: string, dto: CreateTradeDto): Promise<Trade> {
+    await this.billingService.assertCanCreateTrade(userId);
+
     const portfolioId = await this.resolvePortfolioId(userId, dto.portfolioId);
 
     return this.tradeRepository.create({
