@@ -35,4 +35,7 @@ export default () => ({
     forcePathStyle: process.env.STORAGE_FORCE_PATH_STYLE === 'true',
     publicUrlBase: process.env.STORAGE_PUBLIC_URL_BASE,
   },
+  security: {
+    encryptionKey: process.env.ENCRYPTION_KEY,
+  },
 });

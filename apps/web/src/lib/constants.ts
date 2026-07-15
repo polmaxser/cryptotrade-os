@@ -26,4 +26,5 @@ export const QUERY_KEYS = {
   alerts: ['alerts'] as const,
   notes: ['notes'] as const,
   calendarMonth: (month: string) => ['calendar', month] as const,
+  exchangeConnections: ['exchanges', 'connections'] as const,
 };

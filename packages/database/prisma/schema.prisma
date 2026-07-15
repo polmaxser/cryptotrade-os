@@ -36,6 +36,15 @@ enum SubscriptionStatus {
   INCOMPLETE
 }
 
+enum TradeSource {
+  MANUAL
+  BINANCE
+}
+
+enum ExchangeProvider {
+  BINANCE
+}
+
 //////////////////////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////////////////////
@@ -72,6 +81,8 @@ model User {
   watchlistItems WatchlistItem[]
   priceAlerts    PriceAlert[]
   notes          Note[]
+
+  exchangeConnections ExchangeConnection[]
 
   @@index([email])
   @@map("users")
@@ -213,6 +224,37 @@ model Portfolio {
 }
 
 //////////////////////////////////////////////////////////////
+// EXCHANGE CONNECTIONS
+//////////////////////////////////////////////////////////////
+
+model ExchangeConnection {
+  id String @id @default(cuid())
+
+  exchange ExchangeProvider
+  label    String
+
+  /// AES-256-GCM encrypted — never stored or returned in plaintext.
+  encryptedApiKey    String
+  encryptedApiSecret String
+
+  /// Last 4 characters of the real key, for display/identification only.
+  apiKeyPreview String
+
+  lastImportedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trades Trade[]
+
+  @@index([userId])
+  @@map("exchange_connections")
+}
+
+//////////////////////////////////////////////////////////////
 // TRADE
 //////////////////////////////////////////////////////////////
 
@@ -258,6 +300,12 @@ model Trade {
 
   portfolio Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: Restrict)
 
+  /// MANUAL unless imported from a connected exchange.
+  source TradeSource @default(MANUAL)
+
+  exchangeConnectionId String?
+  exchangeConnection   ExchangeConnection? @relation(fields: [exchangeConnectionId], references: [id], onDelete: SetNull)
+
   journalEntries JournalEntry[]
 
   @@index([userId])
@@ -267,6 +315,8 @@ model Trade {
   @@index([symbol])
 
   @@index([status])
+
+  @@index([exchangeConnectionId])
 
   @@map("trades")
 }

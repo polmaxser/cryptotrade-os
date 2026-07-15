@@ -80,6 +80,25 @@ export class TradeRepository {
     });
   }
 
+  async createMany(
+    data: Prisma.TradeCreateManyInput[],
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const result = await (tx ?? this.prisma).trade.createMany({ data });
+    return result.count;
+  }
+
+  async deleteByExchangeConnectionAndSymbol(
+    exchangeConnectionId: string,
+    symbol: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const result = await (tx ?? this.prisma).trade.deleteMany({
+      where: { exchangeConnectionId, symbol },
+    });
+    return result.count;
+  }
+
   async countByStatus(where: Prisma.TradeWhereInput): Promise<TradeStatusCounts> {
     const [open, closed] = await Promise.all([
       this.prisma.trade.count({

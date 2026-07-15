@@ -18,7 +18,8 @@
     "calendar": "Календарь",
     "watchlist": "Watchlist",
     "alerts": "Алерты",
-    "notes": "Заметки"
+    "notes": "Заметки",
+    "exchanges": "Биржи"
   },
   "auth": {
     "login": {
@@ -275,6 +276,37 @@
   "calendar": {
     "title": "Календарь",
     "subtitle": "Дневной PnL по закрытым сделкам."
+  },
+  "exchanges": {
+    "title": "Биржи",
+    "subtitle": "Подключите биржевой аккаунт и импортируйте историю спотовых сделок.",
+    "empty": "Пока нет подключённых бирж.",
+    "keyPreview": "Ключ, оканчивающийся на {preview}",
+    "lastImported": "последний импорт {date}",
+    "importButton": "Импорт",
+    "disconnect": "Отключить",
+    "connect": {
+      "trigger": "Подключить Binance",
+      "title": "Подключить Binance",
+      "readOnlyWarning": "Используйте API-ключ только на чтение, без прав на торговлю и вывод средств. Эта функция только читает историю сделок — она никогда не создаёт ордера и не перемещает средства.",
+      "labelLabel": "Название",
+      "labelPlaceholder": "Мой аккаунт Binance",
+      "apiKeyLabel": "API Key",
+      "apiSecretLabel": "API Secret",
+      "connect": "Подключить",
+      "connecting": "Подключение..."
+    },
+    "import": {
+      "title": "Импорт сделок",
+      "symbolsLabel": "Символы",
+      "symbolsPlaceholder": "BTCUSDT, ETHUSDT",
+      "symbolsHint": "Символы Binance через запятую. Повторный импорт символа заменяет ранее импортированные по нему сделки.",
+      "portfolioLabel": "Портфель",
+      "portfolioDefault": "Портфель по умолчанию",
+      "import": "Импортировать",
+      "importing": "Импорт...",
+      "resultLine": "{symbol}: импортировано сделок — {count}"
+    }
   },
   "dashboard": {
     "title": "Панель управления",

@@ -1,0 +1,134 @@
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ExchangeConnection } from '@cryptotrade/database';
+
+import { PrismaService } from '@/common/database/prisma.service';
+import { EncryptionService } from '@/common/crypto/encryption.service';
+import { TradeRepository } from '@/modules/trades/repositories/trade.repository';
+import { PortfoliosService } from '@/modules/portfolios/portfolios.service';
+import { BillingService } from '@/modules/billing/billing.service';
+
+import { BinanceClientService } from './binance/binance-client.service';
+import { matchFillsToTrades, MatchedTrade } from './binance/binance-trade-matcher';
+import { ExchangeConnectionRepository } from './repositories/exchange-connection.repository';
+import { CreateExchangeConnectionDto } from './dto/create-exchange-connection.dto';
+import { ImportTradesDto } from './dto/import-trades.dto';
+import {
+  ExchangeConnectionSummary,
+  ImportResult,
+  toConnectionSummary,
+} from './types/exchange-connection-summary';
+
+@Injectable()
+export class ExchangesService {
+  constructor(
+    private readonly connectionRepository: ExchangeConnectionRepository,
+    private readonly encryptionService: EncryptionService,
+    private readonly binanceClient: BinanceClientService,
+    private readonly tradeRepository: TradeRepository,
+    private readonly portfoliosService: PortfoliosService,
+    private readonly billingService: BillingService,
+    private readonly prisma: PrismaService,
+  ) {}
+
+  async listConnections(userId: string): Promise<ExchangeConnectionSummary[]> {
+    const connections = await this.connectionRepository.findAllByUser(userId);
+    return connections.map(toConnectionSummary);
+  }
+
+  async createConnection(
+    userId: string,
+    dto: CreateExchangeConnectionDto,
+  ): Promise<ExchangeConnectionSummary> {
+    // Validate the credentials actually work before we ever store them.
+    await this.binanceClient.testConnection(dto.apiKey, dto.apiSecret);
+
+    const connection = await this.connectionRepository.create({
+      userId,
+      exchange: dto.exchange,
+      label: dto.label,
+      encryptedApiKey: this.encryptionService.encrypt(dto.apiKey),
+      encryptedApiSecret: this.encryptionService.encrypt(dto.apiSecret),
+      apiKeyPreview: dto.apiKey.slice(-4),
+    });
+
+    return toConnectionSummary(connection);
+  }
+
+  async deleteConnection(id: string, userId: string): Promise<void> {
+    const connection = await this.getConnectionOrThrow(id, userId);
+    await this.connectionRepository.delete(connection.id);
+  }
+
+  async importTrades(id: string, userId: string, dto: ImportTradesDto): Promise<ImportResult[]> {
+    const connection = await this.getConnectionOrThrow(id, userId);
+
+    const portfolioId = dto.portfolioId
+      ? (await this.portfoliosService.findOne(dto.portfolioId, userId)).id
+      : (await this.portfoliosService.getDefaultForUser(userId))?.id;
+
+    const apiKey = this.encryptionService.decrypt(connection.encryptedApiKey);
+    const apiSecret = this.encryptionService.decrypt(connection.encryptedApiSecret);
+
+    const matchedBySymbol = new Map<string, MatchedTrade[]>();
+    let totalTrades = 0;
+
+    for (const rawSymbol of dto.symbols) {
+      const symbol = rawSymbol.toUpperCase();
+      const fills = await this.binanceClient.fetchTrades(apiKey, apiSecret, symbol);
+      const matched = matchFillsToTrades(fills);
+      matchedBySymbol.set(symbol, matched);
+      totalTrades += matched.length;
+    }
+
+    await this.billingService.assertCanImportTrades(userId, totalTrades);
+
+    const results: ImportResult[] = [];
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const [symbol, matched] of matchedBySymbol) {
+        await this.tradeRepository.deleteByExchangeConnectionAndSymbol(connection.id, symbol, tx);
+
+        if (matched.length > 0) {
+          await this.tradeRepository.createMany(
+            matched.map((trade) => ({
+              symbol,
+              side: trade.side,
+              entryPrice: trade.entryPrice,
+              exitPrice: trade.exitPrice ?? undefined,
+              quantity: trade.quantity,
+              pnl: trade.pnl ?? undefined,
+              status: trade.status,
+              openedAt: trade.openedAt,
+              closedAt: trade.closedAt ?? undefined,
+              userId,
+              portfolioId: portfolioId ?? undefined,
+              source: 'BINANCE',
+              exchangeConnectionId: connection.id,
+            })),
+            tx,
+          );
+        }
+
+        results.push({ symbol, tradesImported: matched.length });
+      }
+    });
+
+    await this.connectionRepository.touchLastImported(connection.id);
+
+    return results;
+  }
+
+  private async getConnectionOrThrow(id: string, userId: string): Promise<ExchangeConnection> {
+    const connection = await this.connectionRepository.findById(id);
+
+    if (!connection) {
+      throw new NotFoundException('Exchange connection not found');
+    }
+
+    if (connection.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this exchange connection');
+    }
+
+    return connection;
+  }
+}

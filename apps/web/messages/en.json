@@ -18,7 +18,8 @@
     "calendar": "Calendar",
     "watchlist": "Watchlist",
     "alerts": "Alerts",
-    "notes": "Notes"
+    "notes": "Notes",
+    "exchanges": "Exchanges"
   },
   "auth": {
     "login": {
@@ -275,6 +276,37 @@
   "calendar": {
     "title": "Calendar",
     "subtitle": "Daily PnL from your closed trades."
+  },
+  "exchanges": {
+    "title": "Exchanges",
+    "subtitle": "Connect an exchange account and import your spot trade history.",
+    "empty": "No exchanges connected yet.",
+    "keyPreview": "Key ending in {preview}",
+    "lastImported": "last imported {date}",
+    "importButton": "Import",
+    "disconnect": "Disconnect",
+    "connect": {
+      "trigger": "Connect Binance",
+      "title": "Connect Binance",
+      "readOnlyWarning": "Use a read-only API key with no trading or withdrawal permissions. This feature only ever reads your trade history — it never places orders or moves funds.",
+      "labelLabel": "Label",
+      "labelPlaceholder": "My Binance Account",
+      "apiKeyLabel": "API Key",
+      "apiSecretLabel": "API Secret",
+      "connect": "Connect",
+      "connecting": "Connecting..."
+    },
+    "import": {
+      "title": "Import Trades",
+      "symbolsLabel": "Symbols",
+      "symbolsPlaceholder": "BTCUSDT, ETHUSDT",
+      "symbolsHint": "Comma-separated Binance symbols. Re-importing a symbol replaces its previously imported trades.",
+      "portfolioLabel": "Portfolio",
+      "portfolioDefault": "Default portfolio",
+      "import": "Import",
+      "importing": "Importing...",
+      "resultLine": "{symbol}: {count} trade(s) imported"
+    }
   },
   "dashboard": {
     "title": "Dashboard",

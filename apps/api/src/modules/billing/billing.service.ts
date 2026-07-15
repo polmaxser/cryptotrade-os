@@ -105,6 +105,30 @@ export class BillingService {
     }
   }
 
+  /**
+   * Bulk-import variant of assertCanCreateTrade — checked once for the whole
+   * batch rather than per-trade, since a per-item check would be slow across
+   * hundreds of imported trades and would reject the import mid-batch once
+   * the cap is hit rather than failing clearly upfront.
+   */
+  async assertCanImportTrades(userId: string, additionalCount: number): Promise<void> {
+    const plan = await this.getEffectivePlan(userId);
+    const limits = getPlanLimits(plan);
+
+    if (limits.maxTradesPerMonth === null) {
+      return;
+    }
+
+    const count = await this.getTradesThisMonthCount(userId);
+
+    if (count + additionalCount > limits.maxTradesPerMonth) {
+      const remaining = Math.max(0, limits.maxTradesPerMonth - count);
+      throw new ConflictException(
+        `Your ${PLAN_DEFINITIONS[plan].name} plan allows ${remaining} more trade(s) this month, but this import would add ${additionalCount}. Upgrade for unlimited trades.`,
+      );
+    }
+  }
+
   async assertCanCreateWorkspace(userId: string): Promise<void> {
     const plan = await this.getEffectivePlan(userId);
     const limits = getPlanLimits(plan);

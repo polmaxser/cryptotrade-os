@@ -62,6 +62,9 @@ export function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/alerts')}>{t('alerts')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/notes')}>{t('notes')}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/exchanges')}>
+          {t('exchanges')}
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/workspaces')}>
           {t('workspaces')}
         </DropdownMenuItem>
