@@ -8,6 +8,9 @@ const BYBIT_BASE_URL = 'https://api.bybit.com';
 const RECV_WINDOW_MS = '10000';
 const EXECUTION_LIMIT = '100';
 
+/** spot + USDT/USDC-margined perpetuals — inverse (coin-margined) contracts are out of scope for now. */
+const EXECUTION_CATEGORIES = ['spot', 'linear'] as const;
+
 interface BybitExecution {
   execId: string;
   symbol: string;
@@ -37,20 +40,46 @@ export class BybitClientService implements ExchangeClient {
     await this.signedGet('/v5/user/query-api', credentials, {});
   }
 
+  /**
+   * A symbol like BTCUSDT can trade under both the spot and linear (perpetual
+   * futures) categories on Bybit — same string, different market. We query
+   * both and merge, rather than guessing which one the trader meant. If one
+   * category is unavailable for the account (e.g. derivatives not enabled),
+   * that call is skipped rather than failing the whole import — only if
+   * every category fails do we surface the error.
+   */
   async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
-    const response = await this.signedGet<{ list: BybitExecution[] }>(
-      '/v5/execution/list',
-      credentials,
-      { category: 'spot', symbol, limit: EXECUTION_LIMIT },
+    const settled = await Promise.allSettled(
+      EXECUTION_CATEGORIES.map((category) =>
+        this.signedGet<{ list: BybitExecution[] }>('/v5/execution/list', credentials, {
+          category,
+          symbol,
+          limit: EXECUTION_LIMIT,
+        }),
+      ),
     );
 
-    return response.list.map((execution) => ({
-      id: execution.execId,
-      price: Number(execution.execPrice),
-      qty: Number(execution.execQty),
-      isBuyer: execution.side === 'Buy',
-      time: Number(execution.execTime),
-    }));
+    const fulfilledCount = settled.filter((result) => result.status === 'fulfilled').length;
+
+    if (fulfilledCount === 0) {
+      const firstRejection = settled.find(
+        (result): result is PromiseRejectedResult => result.status === 'rejected',
+      );
+      throw firstRejection?.reason ?? new ServiceUnavailableException('Bybit fills request failed');
+    }
+
+    return settled.flatMap((result, index) => {
+      if (result.status !== 'fulfilled') return [];
+
+      const category = EXECUTION_CATEGORIES[index];
+      return result.value.list.map((execution) => ({
+        id: `${category}:${execution.execId}`,
+        price: Number(execution.execPrice),
+        qty: Number(execution.execQty),
+        isBuyer: execution.side === 'Buy',
+        time: Number(execution.execTime),
+      }));
+    });
   }
 
   private async signedGet<T>(

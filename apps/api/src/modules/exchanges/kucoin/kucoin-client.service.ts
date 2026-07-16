@@ -4,19 +4,31 @@ import { createHmac } from 'node:crypto';
 import { ExchangeClient, ExchangeCredentials } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 
-const KUCOIN_BASE_URL = 'https://api.kucoin.com';
+const KUCOIN_SPOT_BASE_URL = 'https://api.kucoin.com';
+/** Futures live on a separate host with their own symbol namespace (e.g. spot "BTC-USDT" vs futures "XBTUSDTM"). */
+const KUCOIN_FUTURES_BASE_URL = 'https://api-futures.kucoin.com';
 const API_KEY_VERSION = '2';
 const FILLS_LIMIT = '100';
 const SUCCESS_CODE = '200000';
 const AUTH_ERROR_CODES = new Set(['400001', '400003', '400004', '400005']);
 
-interface KucoinFill {
+interface KucoinSpotFill {
   id: string;
   symbol: string;
   price: string;
   size: string;
   side: 'buy' | 'sell';
   createdAt: number;
+}
+
+/** Same shape as the spot fill, except the id field is `tradeId` and the timestamp is in nanoseconds. */
+interface KucoinFuturesFill {
+  tradeId: string;
+  symbol: string;
+  price: string;
+  size: string;
+  side: 'buy' | 'sell';
+  tradeTime: number;
 }
 
 interface KucoinResponse<T> {
@@ -36,26 +48,63 @@ interface KucoinResponse<T> {
 @Injectable()
 export class KucoinClientService implements ExchangeClient {
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
-    await this.signedGet('/api/v1/accounts', credentials, {});
+    await this.signedGet(KUCOIN_SPOT_BASE_URL, '/api/v1/accounts', credentials, {});
   }
 
+  /**
+   * Spot and futures are entirely separate symbol namespaces on KuCoin (spot
+   * "BTC-USDT" vs futures "XBTUSDTM"), unlike Binance/Bybit where the same
+   * string spans both. Querying the wrong market for a given symbol just
+   * returns an empty list, so it's safe to query both hosts and merge —
+   * whichever one actually matches the symbol contributes fills.
+   */
   async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
-    const response = await this.signedGet<{ items: KucoinFill[] }>(
-      '/api/v1/hf/fills',
-      credentials,
-      { symbol, limit: FILLS_LIMIT },
-    );
+    const [spotResult, futuresResult] = await Promise.allSettled([
+      this.signedGet<{ items: KucoinSpotFill[] }>(
+        KUCOIN_SPOT_BASE_URL,
+        '/api/v1/hf/fills',
+        credentials,
+        { symbol, limit: FILLS_LIMIT },
+      ),
+      this.signedGet<{ items: KucoinFuturesFill[] }>(
+        KUCOIN_FUTURES_BASE_URL,
+        '/api/v1/fills',
+        credentials,
+        { symbol },
+      ),
+    ]);
 
-    return response.items.map((fill) => ({
-      id: fill.id,
-      price: Number(fill.price),
-      qty: Number(fill.size),
-      isBuyer: fill.side === 'buy',
-      time: fill.createdAt,
-    }));
+    const spotFills: NormalizedFill[] =
+      spotResult.status === 'fulfilled'
+        ? spotResult.value.items.map((fill) => ({
+            id: `spot:${fill.id}`,
+            price: Number(fill.price),
+            qty: Number(fill.size),
+            isBuyer: fill.side === 'buy',
+            time: fill.createdAt,
+          }))
+        : [];
+
+    const futuresFills: NormalizedFill[] =
+      futuresResult.status === 'fulfilled'
+        ? futuresResult.value.items.map((fill) => ({
+            id: `futures:${fill.tradeId}`,
+            price: Number(fill.price),
+            qty: Number(fill.size),
+            isBuyer: fill.side === 'buy',
+            time: Math.floor(fill.tradeTime / 1_000_000),
+          }))
+        : [];
+
+    if (spotResult.status === 'rejected' && futuresResult.status === 'rejected') {
+      throw spotResult.reason;
+    }
+
+    return [...spotFills, ...futuresFills];
   }
 
   private async signedGet<T>(
+    baseUrl: string,
     path: string,
     credentials: ExchangeCredentials,
     params: Record<string, string>,
@@ -83,7 +132,7 @@ export class KucoinClientService implements ExchangeClient {
     let response: globalThis.Response;
 
     try {
-      response = await fetch(`${KUCOIN_BASE_URL}${requestPath}`, {
+      response = await fetch(`${baseUrl}${requestPath}`, {
         headers: {
           'KC-API-KEY': credentials.apiKey,
           'KC-API-SIGN': signature,

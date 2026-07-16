@@ -42,7 +42,7 @@ export class OkxClientService implements ExchangeClient {
 
   async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
     const fills = await this.signedGet<OkxFill[]>('/api/v5/trade/fills', credentials, {
-      instType: 'SPOT',
+      instType: instTypeForInstId(symbol),
       instId: symbol,
       limit: FILLS_LIMIT,
     });
@@ -107,4 +107,16 @@ export class OkxClientService implements ExchangeClient {
 
     return payload.data;
   }
+}
+
+/**
+ * Unlike Bybit/Binance, OKX bakes the market type into the instId itself, so the
+ * right instType can be derived rather than asked for: "HYPE-USDT" is spot,
+ * "HYPE-USDT-SWAP" is a perpetual, and "BTC-USD-260717" (a YYMMDD suffix) is a
+ * dated future. Confirmed against OKX's public instruments endpoint.
+ */
+function instTypeForInstId(instId: string): 'SPOT' | 'SWAP' | 'FUTURES' {
+  if (instId.endsWith('-SWAP')) return 'SWAP';
+  if (/-\d{6}$/.test(instId)) return 'FUTURES';
+  return 'SPOT';
 }
