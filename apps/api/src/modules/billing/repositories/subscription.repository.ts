@@ -1,11 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Subscription } from '@cryptotrade/database';
+import { Prisma, Subscription, SubscriptionPlan, SubscriptionStatus } from '@cryptotrade/database';
 
 import { PrismaService } from '@/common/database/prisma.service';
 
 @Injectable()
 export class SubscriptionRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  /** Non-lapsed Premium subscribers — the audience for the nightly AI Coach run. */
+  async findActivePremiumUserIds(): Promise<string[]> {
+    const subscriptions = await this.prisma.subscription.findMany({
+      where: {
+        plan: SubscriptionPlan.PREMIUM,
+        status: { in: [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING] },
+      },
+      select: { userId: true },
+    });
+
+    return subscriptions.map((s) => s.userId);
+  }
 
   async create(
     data: Prisma.SubscriptionUncheckedCreateInput,

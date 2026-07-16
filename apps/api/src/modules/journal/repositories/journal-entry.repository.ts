@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { JournalTagCategory } from '@cryptotrade/database';
 
 import { PrismaService } from '@/common/database/prisma.service';
 import { JournalEntryWithRelations } from '../types/journal-entry-with-relations';
@@ -90,4 +91,37 @@ export class JournalEntryRepository {
       ...WITH_RELATIONS,
     });
   }
+
+  /**
+   * Entries linked to a trade opened within the window, with their tags —
+   * the input AI Coach's tag-correlation detector needs (pattern: do trades
+   * tagged with a given Emotion consistently underperform).
+   */
+  async findLinkedForCoachAnalysis(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<CoachJournalRow[]> {
+    const entries = await this.prisma.journalEntry.findMany({
+      where: {
+        userId,
+        tradeId: { not: null },
+        trade: { openedAt: { gte: from, lte: to } },
+      },
+      select: {
+        tradeId: true,
+        tags: { select: { id: true, name: true, category: true } },
+      },
+    });
+
+    return entries.map((entry) => ({
+      tradeId: entry.tradeId as string,
+      tags: entry.tags,
+    }));
+  }
+}
+
+export interface CoachJournalRow {
+  tradeId: string;
+  tags: { id: string; name: string; category: JournalTagCategory }[];
 }

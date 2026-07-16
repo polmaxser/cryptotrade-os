@@ -67,6 +67,22 @@ enum ExchangeProvider {
   KUCOIN
 }
 
+enum CoachInsightPattern {
+  REVENGE_TRADING
+  HOLDING_LOSERS_TOO_LONG
+  CUTTING_WINNERS_SHORT
+  TIME_OF_DAY_WEAKNESS
+  TAG_CORRELATION
+  OVERTRADING
+  POSITION_SIZE_INCONSISTENCY
+}
+
+enum CoachInsightStatus {
+  NEW
+  CONFIRMED
+  DISMISSED
+}
+
 //////////////////////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////////////////////
@@ -108,6 +124,8 @@ model User {
 
   defiPositions DeFiPosition[]
   nftHoldings   NftHolding[]
+
+  coachInsights CoachInsight[]
 
   @@index([email])
   @@map("users")
@@ -620,4 +638,41 @@ model Note {
 
   @@index([userId])
   @@map("notes")
+}
+
+//////////////////////////////////////////////////////////////
+// AI COACH
+//////////////////////////////////////////////////////////////
+
+model CoachInsight {
+  id String @id @default(cuid())
+
+  pattern CoachInsightPattern
+  status  CoachInsightStatus  @default(NEW)
+
+  title       String
+  description String
+
+  /// The computed numbers the finding is based on (means, counts, sample sizes) —
+  /// kept alongside the LLM-phrased text so a finding stays inspectable/auditable.
+  metrics Json
+
+  /// Trades the finding is grounded in — no join table needed for a read-only reference list.
+  relatedTradeIds String[] @default([])
+
+  periodStart DateTime
+  periodEnd   DateTime
+
+  /// Set when the trader marks the finding as confirmed or dismissed.
+  reviewedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, pattern])
+  @@map("coach_insights")
 }

@@ -23,6 +23,7 @@ import { CalendarModule } from './modules/calendar/calendar.module';
 import { ExchangesModule } from './modules/exchanges/exchanges.module';
 import { DeFiPositionsModule } from './modules/defi-positions/defi-positions.module';
 import { NftHoldingsModule } from './modules/nft-holdings/nft-holdings.module';
+import { AiCoachModule } from './modules/ai-coach/ai-coach.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -52,6 +53,7 @@ import configuration from './config/configuration';
     ExchangesModule,
     DeFiPositionsModule,
     NftHoldingsModule,
+    AiCoachModule,
   ],
   controllers: [AppController],
   providers: [AppService],

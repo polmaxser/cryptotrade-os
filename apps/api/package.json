@@ -15,6 +15,7 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.112.0",
     "@aws-sdk/client-s3": "^3.1087.0",
     "@cryptotrade/database": "workspace:*",
     "@nestjs/common": "^11.0.12",

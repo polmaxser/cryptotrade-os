@@ -21,7 +21,8 @@
     "notes": "Notes",
     "exchanges": "Exchanges",
     "defi": "DeFi",
-    "nft": "NFTs"
+    "nft": "NFTs",
+    "coach": "AI Coach"
   },
   "auth": {
     "login": {
@@ -381,6 +382,31 @@
       "saving": "Saving...",
       "saveChanges": "Save Changes",
       "create": "Add NFT"
+    }
+  },
+  "coach": {
+    "title": "AI Coach",
+    "subtitle": "Behavioral patterns found in your trading history — Premium.",
+    "empty": "No findings yet. Run an analysis or check back after your next trading day.",
+    "analyzeNow": "Analyze now",
+    "analyzing": "Analyzing...",
+    "analyzeError": "Something went wrong while analyzing your trades.",
+    "confirm": "Confirm",
+    "dismiss": "Dismiss",
+    "relatedTrades": "Based on {count, plural, one {# trade} other {# trades}}",
+    "status": {
+      "NEW": "New",
+      "CONFIRMED": "Confirmed",
+      "DISMISSED": "Dismissed"
+    },
+    "patterns": {
+      "REVENGE_TRADING": "Revenge trading",
+      "HOLDING_LOSERS_TOO_LONG": "Holding losers too long",
+      "CUTTING_WINNERS_SHORT": "Cutting winners short",
+      "TIME_OF_DAY_WEAKNESS": "Time-of-day weakness",
+      "TAG_CORRELATION": "Emotion tag correlation",
+      "OVERTRADING": "Overtrading",
+      "POSITION_SIZE_INCONSISTENCY": "Inconsistent position sizing"
     }
   },
   "dashboard": {

@@ -38,4 +38,8 @@ export default () => ({
   security: {
     encryptionKey: process.env.ENCRYPTION_KEY,
   },
+  aiCoach: {
+    anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+    anthropicModel: process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-5',
+  },
 });

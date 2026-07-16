@@ -140,6 +140,15 @@ export class BillingService {
     }
   }
 
+  async assertCanUseAiCoach(userId: string): Promise<void> {
+    const plan = await this.getEffectivePlan(userId);
+    const limits = getPlanLimits(plan);
+
+    if (!limits.canUseAiCoach) {
+      throw new ForbiddenException('AI Coach is available on the Premium plan. Upgrade to use it.');
+    }
+  }
+
   async createCheckoutSession(
     userId: string,
     plan: 'STANDARD' | 'PREMIUM',

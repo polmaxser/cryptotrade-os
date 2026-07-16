@@ -67,6 +67,7 @@ export function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/defi')}>{t('defi')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/nft')}>{t('nft')}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => router.push('/coach')}>{t('coach')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/workspaces')}>
           {t('workspaces')}
         </DropdownMenuItem>

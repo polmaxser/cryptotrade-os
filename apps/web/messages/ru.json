@@ -21,7 +21,8 @@
     "notes": "Заметки",
     "exchanges": "Биржи",
     "defi": "DeFi",
-    "nft": "NFT"
+    "nft": "NFT",
+    "coach": "AI Coach"
   },
   "auth": {
     "login": {
@@ -381,6 +382,31 @@
       "saving": "Сохранение...",
       "saveChanges": "Сохранить",
       "create": "Добавить NFT"
+    }
+  },
+  "coach": {
+    "title": "AI Coach",
+    "subtitle": "Поведенческие паттерны, найденные в истории торговли — Premium.",
+    "empty": "Пока нет находок. Запустите анализ или загляните после следующего торгового дня.",
+    "analyzeNow": "Анализировать",
+    "analyzing": "Анализ...",
+    "analyzeError": "Не удалось выполнить анализ сделок.",
+    "confirm": "Подтвердить",
+    "dismiss": "Отклонить",
+    "relatedTrades": "На основе {count, plural, one {# сделки} other {# сделок}}",
+    "status": {
+      "NEW": "Новая",
+      "CONFIRMED": "Подтверждена",
+      "DISMISSED": "Отклонена"
+    },
+    "patterns": {
+      "REVENGE_TRADING": "Реванш-трейдинг",
+      "HOLDING_LOSERS_TOO_LONG": "Пересиживание убытков",
+      "CUTTING_WINNERS_SHORT": "Обрезание прибыли",
+      "TIME_OF_DAY_WEAKNESS": "Просадка в определённое время",
+      "TAG_CORRELATION": "Корреляция с эмоцией",
+      "OVERTRADING": "Овертрейдинг",
+      "POSITION_SIZE_INCONSISTENCY": "Несоответствие размера позиции"
     }
   },
   "dashboard": {

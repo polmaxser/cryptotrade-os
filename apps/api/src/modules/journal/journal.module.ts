@@ -16,6 +16,6 @@ import { JournalTagRepository } from './repositories/journal-tag.repository';
 
   providers: [JournalService, JournalEntryRepository, JournalTagRepository],
 
-  exports: [JournalService],
+  exports: [JournalService, JournalEntryRepository],
 })
 export class JournalModule {}

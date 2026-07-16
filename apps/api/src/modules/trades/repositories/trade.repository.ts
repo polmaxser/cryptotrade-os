@@ -99,6 +99,35 @@ export class TradeRepository {
     return result.count;
   }
 
+  /**
+   * All trades (any status) opened within a window — the shared input for AI
+   * Coach pattern detection, which needs both closed-trade outcomes and raw
+   * open/frequency data (e.g. revenge trading looks at the trade right after
+   * a loss, regardless of whether it's closed yet).
+   */
+  async findForCoachAnalysis(userId: string, from: Date, to: Date): Promise<CoachTradeRow[]> {
+    return this.prisma.trade.findMany({
+      where: {
+        userId,
+        openedAt: { gte: from, lte: to },
+      },
+      select: {
+        id: true,
+        symbol: true,
+        side: true,
+        quantity: true,
+        entryPrice: true,
+        pnl: true,
+        status: true,
+        openedAt: true,
+        closedAt: true,
+      },
+      orderBy: {
+        openedAt: 'asc',
+      },
+    });
+  }
+
   async countByStatus(where: Prisma.TradeWhereInput): Promise<TradeStatusCounts> {
     const [open, closed] = await Promise.all([
       this.prisma.trade.count({
@@ -141,4 +170,16 @@ export interface TradeStatusCounts {
   open: number;
   closed: number;
   total: number;
+}
+
+export interface CoachTradeRow {
+  id: string;
+  symbol: string;
+  side: string;
+  quantity: Prisma.Decimal;
+  entryPrice: Prisma.Decimal;
+  pnl: Prisma.Decimal | null;
+  status: string;
+  openedAt: Date;
+  closedAt: Date | null;
 }
