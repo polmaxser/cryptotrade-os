@@ -1,8 +1,10 @@
+export type PortfolioType = 'SPOT' | 'FUTURES' | 'DEFI' | 'NFT';
+
 export type Portfolio = {
   id: string;
   name: string;
   description: string | null;
-  type: 'SPOT';
+  type: PortfolioType;
   baseCurrency: string;
   startingBalance: string | null;
   isDefault: boolean;

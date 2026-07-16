@@ -21,7 +21,7 @@ import { createTrade } from '@/lib/api/trades';
 import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
 import { toDatetimeLocalValue, fromDatetimeLocalValue } from '@/lib/date';
-import type { TradeSide } from '@/types/trade';
+import type { MarginType, TradeSide } from '@/types/trade';
 
 export function NewTradeDialog() {
   const t = useTranslations('trades.new');
@@ -34,6 +34,8 @@ export function NewTradeDialog() {
   const [side, setSide] = useState<TradeSide>('LONG');
   const [entryPrice, setEntryPrice] = useState('');
   const [stopLossPrice, setStopLossPrice] = useState('');
+  const [leverage, setLeverage] = useState('');
+  const [marginType, setMarginType] = useState<MarginType | ''>('');
   const [quantity, setQuantity] = useState('');
   const [openedAt, setOpenedAt] = useState(() => toDatetimeLocalValue(new Date()));
   const [portfolioId, setPortfolioId] = useState<string>('');
@@ -48,6 +50,8 @@ export function NewTradeDialog() {
     setSide('LONG');
     setEntryPrice('');
     setStopLossPrice('');
+    setLeverage('');
+    setMarginType('');
     setQuantity('');
     setOpenedAt(toDatetimeLocalValue(new Date()));
     setPortfolioId('');
@@ -78,6 +82,8 @@ export function NewTradeDialog() {
       side,
       entryPrice: Number(entryPrice),
       stopLossPrice: stopLossPrice === '' ? undefined : Number(stopLossPrice),
+      leverage: leverage === '' ? undefined : Number(leverage),
+      marginType: marginType || undefined,
       quantity: Number(quantity),
       openedAt: fromDatetimeLocalValue(openedAt),
       portfolioId: portfolioId || undefined,
@@ -181,6 +187,34 @@ export function NewTradeDialog() {
               value={stopLossPrice}
               onChange={(event) => setStopLossPrice(event.target.value)}
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="leverage">{t('leverageLabel')}</Label>
+              <Input
+                id="leverage"
+                type="number"
+                step="1"
+                min="1"
+                value={leverage}
+                onChange={(event) => setLeverage(event.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="marginType">{t('marginTypeLabel')}</Label>
+              <select
+                id="marginType"
+                value={marginType}
+                onChange={(event) => setMarginType(event.target.value as MarginType | '')}
+                className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              >
+                <option value="">{t('marginTypeNone')}</option>
+                <option value="ISOLATED">{t('marginTypeIsolated')}</option>
+                <option value="CROSS">{t('marginTypeCross')}</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">

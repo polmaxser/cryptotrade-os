@@ -39,6 +39,21 @@ export class PortfoliosService {
     return this.portfolioRepository.findDefaultForUser(userId);
   }
 
+  /**
+   * Shared by any module that attaches records to a portfolio (trades, DeFi
+   * positions, NFT holdings): validates an explicitly requested portfolio
+   * belongs to the user, or falls back to their default portfolio.
+   */
+  async resolvePortfolioId(userId: string, requestedPortfolioId?: string): Promise<string | null> {
+    if (requestedPortfolioId) {
+      const portfolio = await this.findOne(requestedPortfolioId, userId);
+      return portfolio.id;
+    }
+
+    const defaultPortfolio = await this.getDefaultForUser(userId);
+    return defaultPortfolio?.id ?? null;
+  }
+
   async create(userId: string, dto: CreatePortfolioDto): Promise<Portfolio> {
     await this.billingService.assertCanCreatePortfolio(userId);
 

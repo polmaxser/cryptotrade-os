@@ -27,4 +27,6 @@ export const QUERY_KEYS = {
   notes: ['notes'] as const,
   calendarMonth: (month: string) => ['calendar', month] as const,
   exchangeConnections: ['exchanges', 'connections'] as const,
+  defiPositions: ['defi-positions'] as const,
+  nftHoldings: ['nft-holdings'] as const,
 };

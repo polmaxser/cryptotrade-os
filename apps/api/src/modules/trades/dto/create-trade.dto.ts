@@ -1,4 +1,5 @@
-import { IsDateString, IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { MarginType } from '@cryptotrade/database';
 
 export enum TradeSide {
   LONG = 'LONG',
@@ -34,6 +35,17 @@ export class CreateTradeDto {
   @IsNumber()
   @Min(0)
   stopLossPrice?: number;
+
+  /** Futures-only. */
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  leverage?: number;
+
+  /** Futures-only. */
+  @IsOptional()
+  @IsEnum(MarginType)
+  marginType?: MarginType;
 
   @IsNumber()
   @Min(0)

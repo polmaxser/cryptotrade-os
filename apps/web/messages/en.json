@@ -19,7 +19,9 @@
     "watchlist": "Watchlist",
     "alerts": "Alerts",
     "notes": "Notes",
-    "exchanges": "Exchanges"
+    "exchanges": "Exchanges",
+    "defi": "DeFi",
+    "nft": "NFTs"
   },
   "auth": {
     "login": {
@@ -116,6 +118,11 @@
       "sideShort": "Short",
       "entryPriceLabel": "Entry Price",
       "stopLossPriceLabel": "Stop Loss (optional)",
+      "leverageLabel": "Leverage (optional)",
+      "marginTypeLabel": "Margin Type (optional)",
+      "marginTypeNone": "— None (spot) —",
+      "marginTypeIsolated": "Isolated",
+      "marginTypeCross": "Cross",
       "quantityLabel": "Quantity",
       "openedAtLabel": "Opened At",
       "portfolioLabel": "Portfolio",
@@ -131,6 +138,11 @@
       "statusOpen": "Open",
       "statusClosed": "Closed",
       "stopLossPriceLabel": "Stop Loss (optional)",
+      "leverageLabel": "Leverage (optional)",
+      "marginTypeLabel": "Margin Type (optional)",
+      "marginTypeNone": "— None (spot) —",
+      "marginTypeIsolated": "Isolated",
+      "marginTypeCross": "Cross",
       "exitPriceLabel": "Exit Price",
       "closedAtLabel": "Closed At",
       "pnlLabel": "PnL",
@@ -314,6 +326,61 @@
       "import": "Import",
       "importing": "Importing...",
       "resultLine": "{symbol}: {count} trade(s) imported"
+    }
+  },
+  "defi": {
+    "title": "DeFi Positions",
+    "subtitle": "Track your liquidity, staking, and lending positions.",
+    "empty": "No DeFi positions yet.",
+    "newPosition": "Add Position",
+    "edit": "Edit",
+    "delete": "Delete",
+    "closed": "Closed",
+    "dialog": {
+      "createTitle": "Add DeFi Position",
+      "editTitle": "Edit DeFi Position",
+      "protocolLabel": "Protocol",
+      "typeLabel": "Type",
+      "types": {
+        "LIQUIDITY_POOL": "Liquidity Pool",
+        "STAKING": "Staking",
+        "LENDING": "Lending",
+        "BORROWING": "Borrowing",
+        "YIELD_FARMING": "Yield Farming"
+      },
+      "assetLabel": "Asset",
+      "amountLabel": "Amount",
+      "valueUsdLabel": "Value (USD)",
+      "apyLabel": "APY % (optional)",
+      "openedAtLabel": "Opened At",
+      "notesLabel": "Notes",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "create": "Add Position"
+    }
+  },
+  "nft": {
+    "title": "NFT Holdings",
+    "subtitle": "Track your NFT collection.",
+    "empty": "No NFTs added yet.",
+    "newHolding": "Add NFT",
+    "edit": "Edit",
+    "delete": "Delete",
+    "floorLabel": "Floor price",
+    "dialog": {
+      "createTitle": "Add NFT",
+      "editTitle": "Edit NFT",
+      "collectionLabel": "Collection",
+      "tokenIdLabel": "Token ID",
+      "contractAddressLabel": "Contract Address (optional)",
+      "imageUrlLabel": "Image URL (optional)",
+      "acquiredPriceLabel": "Acquired Price (USD)",
+      "floorPriceLabel": "Current Floor Price (USD)",
+      "acquiredAtLabel": "Acquired At",
+      "notesLabel": "Notes",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "create": "Add NFT"
     }
   },
   "dashboard": {

@@ -21,6 +21,8 @@ import { AlertsModule } from './modules/alerts/alerts.module';
 import { NotesModule } from './modules/notes/notes.module';
 import { CalendarModule } from './modules/calendar/calendar.module';
 import { ExchangesModule } from './modules/exchanges/exchanges.module';
+import { DeFiPositionsModule } from './modules/defi-positions/defi-positions.module';
+import { NftHoldingsModule } from './modules/nft-holdings/nft-holdings.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -48,6 +50,8 @@ import configuration from './config/configuration';
     NotesModule,
     CalendarModule,
     ExchangesModule,
+    DeFiPositionsModule,
+    NftHoldingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

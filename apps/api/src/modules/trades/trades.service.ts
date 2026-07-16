@@ -35,7 +35,7 @@ export class TradesService {
   async create(userId: string, dto: CreateTradeDto): Promise<Trade> {
     await this.billingService.assertCanCreateTrade(userId);
 
-    const portfolioId = await this.resolvePortfolioId(userId, dto.portfolioId);
+    const portfolioId = await this.portfoliosService.resolvePortfolioId(userId, dto.portfolioId);
 
     return this.tradeRepository.create({
       ...dto,
@@ -64,20 +64,5 @@ export class TradesService {
     if (trade.userId !== userId) {
       throw new ForbiddenException('You do not have access to this trade');
     }
-  }
-
-  private async resolvePortfolioId(
-    userId: string,
-    requestedPortfolioId?: string,
-  ): Promise<string | null> {
-    if (requestedPortfolioId) {
-      const portfolio = await this.portfoliosService.findOne(requestedPortfolioId, userId);
-
-      return portfolio.id;
-    }
-
-    const defaultPortfolio = await this.portfoliosService.getDefaultForUser(userId);
-
-    return defaultPortfolio?.id ?? null;
   }
 }

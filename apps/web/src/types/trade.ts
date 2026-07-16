@@ -1,5 +1,6 @@
 export type TradeSide = 'LONG' | 'SHORT';
 export type TradeStatus = 'OPEN' | 'CLOSED';
+export type MarginType = 'ISOLATED' | 'CROSS';
 
 export type Trade = {
   id: string;
@@ -9,6 +10,8 @@ export type Trade = {
   entryPrice: string;
   exitPrice: string | null;
   stopLossPrice: string | null;
+  leverage: number | null;
+  marginType: MarginType | null;
   quantity: string;
   pnl: string | null;
   pnlPercent: string | null;
@@ -29,6 +32,8 @@ export type CreateTradePayload = {
   entryPrice: number;
   exitPrice?: number;
   stopLossPrice?: number;
+  leverage?: number;
+  marginType?: MarginType;
   quantity: number;
   pnl?: number;
   pnlPercent?: number;

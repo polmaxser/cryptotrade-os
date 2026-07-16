@@ -20,6 +20,22 @@ enum WorkspaceRole {
 
 enum PortfolioType {
   SPOT
+  FUTURES
+  DEFI
+  NFT
+}
+
+enum MarginType {
+  ISOLATED
+  CROSS
+}
+
+enum DeFiPositionType {
+  LIQUIDITY_POOL
+  STAKING
+  LENDING
+  BORROWING
+  YIELD_FARMING
 }
 
 enum SubscriptionPlan {
@@ -89,6 +105,9 @@ model User {
   notes          Note[]
 
   exchangeConnections ExchangeConnection[]
+
+  defiPositions DeFiPosition[]
+  nftHoldings   NftHolding[]
 
   @@index([email])
   @@map("users")
@@ -223,7 +242,9 @@ model Portfolio {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  trades Trade[]
+  trades        Trade[]
+  defiPositions DeFiPosition[]
+  nftHoldings   NftHolding[]
 
   @@index([userId])
   @@map("portfolios")
@@ -282,6 +303,10 @@ model Trade {
   /// Planned exit if the trade goes against the position — the risk basis for R-Multiple. Null when not set.
   stopLossPrice Decimal? @db.Decimal(20, 8)
 
+  /// Futures-only. Null for spot trades.
+  leverage   Int?
+  marginType MarginType?
+
   quantity Decimal @db.Decimal(20, 8)
 
   pnl Decimal? @db.Decimal(20, 8)
@@ -327,6 +352,75 @@ model Trade {
   @@index([exchangeConnectionId])
 
   @@map("trades")
+}
+
+//////////////////////////////////////////////////////////////
+// DEFI POSITIONS
+//////////////////////////////////////////////////////////////
+
+model DeFiPosition {
+  id String @id @default(cuid())
+
+  protocol String
+  type     DeFiPositionType
+
+  /// e.g. "ETH/USDC" for an LP position, "ETH" for staking.
+  asset String
+
+  amount   Decimal @db.Decimal(20, 8)
+  valueUsd Decimal @db.Decimal(20, 2)
+  apy      Decimal? @db.Decimal(6, 2)
+
+  notes String?
+
+  openedAt DateTime
+  closedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  portfolioId String?
+  portfolio   Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([portfolioId])
+  @@map("defi_positions")
+}
+
+//////////////////////////////////////////////////////////////
+// NFT HOLDINGS
+//////////////////////////////////////////////////////////////
+
+model NftHolding {
+  id String @id @default(cuid())
+
+  collectionName  String
+  tokenId         String
+  contractAddress String?
+  imageUrl        String?
+
+  acquiredPriceUsd    Decimal? @db.Decimal(20, 2)
+  currentFloorPriceUsd Decimal? @db.Decimal(20, 2)
+
+  notes String?
+
+  acquiredAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  portfolioId String?
+  portfolio   Portfolio? @relation(fields: [portfolioId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([portfolioId])
+  @@map("nft_holdings")
 }
 
 //////////////////////////////////////////////////////////////

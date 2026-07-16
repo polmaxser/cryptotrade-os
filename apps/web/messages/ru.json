@@ -19,7 +19,9 @@
     "watchlist": "Watchlist",
     "alerts": "Алерты",
     "notes": "Заметки",
-    "exchanges": "Биржи"
+    "exchanges": "Биржи",
+    "defi": "DeFi",
+    "nft": "NFT"
   },
   "auth": {
     "login": {
@@ -116,6 +118,11 @@
       "sideShort": "Short",
       "entryPriceLabel": "Цена входа",
       "stopLossPriceLabel": "Stop Loss (необязательно)",
+      "leverageLabel": "Плечо (необязательно)",
+      "marginTypeLabel": "Тип маржи (необязательно)",
+      "marginTypeNone": "— Нет (спот) —",
+      "marginTypeIsolated": "Изолированная",
+      "marginTypeCross": "Кросс",
       "quantityLabel": "Количество",
       "openedAtLabel": "Дата открытия",
       "portfolioLabel": "Портфель",
@@ -131,6 +138,11 @@
       "statusOpen": "Открыта",
       "statusClosed": "Закрыта",
       "stopLossPriceLabel": "Stop Loss (необязательно)",
+      "leverageLabel": "Плечо (необязательно)",
+      "marginTypeLabel": "Тип маржи (необязательно)",
+      "marginTypeNone": "— Нет (спот) —",
+      "marginTypeIsolated": "Изолированная",
+      "marginTypeCross": "Кросс",
       "exitPriceLabel": "Цена выхода",
       "closedAtLabel": "Дата закрытия",
       "pnlLabel": "PnL",
@@ -314,6 +326,61 @@
       "import": "Импортировать",
       "importing": "Импорт...",
       "resultLine": "{symbol}: импортировано сделок — {count}"
+    }
+  },
+  "defi": {
+    "title": "DeFi-позиции",
+    "subtitle": "Отслеживайте позиции в ликвидности, стейкинге и лендинге.",
+    "empty": "Пока нет DeFi-позиций.",
+    "newPosition": "Добавить позицию",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "closed": "Закрыта",
+    "dialog": {
+      "createTitle": "Добавить DeFi-позицию",
+      "editTitle": "Редактирование DeFi-позиции",
+      "protocolLabel": "Протокол",
+      "typeLabel": "Тип",
+      "types": {
+        "LIQUIDITY_POOL": "Пул ликвидности",
+        "STAKING": "Стейкинг",
+        "LENDING": "Лендинг",
+        "BORROWING": "Заём",
+        "YIELD_FARMING": "Йилд-фарминг"
+      },
+      "assetLabel": "Актив",
+      "amountLabel": "Количество",
+      "valueUsdLabel": "Стоимость (USD)",
+      "apyLabel": "APY % (необязательно)",
+      "openedAtLabel": "Дата открытия",
+      "notesLabel": "Заметки",
+      "saving": "Сохранение...",
+      "saveChanges": "Сохранить",
+      "create": "Добавить позицию"
+    }
+  },
+  "nft": {
+    "title": "NFT",
+    "subtitle": "Отслеживайте свою коллекцию NFT.",
+    "empty": "Пока нет добавленных NFT.",
+    "newHolding": "Добавить NFT",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "floorLabel": "Floor-цена",
+    "dialog": {
+      "createTitle": "Добавить NFT",
+      "editTitle": "Редактирование NFT",
+      "collectionLabel": "Коллекция",
+      "tokenIdLabel": "Token ID",
+      "contractAddressLabel": "Адрес контракта (необязательно)",
+      "imageUrlLabel": "Ссылка на изображение (необязательно)",
+      "acquiredPriceLabel": "Цена покупки (USD)",
+      "floorPriceLabel": "Текущая floor-цена (USD)",
+      "acquiredAtLabel": "Дата приобретения",
+      "notesLabel": "Заметки",
+      "saving": "Сохранение...",
+      "saveChanges": "Сохранить",
+      "create": "Добавить NFT"
     }
   },
   "dashboard": {
