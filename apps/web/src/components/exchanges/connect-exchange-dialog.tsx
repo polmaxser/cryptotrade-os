@@ -20,8 +20,8 @@ import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
 import type { ExchangeProvider } from '@/types/exchange';
 
-const SUPPORTED_EXCHANGES: ExchangeProvider[] = ['BINANCE', 'BYBIT', 'OKX'];
-const EXCHANGES_REQUIRING_PASSPHRASE: ExchangeProvider[] = ['OKX'];
+const SUPPORTED_EXCHANGES: ExchangeProvider[] = ['BINANCE', 'BYBIT', 'OKX', 'KUCOIN'];
+const EXCHANGES_REQUIRING_PASSPHRASE: ExchangeProvider[] = ['OKX', 'KUCOIN'];
 
 export function ConnectExchangeDialog() {
   const t = useTranslations('exchanges.connect');

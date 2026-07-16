@@ -152,6 +152,7 @@ const EXCHANGE_TO_TRADE_SOURCE: Record<ExchangeProvider, TradeSource> = {
   [ExchangeProvider.BINANCE]: TradeSource.BINANCE,
   [ExchangeProvider.BYBIT]: TradeSource.BYBIT,
   [ExchangeProvider.OKX]: TradeSource.OKX,
+  [ExchangeProvider.KUCOIN]: TradeSource.KUCOIN,
 };
 
 function toTradeSource(exchange: ExchangeProvider): TradeSource {

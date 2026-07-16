@@ -13,6 +13,7 @@ import { ExchangeConnectionRepository } from './repositories/exchange-connection
 import { BinanceClientService } from './binance/binance-client.service';
 import { BybitClientService } from './bybit/bybit-client.service';
 import { OkxClientService } from './okx/okx-client.service';
+import { KucoinClientService } from './kucoin/kucoin-client.service';
 
 @Module({
   imports: [DatabaseModule, CryptoModule, TradesModule, PortfoliosModule, BillingModule],
@@ -26,6 +27,7 @@ import { OkxClientService } from './okx/okx-client.service';
     BinanceClientService,
     BybitClientService,
     OkxClientService,
+    KucoinClientService,
   ],
 
   exports: [ExchangesService],

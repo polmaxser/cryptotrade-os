@@ -293,7 +293,8 @@
       "exchanges": {
         "BINANCE": "Binance",
         "BYBIT": "Bybit",
-        "OKX": "OKX"
+        "OKX": "OKX",
+        "KUCOIN": "KuCoin"
       },
       "labelLabel": "Label",
       "labelPlaceholder": "My Exchange Account",

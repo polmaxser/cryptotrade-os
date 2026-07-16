@@ -41,12 +41,14 @@ enum TradeSource {
   BINANCE
   BYBIT
   OKX
+  KUCOIN
 }
 
 enum ExchangeProvider {
   BINANCE
   BYBIT
   OKX
+  KUCOIN
 }
 
 //////////////////////////////////////////////////////////////
