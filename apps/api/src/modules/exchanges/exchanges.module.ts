@@ -8,15 +8,23 @@ import { BillingModule } from '@/modules/billing/billing.module';
 
 import { ExchangesController } from './exchanges.controller';
 import { ExchangesService } from './exchanges.service';
+import { ExchangeClientRegistry } from './exchange-client-registry.service';
 import { ExchangeConnectionRepository } from './repositories/exchange-connection.repository';
 import { BinanceClientService } from './binance/binance-client.service';
+import { BybitClientService } from './bybit/bybit-client.service';
 
 @Module({
   imports: [DatabaseModule, CryptoModule, TradesModule, PortfoliosModule, BillingModule],
 
   controllers: [ExchangesController],
 
-  providers: [ExchangesService, ExchangeConnectionRepository, BinanceClientService],
+  providers: [
+    ExchangesService,
+    ExchangeConnectionRepository,
+    ExchangeClientRegistry,
+    BinanceClientService,
+    BybitClientService,
+  ],
 
   exports: [ExchangesService],
 })

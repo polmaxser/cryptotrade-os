@@ -1,4 +1,4 @@
-export type ExchangeProvider = 'BINANCE';
+export type ExchangeProvider = 'BINANCE' | 'BYBIT';
 
 export type ExchangeConnection = {
   id: string;

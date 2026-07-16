@@ -39,10 +39,12 @@ enum SubscriptionStatus {
 enum TradeSource {
   MANUAL
   BINANCE
+  BYBIT
 }
 
 enum ExchangeProvider {
   BINANCE
+  BYBIT
 }
 
 //////////////////////////////////////////////////////////////

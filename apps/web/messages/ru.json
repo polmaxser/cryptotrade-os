@@ -286,11 +286,16 @@
     "importButton": "Импорт",
     "disconnect": "Отключить",
     "connect": {
-      "trigger": "Подключить Binance",
-      "title": "Подключить Binance",
+      "trigger": "Подключить биржу",
+      "title": "Подключить биржу",
       "readOnlyWarning": "Используйте API-ключ только на чтение, без прав на торговлю и вывод средств. Эта функция только читает историю сделок — она никогда не создаёт ордера и не перемещает средства.",
+      "exchangeLabel": "Биржа",
+      "exchanges": {
+        "BINANCE": "Binance",
+        "BYBIT": "Bybit"
+      },
       "labelLabel": "Название",
-      "labelPlaceholder": "Мой аккаунт Binance",
+      "labelPlaceholder": "Мой аккаунт на бирже",
       "apiKeyLabel": "API Key",
       "apiSecretLabel": "API Secret",
       "connect": "Подключить",
@@ -300,7 +305,7 @@
       "title": "Импорт сделок",
       "symbolsLabel": "Символы",
       "symbolsPlaceholder": "BTCUSDT, ETHUSDT",
-      "symbolsHint": "Символы Binance через запятую. Повторный импорт символа заменяет ранее импортированные по нему сделки.",
+      "symbolsHint": "Символы этой биржи через запятую. Повторный импорт символа заменяет ранее импортированные по нему сделки.",
       "portfolioLabel": "Портфель",
       "portfolioDefault": "Портфель по умолчанию",
       "import": "Импортировать",

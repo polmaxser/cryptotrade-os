@@ -1,4 +1,4 @@
-import { BinanceFill } from './binance-client.service';
+import { NormalizedFill } from './types/normalized-fill';
 
 export interface MatchedTrade {
   side: 'LONG' | 'SHORT';
@@ -32,17 +32,21 @@ const EPSILON = 1e-12;
  * history is emitted as a single OPEN trade. Commission is intentionally not
  * netted into PnL — the fee asset varies per fill and isn't always the quote
  * asset, so converting it accurately is out of scope here.
+ *
+ * Exchange-agnostic: every exchange client maps its own raw fill format into
+ * NormalizedFill before calling this, so the matching logic lives in exactly
+ * one place.
  */
-export function matchFillsToTrades(fills: BinanceFill[]): MatchedTrade[] {
-  const sorted = [...fills].sort((a, b) => a.time - b.time || a.id - b.id);
+export function matchFillsToTrades(fills: NormalizedFill[]): MatchedTrade[] {
+  const sorted = [...fills].sort((a, b) => a.time - b.time || a.id.localeCompare(b.id));
   const trades: MatchedTrade[] = [];
   let position: OpenPosition | null = null;
 
   for (const fill of sorted) {
-    const price = Number(fill.price);
+    const price = fill.price;
     const fillTime = new Date(fill.time);
     const isBuy = fill.isBuyer;
-    let remainingQty = Number(fill.qty);
+    let remainingQty = fill.qty;
 
     while (remainingQty > EPSILON) {
       if (!position) {

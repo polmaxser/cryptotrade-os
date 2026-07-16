@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { ExchangeConnection } from '@cryptotrade/database';
+import { ExchangeConnection, ExchangeProvider, TradeSource } from '@cryptotrade/database';
 
 import { PrismaService } from '@/common/database/prisma.service';
 import { EncryptionService } from '@/common/crypto/encryption.service';
@@ -7,8 +7,8 @@ import { TradeRepository } from '@/modules/trades/repositories/trade.repository'
 import { PortfoliosService } from '@/modules/portfolios/portfolios.service';
 import { BillingService } from '@/modules/billing/billing.service';
 
-import { BinanceClientService } from './binance/binance-client.service';
-import { matchFillsToTrades, MatchedTrade } from './binance/binance-trade-matcher';
+import { ExchangeClientRegistry } from './exchange-client-registry.service';
+import { matchFillsToTrades, MatchedTrade } from './trade-matcher';
 import { ExchangeConnectionRepository } from './repositories/exchange-connection.repository';
 import { CreateExchangeConnectionDto } from './dto/create-exchange-connection.dto';
 import { ImportTradesDto } from './dto/import-trades.dto';
@@ -23,7 +23,7 @@ export class ExchangesService {
   constructor(
     private readonly connectionRepository: ExchangeConnectionRepository,
     private readonly encryptionService: EncryptionService,
-    private readonly binanceClient: BinanceClientService,
+    private readonly clientRegistry: ExchangeClientRegistry,
     private readonly tradeRepository: TradeRepository,
     private readonly portfoliosService: PortfoliosService,
     private readonly billingService: BillingService,
@@ -40,7 +40,8 @@ export class ExchangesService {
     dto: CreateExchangeConnectionDto,
   ): Promise<ExchangeConnectionSummary> {
     // Validate the credentials actually work before we ever store them.
-    await this.binanceClient.testConnection(dto.apiKey, dto.apiSecret);
+    const client = this.clientRegistry.getClient(dto.exchange);
+    await client.testConnection(dto.apiKey, dto.apiSecret);
 
     const connection = await this.connectionRepository.create({
       userId,
@@ -61,6 +62,7 @@ export class ExchangesService {
 
   async importTrades(id: string, userId: string, dto: ImportTradesDto): Promise<ImportResult[]> {
     const connection = await this.getConnectionOrThrow(id, userId);
+    const client = this.clientRegistry.getClient(connection.exchange);
 
     const portfolioId = dto.portfolioId
       ? (await this.portfoliosService.findOne(dto.portfolioId, userId)).id
@@ -74,7 +76,7 @@ export class ExchangesService {
 
     for (const rawSymbol of dto.symbols) {
       const symbol = rawSymbol.toUpperCase();
-      const fills = await this.binanceClient.fetchTrades(apiKey, apiSecret, symbol);
+      const fills = await client.fetchFills(apiKey, apiSecret, symbol);
       const matched = matchFillsToTrades(fills);
       matchedBySymbol.set(symbol, matched);
       totalTrades += matched.length;
@@ -83,6 +85,7 @@ export class ExchangesService {
     await this.billingService.assertCanImportTrades(userId, totalTrades);
 
     const results: ImportResult[] = [];
+    const source = toTradeSource(connection.exchange);
 
     await this.prisma.$transaction(async (tx) => {
       for (const [symbol, matched] of matchedBySymbol) {
@@ -102,7 +105,7 @@ export class ExchangesService {
               closedAt: trade.closedAt ?? undefined,
               userId,
               portfolioId: portfolioId ?? undefined,
-              source: 'BINANCE',
+              source,
               exchangeConnectionId: connection.id,
             })),
             tx,
@@ -131,4 +134,13 @@ export class ExchangesService {
 
     return connection;
   }
+}
+
+const EXCHANGE_TO_TRADE_SOURCE: Record<ExchangeProvider, TradeSource> = {
+  [ExchangeProvider.BINANCE]: TradeSource.BINANCE,
+  [ExchangeProvider.BYBIT]: TradeSource.BYBIT,
+};
+
+function toTradeSource(exchange: ExchangeProvider): TradeSource {
+  return EXCHANGE_TO_TRADE_SOURCE[exchange];
 }

@@ -18,6 +18,9 @@ import { Label } from '@/components/ui/label';
 import { createExchangeConnection } from '@/lib/api/exchanges';
 import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
+import type { ExchangeProvider } from '@/types/exchange';
+
+const SUPPORTED_EXCHANGES: ExchangeProvider[] = ['BINANCE', 'BYBIT'];
 
 export function ConnectExchangeDialog() {
   const t = useTranslations('exchanges.connect');
@@ -25,6 +28,7 @@ export function ConnectExchangeDialog() {
   const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
+  const [exchange, setExchange] = useState<ExchangeProvider>('BINANCE');
   const [label, setLabel] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
@@ -35,6 +39,7 @@ export function ConnectExchangeDialog() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.exchangeConnections });
       setOpen(false);
+      setExchange('BINANCE');
       setLabel('');
       setApiKey('');
       setApiSecret('');
@@ -45,7 +50,7 @@ export function ConnectExchangeDialog() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-    mutation.mutate({ exchange: 'BINANCE', label, apiKey, apiSecret });
+    mutation.mutate({ exchange, label, apiKey, apiSecret });
   }
 
   return (
@@ -66,6 +71,22 @@ export function ConnectExchangeDialog() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="exchangeProvider">{t('exchangeLabel')}</Label>
+            <select
+              id="exchangeProvider"
+              value={exchange}
+              onChange={(event) => setExchange(event.target.value as ExchangeProvider)}
+              className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            >
+              {SUPPORTED_EXCHANGES.map((provider) => (
+                <option key={provider} value={provider}>
+                  {t(`exchanges.${provider}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="connectionLabel">{t('labelLabel')}</Label>
             <Input

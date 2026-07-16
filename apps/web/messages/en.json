@@ -286,11 +286,16 @@
     "importButton": "Import",
     "disconnect": "Disconnect",
     "connect": {
-      "trigger": "Connect Binance",
-      "title": "Connect Binance",
+      "trigger": "Connect Exchange",
+      "title": "Connect Exchange",
       "readOnlyWarning": "Use a read-only API key with no trading or withdrawal permissions. This feature only ever reads your trade history — it never places orders or moves funds.",
+      "exchangeLabel": "Exchange",
+      "exchanges": {
+        "BINANCE": "Binance",
+        "BYBIT": "Bybit"
+      },
       "labelLabel": "Label",
-      "labelPlaceholder": "My Binance Account",
+      "labelPlaceholder": "My Exchange Account",
       "apiKeyLabel": "API Key",
       "apiSecretLabel": "API Secret",
       "connect": "Connect",
@@ -300,7 +305,7 @@
       "title": "Import Trades",
       "symbolsLabel": "Symbols",
       "symbolsPlaceholder": "BTCUSDT, ETHUSDT",
-      "symbolsHint": "Comma-separated Binance symbols. Re-importing a symbol replaces its previously imported trades.",
+      "symbolsHint": "Comma-separated symbols for this exchange. Re-importing a symbol replaces its previously imported trades.",
       "portfolioLabel": "Portfolio",
       "portfolioDefault": "Default portfolio",
       "import": "Import",
