@@ -292,12 +292,14 @@
       "exchangeLabel": "Биржа",
       "exchanges": {
         "BINANCE": "Binance",
-        "BYBIT": "Bybit"
+        "BYBIT": "Bybit",
+        "OKX": "OKX"
       },
       "labelLabel": "Название",
       "labelPlaceholder": "Мой аккаунт на бирже",
       "apiKeyLabel": "API Key",
       "apiSecretLabel": "API Secret",
+      "apiPassphraseLabel": "API Passphrase",
       "connect": "Подключить",
       "connecting": "Подключение..."
     },

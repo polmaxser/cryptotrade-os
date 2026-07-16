@@ -1,7 +1,7 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 
-import { ExchangeClient } from '../types/exchange-client';
+import { ExchangeClient, ExchangeCredentials } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 
 const BINANCE_BASE_URL = 'https://api.binance.com';
@@ -28,12 +28,12 @@ interface BinanceFill {
  */
 @Injectable()
 export class BinanceClientService implements ExchangeClient {
-  async testConnection(apiKey: string, apiSecret: string): Promise<void> {
-    await this.signedGet('/api/v3/account', apiKey, apiSecret, {});
+  async testConnection(credentials: ExchangeCredentials): Promise<void> {
+    await this.signedGet('/api/v3/account', credentials, {});
   }
 
-  async fetchFills(apiKey: string, apiSecret: string, symbol: string): Promise<NormalizedFill[]> {
-    const fills = await this.signedGet<BinanceFill[]>('/api/v3/myTrades', apiKey, apiSecret, {
+  async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
+    const fills = await this.signedGet<BinanceFill[]>('/api/v3/myTrades', credentials, {
       symbol,
       limit: '1000',
     });
@@ -49,8 +49,7 @@ export class BinanceClientService implements ExchangeClient {
 
   private async signedGet<T>(
     path: string,
-    apiKey: string,
-    apiSecret: string,
+    credentials: ExchangeCredentials,
     params: Record<string, string>,
   ): Promise<T> {
     const query = new URLSearchParams({
@@ -58,14 +57,16 @@ export class BinanceClientService implements ExchangeClient {
       timestamp: Date.now().toString(),
       recvWindow: RECV_WINDOW_MS,
     });
-    const signature = createHmac('sha256', apiSecret).update(query.toString()).digest('hex');
+    const signature = createHmac('sha256', credentials.apiSecret)
+      .update(query.toString())
+      .digest('hex');
     query.set('signature', signature);
 
     let response: globalThis.Response;
 
     try {
       response = await fetch(`${BINANCE_BASE_URL}${path}?${query.toString()}`, {
-        headers: { 'X-MBX-APIKEY': apiKey },
+        headers: { 'X-MBX-APIKEY': credentials.apiKey },
       });
     } catch {
       throw new ServiceUnavailableException('Could not reach Binance');

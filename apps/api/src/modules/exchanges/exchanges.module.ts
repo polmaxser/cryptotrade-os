@@ -12,6 +12,7 @@ import { ExchangeClientRegistry } from './exchange-client-registry.service';
 import { ExchangeConnectionRepository } from './repositories/exchange-connection.repository';
 import { BinanceClientService } from './binance/binance-client.service';
 import { BybitClientService } from './bybit/bybit-client.service';
+import { OkxClientService } from './okx/okx-client.service';
 
 @Module({
   imports: [DatabaseModule, CryptoModule, TradesModule, PortfoliosModule, BillingModule],
@@ -24,6 +25,7 @@ import { BybitClientService } from './bybit/bybit-client.service';
     ExchangeClientRegistry,
     BinanceClientService,
     BybitClientService,
+    OkxClientService,
   ],
 
   exports: [ExchangesService],

@@ -1,4 +1,4 @@
-export type ExchangeProvider = 'BINANCE' | 'BYBIT';
+export type ExchangeProvider = 'BINANCE' | 'BYBIT' | 'OKX';
 
 export type ExchangeConnection = {
   id: string;
@@ -14,6 +14,7 @@ export type CreateExchangeConnectionPayload = {
   label: string;
   apiKey: string;
   apiSecret: string;
+  apiPassphrase?: string;
 };
 
 export type ImportTradesPayload = {

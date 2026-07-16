@@ -1,4 +1,4 @@
-import { IsEnum, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEnum, IsString, MaxLength, MinLength, ValidateIf } from 'class-validator';
 import { ExchangeProvider } from '@cryptotrade/database';
 
 export class CreateExchangeConnectionDto {
@@ -17,4 +17,10 @@ export class CreateExchangeConnectionDto {
   @IsString()
   @MinLength(1)
   apiSecret!: string;
+
+  /** Required for exchanges (e.g. OKX) that set a passphrase at API key creation time. */
+  @ValidateIf((dto: CreateExchangeConnectionDto) => dto.exchange === ExchangeProvider.OKX)
+  @IsString()
+  @MinLength(1)
+  apiPassphrase?: string;
 }

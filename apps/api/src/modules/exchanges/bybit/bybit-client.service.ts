@@ -1,7 +1,7 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 
-import { ExchangeClient } from '../types/exchange-client';
+import { ExchangeClient, ExchangeCredentials } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 
 const BYBIT_BASE_URL = 'https://api.bybit.com';
@@ -33,15 +33,14 @@ interface BybitResponse<T> {
  */
 @Injectable()
 export class BybitClientService implements ExchangeClient {
-  async testConnection(apiKey: string, apiSecret: string): Promise<void> {
-    await this.signedGet('/v5/user/query-api', apiKey, apiSecret, {});
+  async testConnection(credentials: ExchangeCredentials): Promise<void> {
+    await this.signedGet('/v5/user/query-api', credentials, {});
   }
 
-  async fetchFills(apiKey: string, apiSecret: string, symbol: string): Promise<NormalizedFill[]> {
+  async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
     const response = await this.signedGet<{ list: BybitExecution[] }>(
       '/v5/execution/list',
-      apiKey,
-      apiSecret,
+      credentials,
       { category: 'spot', symbol, limit: EXECUTION_LIMIT },
     );
 
@@ -56,23 +55,24 @@ export class BybitClientService implements ExchangeClient {
 
   private async signedGet<T>(
     path: string,
-    apiKey: string,
-    apiSecret: string,
+    credentials: ExchangeCredentials,
     params: Record<string, string>,
   ): Promise<T> {
     const query = new URLSearchParams(params);
     const queryString = query.toString();
     const timestamp = Date.now().toString();
 
-    const signaturePayload = `${timestamp}${apiKey}${RECV_WINDOW_MS}${queryString}`;
-    const signature = createHmac('sha256', apiSecret).update(signaturePayload).digest('hex');
+    const signaturePayload = `${timestamp}${credentials.apiKey}${RECV_WINDOW_MS}${queryString}`;
+    const signature = createHmac('sha256', credentials.apiSecret)
+      .update(signaturePayload)
+      .digest('hex');
 
     let response: globalThis.Response;
 
     try {
       response = await fetch(`${BYBIT_BASE_URL}${path}${queryString ? `?${queryString}` : ''}`, {
         headers: {
-          'X-BAPI-API-KEY': apiKey,
+          'X-BAPI-API-KEY': credentials.apiKey,
           'X-BAPI-TIMESTAMP': timestamp,
           'X-BAPI-RECV-WINDOW': RECV_WINDOW_MS,
           'X-BAPI-SIGN': signature,

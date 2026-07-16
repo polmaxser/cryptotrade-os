@@ -40,11 +40,13 @@ enum TradeSource {
   MANUAL
   BINANCE
   BYBIT
+  OKX
 }
 
 enum ExchangeProvider {
   BINANCE
   BYBIT
+  OKX
 }
 
 //////////////////////////////////////////////////////////////
@@ -238,6 +240,8 @@ model ExchangeConnection {
   /// AES-256-GCM encrypted — never stored or returned in plaintext.
   encryptedApiKey    String
   encryptedApiSecret String
+  /// Some exchanges (e.g. OKX) require a third credential set at key creation time.
+  encryptedApiPassphrase String?
 
   /// Last 4 characters of the real key, for display/identification only.
   apiKeyPreview String

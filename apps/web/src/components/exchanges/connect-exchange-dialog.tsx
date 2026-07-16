@@ -20,7 +20,8 @@ import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
 import type { ExchangeProvider } from '@/types/exchange';
 
-const SUPPORTED_EXCHANGES: ExchangeProvider[] = ['BINANCE', 'BYBIT'];
+const SUPPORTED_EXCHANGES: ExchangeProvider[] = ['BINANCE', 'BYBIT', 'OKX'];
+const EXCHANGES_REQUIRING_PASSPHRASE: ExchangeProvider[] = ['OKX'];
 
 export function ConnectExchangeDialog() {
   const t = useTranslations('exchanges.connect');
@@ -32,7 +33,10 @@ export function ConnectExchangeDialog() {
   const [label, setLabel] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
+  const [apiPassphrase, setApiPassphrase] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  const needsPassphrase = EXCHANGES_REQUIRING_PASSPHRASE.includes(exchange);
 
   const mutation = useMutation({
     mutationFn: createExchangeConnection,
@@ -43,6 +47,7 @@ export function ConnectExchangeDialog() {
       setLabel('');
       setApiKey('');
       setApiSecret('');
+      setApiPassphrase('');
     },
     onError: (err) => setError(err instanceof ApiError ? err.message : tErrors('generic')),
   });
@@ -50,7 +55,13 @@ export function ConnectExchangeDialog() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-    mutation.mutate({ exchange, label, apiKey, apiSecret });
+    mutation.mutate({
+      exchange,
+      label,
+      apiKey,
+      apiSecret,
+      apiPassphrase: needsPassphrase ? apiPassphrase : undefined,
+    });
   }
 
   return (
@@ -120,6 +131,20 @@ export function ConnectExchangeDialog() {
               onChange={(event) => setApiSecret(event.target.value)}
             />
           </div>
+
+          {needsPassphrase ? (
+            <div className="space-y-2">
+              <Label htmlFor="apiPassphrase">{t('apiPassphraseLabel')}</Label>
+              <Input
+                id="apiPassphrase"
+                type="password"
+                required
+                autoComplete="off"
+                value={apiPassphrase}
+                onChange={(event) => setApiPassphrase(event.target.value)}
+              />
+            </div>
+          ) : null}
 
           {error ? <p className="text-sm text-red-400">{error}</p> : null}
 

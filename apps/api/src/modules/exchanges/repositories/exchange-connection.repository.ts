@@ -24,6 +24,7 @@ export class ExchangeConnectionRepository {
     label: string;
     encryptedApiKey: string;
     encryptedApiSecret: string;
+    encryptedApiPassphrase?: string;
     apiKeyPreview: string;
   }): Promise<ExchangeConnection> {
     return this.prisma.exchangeConnection.create({ data });

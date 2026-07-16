@@ -292,12 +292,14 @@
       "exchangeLabel": "Exchange",
       "exchanges": {
         "BINANCE": "Binance",
-        "BYBIT": "Bybit"
+        "BYBIT": "Bybit",
+        "OKX": "OKX"
       },
       "labelLabel": "Label",
       "labelPlaceholder": "My Exchange Account",
       "apiKeyLabel": "API Key",
       "apiSecretLabel": "API Secret",
+      "apiPassphraseLabel": "API Passphrase",
       "connect": "Connect",
       "connecting": "Connecting..."
     },

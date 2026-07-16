@@ -41,7 +41,11 @@ export class ExchangesService {
   ): Promise<ExchangeConnectionSummary> {
     // Validate the credentials actually work before we ever store them.
     const client = this.clientRegistry.getClient(dto.exchange);
-    await client.testConnection(dto.apiKey, dto.apiSecret);
+    await client.testConnection({
+      apiKey: dto.apiKey,
+      apiSecret: dto.apiSecret,
+      apiPassphrase: dto.apiPassphrase,
+    });
 
     const connection = await this.connectionRepository.create({
       userId,
@@ -49,6 +53,9 @@ export class ExchangesService {
       label: dto.label,
       encryptedApiKey: this.encryptionService.encrypt(dto.apiKey),
       encryptedApiSecret: this.encryptionService.encrypt(dto.apiSecret),
+      encryptedApiPassphrase: dto.apiPassphrase
+        ? this.encryptionService.encrypt(dto.apiPassphrase)
+        : undefined,
       apiKeyPreview: dto.apiKey.slice(-4),
     });
 
@@ -68,15 +75,20 @@ export class ExchangesService {
       ? (await this.portfoliosService.findOne(dto.portfolioId, userId)).id
       : (await this.portfoliosService.getDefaultForUser(userId))?.id;
 
-    const apiKey = this.encryptionService.decrypt(connection.encryptedApiKey);
-    const apiSecret = this.encryptionService.decrypt(connection.encryptedApiSecret);
+    const credentials = {
+      apiKey: this.encryptionService.decrypt(connection.encryptedApiKey),
+      apiSecret: this.encryptionService.decrypt(connection.encryptedApiSecret),
+      apiPassphrase: connection.encryptedApiPassphrase
+        ? this.encryptionService.decrypt(connection.encryptedApiPassphrase)
+        : undefined,
+    };
 
     const matchedBySymbol = new Map<string, MatchedTrade[]>();
     let totalTrades = 0;
 
     for (const rawSymbol of dto.symbols) {
       const symbol = rawSymbol.toUpperCase();
-      const fills = await client.fetchFills(apiKey, apiSecret, symbol);
+      const fills = await client.fetchFills(credentials, symbol);
       const matched = matchFillsToTrades(fills);
       matchedBySymbol.set(symbol, matched);
       totalTrades += matched.length;
@@ -139,6 +151,7 @@ export class ExchangesService {
 const EXCHANGE_TO_TRADE_SOURCE: Record<ExchangeProvider, TradeSource> = {
   [ExchangeProvider.BINANCE]: TradeSource.BINANCE,
   [ExchangeProvider.BYBIT]: TradeSource.BYBIT,
+  [ExchangeProvider.OKX]: TradeSource.OKX,
 };
 
 function toTradeSource(exchange: ExchangeProvider): TradeSource {
