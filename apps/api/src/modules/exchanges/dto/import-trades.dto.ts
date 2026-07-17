@@ -10,11 +10,13 @@ import {
 const MAX_SYMBOLS_PER_IMPORT = 20;
 
 export class ImportTradesDto {
+  /** Omit to sweep every symbol at once — only supported on some exchanges (see ExchangeClient.supportsAllSymbolsFetch). */
+  @IsOptional()
   @IsArray()
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_SYMBOLS_PER_IMPORT)
   @IsString({ each: true })
-  symbols!: string[];
+  symbols?: string[];
 
   @IsOptional()
   @IsString()

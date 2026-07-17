@@ -9,6 +9,8 @@ const FILLS_LIMIT = '100';
 /** Safety cap on before/after-paginated requests so a huge range can't hang the import. */
 const MAX_PAGES = 30;
 
+const ALL_INST_TYPES = ['SPOT', 'SWAP', 'FUTURES'] as const;
+
 interface OkxFill {
   billId: string;
   instId: string;
@@ -38,6 +40,9 @@ interface OkxResponse<T> {
  */
 @Injectable()
 export class OkxClientService implements ExchangeClient {
+  /** instId is optional on OKX's fills endpoints — omitting it sweeps every instrument of a given instType. */
+  readonly supportsAllSymbolsFetch = true;
+
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet('/api/v5/account/config', credentials, {});
   }
@@ -48,41 +53,52 @@ export class OkxClientService implements ExchangeClient {
    * explicit range is requested — a trader picking a "period" is exactly
    * the case that needs to reach past 3 days. Both paginate the same way:
    * `after` walks toward older records using the previous page's oldest billId.
+   *
+   * When `symbol` is given, instType is derived from it as before. Without
+   * one, every instType is swept in turn since OKX has no single "all
+   * instruments" call — instType itself is a required filter.
    */
   async fetchFills(
     credentials: ExchangeCredentials,
-    symbol: string,
+    symbol: string | undefined,
     range?: FillsRange,
   ): Promise<NormalizedFill[]> {
-    const instType = instTypeForInstId(symbol);
+    const instTypes = symbol ? [instTypeForInstId(symbol)] : ALL_INST_TYPES;
     const path = range ? '/api/v5/trade/fills-history' : '/api/v5/trade/fills';
 
-    const baseParams: Record<string, string> = { instType, instId: symbol, limit: FILLS_LIMIT };
-    if (range) {
-      baseParams.begin = String(range.from.getTime());
-      baseParams.end = String(range.to.getTime());
-    }
-
     const fills: NormalizedFill[] = [];
-    let after: string | undefined;
 
-    for (let page = 0; page < MAX_PAGES; page++) {
-      const params = after ? { ...baseParams, after } : baseParams;
-      const batch = await this.signedGet<OkxFill[]>(path, credentials, params);
-      if (batch.length === 0) break;
+    for (const instType of instTypes) {
+      const baseParams: Record<string, string> = { instType, limit: FILLS_LIMIT };
+      if (symbol) {
+        baseParams.instId = symbol;
+      }
+      if (range) {
+        baseParams.begin = String(range.from.getTime());
+        baseParams.end = String(range.to.getTime());
+      }
 
-      fills.push(
-        ...batch.map((fill) => ({
-          id: fill.billId,
-          price: Number(fill.px),
-          qty: Number(fill.sz),
-          isBuyer: fill.side === 'buy',
-          time: Number(fill.ts),
-        })),
-      );
+      let after: string | undefined;
 
-      if (batch.length < Number(FILLS_LIMIT)) break;
-      after = batch[batch.length - 1]?.billId;
+      for (let page = 0; page < MAX_PAGES; page++) {
+        const params = after ? { ...baseParams, after } : baseParams;
+        const batch = await this.signedGet<OkxFill[]>(path, credentials, params);
+        if (batch.length === 0) break;
+
+        fills.push(
+          ...batch.map((fill) => ({
+            id: fill.billId,
+            symbol: fill.instId,
+            price: Number(fill.px),
+            qty: Number(fill.sz),
+            isBuyer: fill.side === 'buy',
+            time: Number(fill.ts),
+          })),
+        );
+
+        if (batch.length < Number(FILLS_LIMIT)) break;
+        after = batch[batch.length - 1]?.billId;
+      }
     }
 
     return fills;

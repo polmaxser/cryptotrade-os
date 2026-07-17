@@ -24,12 +24,20 @@ export interface FillsRange {
  * a client must cover the whole [from, to] window, chunked to each
  * exchange's own max-window-per-request limit and fully paginated within
  * each chunk — that's how a trader reaches older history.
+ *
+ * `symbol` is optional too, but only some exchanges support omitting it
+ * (Bybit and OKX let you list executions across every pair in one sweep;
+ * Binance and KuCoin's spot API require a symbol per request, with no way
+ * to discover which symbols an account has ever traded). Check
+ * `supportsAllSymbolsFetch` before calling without a symbol — a client
+ * that doesn't support it should never be asked to.
  */
 export interface ExchangeClient {
+  readonly supportsAllSymbolsFetch: boolean;
   testConnection(credentials: ExchangeCredentials): Promise<void>;
   fetchFills(
     credentials: ExchangeCredentials,
-    symbol: string,
+    symbol: string | undefined,
     range?: FillsRange,
   ): Promise<NormalizedFill[]>;
 }

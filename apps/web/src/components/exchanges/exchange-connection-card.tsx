@@ -40,7 +40,7 @@ export function ExchangeConnectionCard({ connection }: ExchangeConnectionCardPro
         </div>
 
         <div className="flex items-center gap-2">
-          <ImportTradesDialog connectionId={connection.id}>
+          <ImportTradesDialog connectionId={connection.id} exchange={connection.exchange}>
             <Button size="sm">{t('importButton')}</Button>
           </ImportTradesDialog>
           <Button

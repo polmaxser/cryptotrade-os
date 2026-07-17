@@ -60,6 +60,14 @@ interface KucoinFuturesFillsPage {
  */
 @Injectable()
 export class KucoinClientService implements ExchangeClient {
+  /**
+   * Spot fills require a symbol; futures technically don't, but treating the
+   * whole client as symbol-required keeps the behavior simple and honest —
+   * an "all symbols" import that silently only covered futures would be a
+   * confusing partial result.
+   */
+  readonly supportsAllSymbolsFetch = false;
+
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet(KUCOIN_SPOT_BASE_URL, '/api/v1/accounts', credentials, {});
   }
@@ -73,9 +81,15 @@ export class KucoinClientService implements ExchangeClient {
    */
   async fetchFills(
     credentials: ExchangeCredentials,
-    symbol: string,
+    symbol: string | undefined,
     range?: FillsRange,
   ): Promise<NormalizedFill[]> {
+    if (!symbol) {
+      throw new ServiceUnavailableException(
+        'KuCoin requires a symbol per request — it has no way to list every pair at once',
+      );
+    }
+
     const [spotResult, futuresResult] = await Promise.allSettled([
       this.fetchSpotFills(credentials, symbol, range),
       this.fetchFuturesFills(credentials, symbol, range),
@@ -121,6 +135,7 @@ export class KucoinClientService implements ExchangeClient {
       fills.push(
         ...response.items.map((fill) => ({
           id: `spot:${fill.id}`,
+          symbol: fill.symbol,
           price: Number(fill.price),
           qty: Number(fill.size),
           isBuyer: fill.side === 'buy',
@@ -164,6 +179,7 @@ export class KucoinClientService implements ExchangeClient {
         fills.push(
           ...response.items.map((fill) => ({
             id: `futures:${fill.tradeId}`,
+            symbol: fill.symbol,
             price: Number(fill.price),
             qty: Number(fill.size),
             isBuyer: fill.side === 'buy',

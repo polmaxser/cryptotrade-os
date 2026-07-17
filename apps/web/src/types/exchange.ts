@@ -18,7 +18,8 @@ export type CreateExchangeConnectionPayload = {
 };
 
 export type ImportTradesPayload = {
-  symbols: string[];
+  /** Omit to import every pair — only supported on some exchanges (Bybit, OKX). */
+  symbols?: string[];
   portfolioId?: string;
   /** Both must be set together — omit both to use the exchange's own default recent window. */
   from?: string;

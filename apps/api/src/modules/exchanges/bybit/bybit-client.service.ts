@@ -46,6 +46,8 @@ interface BybitResponse<T> {
  */
 @Injectable()
 export class BybitClientService implements ExchangeClient {
+  readonly supportsAllSymbolsFetch = true;
+
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet('/v5/user/query-api', credentials, {});
   }
@@ -56,11 +58,12 @@ export class BybitClientService implements ExchangeClient {
    * both and merge, rather than guessing which one the trader meant. If one
    * category is unavailable for the account (e.g. derivatives not enabled),
    * that call is skipped rather than failing the whole import — only if
-   * every category fails do we surface the error.
+   * every category fails do we surface the error. `symbol` can be omitted
+   * entirely — Bybit returns executions across every pair in that case.
    */
   async fetchFills(
     credentials: ExchangeCredentials,
-    symbol: string,
+    symbol: string | undefined,
     range?: FillsRange,
   ): Promise<NormalizedFill[]> {
     const settled = await Promise.allSettled(
@@ -84,7 +87,7 @@ export class BybitClientService implements ExchangeClient {
   /** Walks 7-day chunks (or the exchange's un-dated default window) and fully paginates each via cursor. */
   private async fetchCategoryFills(
     credentials: ExchangeCredentials,
-    symbol: string,
+    symbol: string | undefined,
     category: (typeof EXECUTION_CATEGORIES)[number],
     range: FillsRange | undefined,
   ): Promise<NormalizedFill[]> {
@@ -96,7 +99,10 @@ export class BybitClientService implements ExchangeClient {
       let pages = 0;
 
       do {
-        const params: Record<string, string> = { category, symbol, limit: EXECUTION_LIMIT };
+        const params: Record<string, string> = { category, limit: EXECUTION_LIMIT };
+        if (symbol) {
+          params.symbol = symbol;
+        }
         if (window) {
           params.startTime = String(window.from.getTime());
           params.endTime = String(window.to.getTime());
@@ -114,6 +120,7 @@ export class BybitClientService implements ExchangeClient {
         fills.push(
           ...response.list.map((execution) => ({
             id: `${category}:${execution.execId}`,
+            symbol: execution.symbol,
             price: Number(execution.execPrice),
             qty: Number(execution.execQty),
             isBuyer: execution.side === 'Buy',

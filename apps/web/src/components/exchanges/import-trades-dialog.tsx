@@ -18,14 +18,18 @@ import { importTrades } from '@/lib/api/exchanges';
 import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
 import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
-import type { ImportResult } from '@/types/exchange';
+import type { ExchangeProvider, ImportResult } from '@/types/exchange';
+
+/** Mirrors ExchangeClient.supportsAllSymbolsFetch on the backend — Binance/KuCoin's APIs require a symbol per request. */
+const EXCHANGES_SUPPORTING_ALL_SYMBOLS: ExchangeProvider[] = ['BYBIT', 'OKX'];
 
 type ImportTradesDialogProps = {
   connectionId: string;
+  exchange: ExchangeProvider;
   children: ReactNode;
 };
 
-export function ImportTradesDialog({ connectionId, children }: ImportTradesDialogProps) {
+export function ImportTradesDialog({ connectionId, exchange, children }: ImportTradesDialogProps) {
   const t = useTranslations('exchanges.import');
   const tErrors = useTranslations('auth.errors');
   const queryClient = useQueryClient();
@@ -40,6 +44,8 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<ImportResult[] | null>(null);
 
+  const supportsAllSymbols = EXCHANGES_SUPPORTING_ALL_SYMBOLS.includes(exchange);
+
   const mutation = useMutation({
     mutationFn: () => {
       const symbols = symbolsInput
@@ -48,7 +54,7 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
         .filter(Boolean);
 
       return importTrades(connectionId, {
-        symbols,
+        symbols: symbols.length > 0 ? symbols : undefined,
         portfolioId: portfolioId || undefined,
         from: fromDate ? new Date(`${fromDate}T00:00:00.000Z`).toISOString() : undefined,
         to: toDate ? new Date(`${toDate}T23:59:59.999Z`).toISOString() : undefined,
@@ -80,6 +86,11 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
     event.preventDefault();
     setError(null);
 
+    if (!symbolsInput.trim() && !supportsAllSymbols) {
+      setError(t('symbolsRequiredForExchange', { exchange }));
+      return;
+    }
+
     if (Boolean(fromDate) !== Boolean(toDate)) {
       setError(t('periodBothRequired'));
       return;
@@ -103,15 +114,21 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="importSymbols">{t('symbolsLabel')}</Label>
+            <Label htmlFor="importSymbols">
+              {supportsAllSymbols ? t('symbolsLabelOptional') : t('symbolsLabel')}
+            </Label>
             <Input
               id="importSymbols"
-              required
-              placeholder={t('symbolsPlaceholder')}
+              required={!supportsAllSymbols}
+              placeholder={
+                supportsAllSymbols ? t('symbolsPlaceholderOptional') : t('symbolsPlaceholder')
+              }
               value={symbolsInput}
               onChange={(event) => setSymbolsInput(event.target.value)}
             />
-            <p className="text-muted-foreground text-xs">{t('symbolsHint')}</p>
+            <p className="text-muted-foreground text-xs">
+              {supportsAllSymbols ? t('symbolsHintOptional') : t('symbolsHint')}
+            </p>
           </div>
 
           <div className="space-y-2">

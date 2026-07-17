@@ -48,6 +48,9 @@ interface BinanceFuturesFill {
  */
 @Injectable()
 export class BinanceClientService implements ExchangeClient {
+  /** Both myTrades endpoints require a symbol — Binance has no "every pair" trade-history call. */
+  readonly supportsAllSymbolsFetch = false;
+
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet(BINANCE_SPOT_BASE_URL, '/api/v3/account', credentials, {});
   }
@@ -62,9 +65,15 @@ export class BinanceClientService implements ExchangeClient {
    */
   async fetchFills(
     credentials: ExchangeCredentials,
-    symbol: string,
+    symbol: string | undefined,
     range?: FillsRange,
   ): Promise<NormalizedFill[]> {
+    if (!symbol) {
+      throw new ServiceUnavailableException(
+        'Binance requires a symbol per request — it has no way to list every pair a trade at once',
+      );
+    }
+
     const [spotResult, futuresResult] = await Promise.allSettled([
       this.fetchSpotFills(credentials, symbol, range),
       this.fetchFuturesFills(credentials, symbol, range),
@@ -231,6 +240,7 @@ export class BinanceClientService implements ExchangeClient {
 function mapSpotFill(fill: BinanceSpotFill): NormalizedFill {
   return {
     id: `spot:${fill.id}`,
+    symbol: fill.symbol,
     price: Number(fill.price),
     qty: Number(fill.qty),
     isBuyer: fill.isBuyer,
@@ -241,6 +251,7 @@ function mapSpotFill(fill: BinanceSpotFill): NormalizedFill {
 function mapFuturesFill(fill: BinanceFuturesFill): NormalizedFill {
   return {
     id: `futures:${fill.id}`,
+    symbol: fill.symbol,
     price: Number(fill.price),
     qty: Number(fill.qty),
     isBuyer: fill.buyer,

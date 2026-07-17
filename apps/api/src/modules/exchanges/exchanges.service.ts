@@ -17,7 +17,8 @@ import { matchFillsToTrades, MatchedTrade } from './trade-matcher';
 import { ExchangeConnectionRepository } from './repositories/exchange-connection.repository';
 import { CreateExchangeConnectionDto } from './dto/create-exchange-connection.dto';
 import { ImportTradesDto } from './dto/import-trades.dto';
-import { FillsRange } from './types/exchange-client';
+import { ExchangeClient, ExchangeCredentials, FillsRange } from './types/exchange-client';
+import { NormalizedFill } from './types/normalized-fill';
 import {
   ExchangeConnectionSummary,
   ImportResult,
@@ -90,17 +91,18 @@ export class ExchangesService {
     };
 
     const range = this.resolveImportRange(dto);
+    const matchedBySymbol = await this.fetchAndMatchBySymbol(
+      client,
+      connection,
+      credentials,
+      dto,
+      range,
+    );
 
-    const matchedBySymbol = new Map<string, MatchedTrade[]>();
-    let totalTrades = 0;
-
-    for (const rawSymbol of dto.symbols) {
-      const symbol = rawSymbol.toUpperCase();
-      const fills = await client.fetchFills(credentials, symbol, range);
-      const matched = matchFillsToTrades(fills);
-      matchedBySymbol.set(symbol, matched);
-      totalTrades += matched.length;
-    }
+    const totalTrades = [...matchedBySymbol.values()].reduce(
+      (sum, matched) => sum + matched.length,
+      0,
+    );
 
     await this.billingService.assertCanImportTrades(userId, totalTrades);
 
@@ -139,6 +141,53 @@ export class ExchangesService {
     await this.connectionRepository.touchLastImported(connection.id);
 
     return results;
+  }
+
+  /**
+   * With explicit symbols, fetches each one individually as before. Without
+   * any, sweeps every symbol at once (only some exchanges support this —
+   * see ExchangeClient.supportsAllSymbolsFetch) and groups the results by
+   * each fill's own symbol, since the caller has no symbol list to iterate.
+   */
+  private async fetchAndMatchBySymbol(
+    client: ExchangeClient,
+    connection: ExchangeConnection,
+    credentials: ExchangeCredentials,
+    dto: ImportTradesDto,
+    range: FillsRange | undefined,
+  ): Promise<Map<string, MatchedTrade[]>> {
+    const matchedBySymbol = new Map<string, MatchedTrade[]>();
+
+    if (dto.symbols && dto.symbols.length > 0) {
+      for (const rawSymbol of dto.symbols) {
+        const symbol = rawSymbol.toUpperCase();
+        const fills = await client.fetchFills(credentials, symbol, range);
+        matchedBySymbol.set(symbol, matchFillsToTrades(fills));
+      }
+
+      return matchedBySymbol;
+    }
+
+    if (!client.supportsAllSymbolsFetch) {
+      throw new BadRequestException(
+        `${connection.exchange} requires at least one symbol — it has no way to list every pair at once`,
+      );
+    }
+
+    const fills = await client.fetchFills(credentials, undefined, range);
+    const fillsBySymbol = new Map<string, NormalizedFill[]>();
+
+    for (const fill of fills) {
+      const bucket = fillsBySymbol.get(fill.symbol) ?? [];
+      bucket.push(fill);
+      fillsBySymbol.set(fill.symbol, bucket);
+    }
+
+    for (const [symbol, symbolFills] of fillsBySymbol) {
+      matchedBySymbol.set(symbol, matchFillsToTrades(symbolFills));
+    }
+
+    return matchedBySymbol;
   }
 
   private resolveImportRange(dto: ImportTradesDto): FillsRange | undefined {
