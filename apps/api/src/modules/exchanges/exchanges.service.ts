@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ExchangeConnection, ExchangeProvider, TradeSource } from '@cryptotrade/database';
 
 import { PrismaService } from '@/common/database/prisma.service';
@@ -12,6 +17,7 @@ import { matchFillsToTrades, MatchedTrade } from './trade-matcher';
 import { ExchangeConnectionRepository } from './repositories/exchange-connection.repository';
 import { CreateExchangeConnectionDto } from './dto/create-exchange-connection.dto';
 import { ImportTradesDto } from './dto/import-trades.dto';
+import { FillsRange } from './types/exchange-client';
 import {
   ExchangeConnectionSummary,
   ImportResult,
@@ -83,12 +89,14 @@ export class ExchangesService {
         : undefined,
     };
 
+    const range = this.resolveImportRange(dto);
+
     const matchedBySymbol = new Map<string, MatchedTrade[]>();
     let totalTrades = 0;
 
     for (const rawSymbol of dto.symbols) {
       const symbol = rawSymbol.toUpperCase();
-      const fills = await client.fetchFills(credentials, symbol);
+      const fills = await client.fetchFills(credentials, symbol, range);
       const matched = matchFillsToTrades(fills);
       matchedBySymbol.set(symbol, matched);
       totalTrades += matched.length;
@@ -131,6 +139,25 @@ export class ExchangesService {
     await this.connectionRepository.touchLastImported(connection.id);
 
     return results;
+  }
+
+  private resolveImportRange(dto: ImportTradesDto): FillsRange | undefined {
+    if (!dto.from && !dto.to) {
+      return undefined;
+    }
+
+    if (!dto.from || !dto.to) {
+      throw new BadRequestException('Both "from" and "to" must be provided together');
+    }
+
+    const from = new Date(dto.from);
+    const to = new Date(dto.to);
+
+    if (from >= to) {
+      throw new BadRequestException('"from" must be before "to"');
+    }
+
+    return { from, to };
   }
 
   private async getConnectionOrThrow(id: string, userId: string): Promise<ExchangeConnection> {

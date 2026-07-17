@@ -1,12 +1,17 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 
-import { ExchangeClient, ExchangeCredentials } from '../types/exchange-client';
+import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
+import { chunkRange } from '../utils/date-range';
 
 const BYBIT_BASE_URL = 'https://api.bybit.com';
 const RECV_WINDOW_MS = '10000';
 const EXECUTION_LIMIT = '100';
+/** Bybit hard limit: endTime - startTime <= 7 days per request. */
+const MAX_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+/** Safety cap on paginated requests per category so one huge range can't hang the import. */
+const MAX_PAGES_PER_CATEGORY = 30;
 
 /** spot + USDT/USDC-margined perpetuals — inverse (coin-margined) contracts are out of scope for now. */
 const EXECUTION_CATEGORIES = ['spot', 'linear'] as const;
@@ -18,6 +23,11 @@ interface BybitExecution {
   execPrice: string;
   execQty: string;
   execTime: string;
+}
+
+interface BybitExecutionList {
+  list: BybitExecution[];
+  nextPageCursor: string;
 }
 
 interface BybitResponse<T> {
@@ -48,14 +58,14 @@ export class BybitClientService implements ExchangeClient {
    * that call is skipped rather than failing the whole import — only if
    * every category fails do we surface the error.
    */
-  async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
+  async fetchFills(
+    credentials: ExchangeCredentials,
+    symbol: string,
+    range?: FillsRange,
+  ): Promise<NormalizedFill[]> {
     const settled = await Promise.allSettled(
       EXECUTION_CATEGORIES.map((category) =>
-        this.signedGet<{ list: BybitExecution[] }>('/v5/execution/list', credentials, {
-          category,
-          symbol,
-          limit: EXECUTION_LIMIT,
-        }),
+        this.fetchCategoryFills(credentials, symbol, category, range),
       ),
     );
 
@@ -68,18 +78,55 @@ export class BybitClientService implements ExchangeClient {
       throw firstRejection?.reason ?? new ServiceUnavailableException('Bybit fills request failed');
     }
 
-    return settled.flatMap((result, index) => {
-      if (result.status !== 'fulfilled') return [];
+    return settled.flatMap((result) => (result.status === 'fulfilled' ? result.value : []));
+  }
 
-      const category = EXECUTION_CATEGORIES[index];
-      return result.value.list.map((execution) => ({
-        id: `${category}:${execution.execId}`,
-        price: Number(execution.execPrice),
-        qty: Number(execution.execQty),
-        isBuyer: execution.side === 'Buy',
-        time: Number(execution.execTime),
-      }));
-    });
+  /** Walks 7-day chunks (or the exchange's un-dated default window) and fully paginates each via cursor. */
+  private async fetchCategoryFills(
+    credentials: ExchangeCredentials,
+    symbol: string,
+    category: (typeof EXECUTION_CATEGORIES)[number],
+    range: FillsRange | undefined,
+  ): Promise<NormalizedFill[]> {
+    const windows = range ? chunkRange(range.from, range.to, MAX_WINDOW_MS) : [undefined];
+    const fills: NormalizedFill[] = [];
+
+    for (const window of windows) {
+      let cursor: string | undefined;
+      let pages = 0;
+
+      do {
+        const params: Record<string, string> = { category, symbol, limit: EXECUTION_LIMIT };
+        if (window) {
+          params.startTime = String(window.from.getTime());
+          params.endTime = String(window.to.getTime());
+        }
+        if (cursor) {
+          params.cursor = cursor;
+        }
+
+        const response = await this.signedGet<BybitExecutionList>(
+          '/v5/execution/list',
+          credentials,
+          params,
+        );
+
+        fills.push(
+          ...response.list.map((execution) => ({
+            id: `${category}:${execution.execId}`,
+            price: Number(execution.execPrice),
+            qty: Number(execution.execQty),
+            isBuyer: execution.side === 'Buy',
+            time: Number(execution.execTime),
+          })),
+        );
+
+        cursor = response.nextPageCursor || undefined;
+        pages += 1;
+      } while (cursor && pages < MAX_PAGES_PER_CATEGORY);
+    }
+
+    return fills;
   }
 
   private async signedGet<T>(

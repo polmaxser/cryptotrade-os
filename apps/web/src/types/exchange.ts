@@ -20,6 +20,9 @@ export type CreateExchangeConnectionPayload = {
 export type ImportTradesPayload = {
   symbols: string[];
   portfolioId?: string;
+  /** Both must be set together — omit both to use the exchange's own default recent window. */
+  from?: string;
+  to?: string;
 };
 
 export type ImportResult = {

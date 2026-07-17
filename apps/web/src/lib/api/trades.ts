@@ -18,3 +18,7 @@ export async function updateTrade(id: string, payload: UpdateTradePayload): Prom
     body: JSON.stringify(payload),
   });
 }
+
+export async function deleteTrade(id: string): Promise<void> {
+  await apiFetch(`/trades/${id}`, { method: 'DELETE' });
+}

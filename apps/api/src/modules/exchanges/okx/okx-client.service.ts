@@ -1,11 +1,13 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 
-import { ExchangeClient, ExchangeCredentials } from '../types/exchange-client';
+import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 
 const OKX_BASE_URL = 'https://www.okx.com';
 const FILLS_LIMIT = '100';
+/** Safety cap on before/after-paginated requests so a huge range can't hang the import. */
+const MAX_PAGES = 30;
 
 interface OkxFill {
   billId: string;
@@ -40,20 +42,50 @@ export class OkxClientService implements ExchangeClient {
     await this.signedGet('/api/v5/account/config', credentials, {});
   }
 
-  async fetchFills(credentials: ExchangeCredentials, symbol: string): Promise<NormalizedFill[]> {
-    const fills = await this.signedGet<OkxFill[]>('/api/v5/trade/fills', credentials, {
-      instType: instTypeForInstId(symbol),
-      instId: symbol,
-      limit: FILLS_LIMIT,
-    });
+  /**
+   * /trade/fills only covers the last 3 days but needs no special access;
+   * /trade/fills-history covers up to 3 months and is used whenever an
+   * explicit range is requested — a trader picking a "period" is exactly
+   * the case that needs to reach past 3 days. Both paginate the same way:
+   * `after` walks toward older records using the previous page's oldest billId.
+   */
+  async fetchFills(
+    credentials: ExchangeCredentials,
+    symbol: string,
+    range?: FillsRange,
+  ): Promise<NormalizedFill[]> {
+    const instType = instTypeForInstId(symbol);
+    const path = range ? '/api/v5/trade/fills-history' : '/api/v5/trade/fills';
 
-    return fills.map((fill) => ({
-      id: fill.billId,
-      price: Number(fill.px),
-      qty: Number(fill.sz),
-      isBuyer: fill.side === 'buy',
-      time: Number(fill.ts),
-    }));
+    const baseParams: Record<string, string> = { instType, instId: symbol, limit: FILLS_LIMIT };
+    if (range) {
+      baseParams.begin = String(range.from.getTime());
+      baseParams.end = String(range.to.getTime());
+    }
+
+    const fills: NormalizedFill[] = [];
+    let after: string | undefined;
+
+    for (let page = 0; page < MAX_PAGES; page++) {
+      const params = after ? { ...baseParams, after } : baseParams;
+      const batch = await this.signedGet<OkxFill[]>(path, credentials, params);
+      if (batch.length === 0) break;
+
+      fills.push(
+        ...batch.map((fill) => ({
+          id: fill.billId,
+          price: Number(fill.px),
+          qty: Number(fill.sz),
+          isBuyer: fill.side === 'buy',
+          time: Number(fill.ts),
+        })),
+      );
+
+      if (batch.length < Number(FILLS_LIMIT)) break;
+      after = batch[batch.length - 1]?.billId;
+    }
+
+    return fills;
   }
 
   private async signedGet<T>(

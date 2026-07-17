@@ -1,4 +1,11 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsISO8601,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 const MAX_SYMBOLS_PER_IMPORT = 20;
 
@@ -12,4 +19,13 @@ export class ImportTradesDto {
   @IsOptional()
   @IsString()
   portfolioId?: string;
+
+  /** Both from/to must be set together — a one-sided range isn't meaningful for a chunked fetch. */
+  @IsOptional()
+  @IsISO8601()
+  from?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  to?: string;
 }

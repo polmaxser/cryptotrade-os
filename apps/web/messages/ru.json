@@ -22,7 +22,8 @@
     "exchanges": "Биржи",
     "defi": "DeFi",
     "nft": "NFT",
-    "coach": "AI Coach"
+    "coach": "AI Coach",
+    "trades": "Сделки"
   },
   "auth": {
     "login": {
@@ -154,6 +155,25 @@
     },
     "errors": {
       "generic": "Что-то пошло не так. Попробуйте ещё раз."
+    },
+    "list": {
+      "title": "Сделки",
+      "subtitle": "Все сделки по портфелям и подключённым биржам.",
+      "empty": "Пока нет сделок.",
+      "columnSymbol": "Символ",
+      "columnSide": "Направление",
+      "columnEntry": "Вход",
+      "columnExit": "Выход",
+      "columnQuantity": "Кол-во",
+      "columnPnl": "PnL",
+      "columnStatus": "Статус",
+      "columnOpenedAt": "Дата открытия",
+      "sideLong": "Long",
+      "sideShort": "Short",
+      "statusOpen": "Открыта",
+      "statusClosed": "Закрыта",
+      "edit": "Редактировать",
+      "delete": "Удалить"
     }
   },
   "workspaces": {
@@ -322,6 +342,12 @@
       "symbolsLabel": "Символы",
       "symbolsPlaceholder": "BTCUSDT, ETHUSDT",
       "symbolsHint": "Символы этой биржи через запятую. Повторный импорт символа заменяет ранее импортированные по нему сделки.",
+      "periodLabel": "Период (необязательно)",
+      "periodFromLabel": "С",
+      "periodToLabel": "По",
+      "periodHint": "Оставьте оба поля пустыми, чтобы использовать период по умолчанию для этой биржи. Укажите период, чтобы загрузить более старую историю.",
+      "periodBothRequired": "Укажите обе даты — начало и конец периода — либо оставьте оба поля пустыми.",
+      "periodInvalidOrder": "Дата начала должна быть раньше даты конца.",
       "portfolioLabel": "Портфель",
       "portfolioDefault": "Портфель по умолчанию",
       "import": "Импортировать",

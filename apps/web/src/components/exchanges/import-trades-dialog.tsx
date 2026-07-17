@@ -35,6 +35,8 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
   const [open, setOpen] = useState(false);
   const [symbolsInput, setSymbolsInput] = useState('');
   const [portfolioId, setPortfolioId] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<ImportResult[] | null>(null);
 
@@ -45,7 +47,12 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
         .map((symbol) => symbol.trim().toUpperCase())
         .filter(Boolean);
 
-      return importTrades(connectionId, { symbols, portfolioId: portfolioId || undefined });
+      return importTrades(connectionId, {
+        symbols,
+        portfolioId: portfolioId || undefined,
+        from: fromDate ? new Date(`${fromDate}T00:00:00.000Z`).toISOString() : undefined,
+        to: toDate ? new Date(`${toDate}T23:59:59.999Z`).toISOString() : undefined,
+      });
     },
     onSuccess: (data) => {
       setResults(data);
@@ -62,6 +69,8 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
     if (!nextOpen) {
       setSymbolsInput('');
       setPortfolioId('');
+      setFromDate('');
+      setToDate('');
       setError(null);
       setResults(null);
     }
@@ -70,6 +79,17 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    if (Boolean(fromDate) !== Boolean(toDate)) {
+      setError(t('periodBothRequired'));
+      return;
+    }
+
+    if (fromDate && toDate && fromDate > toDate) {
+      setError(t('periodInvalidOrder'));
+      return;
+    }
+
     mutation.mutate();
   }
 
@@ -92,6 +112,25 @@ export function ImportTradesDialog({ connectionId, children }: ImportTradesDialo
               onChange={(event) => setSymbolsInput(event.target.value)}
             />
             <p className="text-muted-foreground text-xs">{t('symbolsHint')}</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>{t('periodLabel')}</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                type="date"
+                aria-label={t('periodFromLabel')}
+                value={fromDate}
+                onChange={(event) => setFromDate(event.target.value)}
+              />
+              <Input
+                type="date"
+                aria-label={t('periodToLabel')}
+                value={toDate}
+                onChange={(event) => setToDate(event.target.value)}
+              />
+            </div>
+            <p className="text-muted-foreground text-xs">{t('periodHint')}</p>
           </div>
 
           {portfolios.length > 1 ? (

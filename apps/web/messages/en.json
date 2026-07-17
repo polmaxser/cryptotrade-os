@@ -22,7 +22,8 @@
     "exchanges": "Exchanges",
     "defi": "DeFi",
     "nft": "NFTs",
-    "coach": "AI Coach"
+    "coach": "AI Coach",
+    "trades": "Trades"
   },
   "auth": {
     "login": {
@@ -154,6 +155,25 @@
     },
     "errors": {
       "generic": "Something went wrong. Please try again."
+    },
+    "list": {
+      "title": "Trades",
+      "subtitle": "Every trade across your portfolios and connected exchanges.",
+      "empty": "No trades yet.",
+      "columnSymbol": "Symbol",
+      "columnSide": "Side",
+      "columnEntry": "Entry",
+      "columnExit": "Exit",
+      "columnQuantity": "Qty",
+      "columnPnl": "PnL",
+      "columnStatus": "Status",
+      "columnOpenedAt": "Opened At",
+      "sideLong": "Long",
+      "sideShort": "Short",
+      "statusOpen": "Open",
+      "statusClosed": "Closed",
+      "edit": "Edit",
+      "delete": "Delete"
     }
   },
   "workspaces": {
@@ -322,6 +342,12 @@
       "symbolsLabel": "Symbols",
       "symbolsPlaceholder": "BTCUSDT, ETHUSDT",
       "symbolsHint": "Comma-separated symbols for this exchange. Re-importing a symbol replaces its previously imported trades.",
+      "periodLabel": "Period (optional)",
+      "periodFromLabel": "From",
+      "periodToLabel": "To",
+      "periodHint": "Leave both empty to use the exchange's default recent window. Set a period to reach further back in history.",
+      "periodBothRequired": "Set both a start and end date, or leave both empty.",
+      "periodInvalidOrder": "The start date must be before the end date.",
       "portfolioLabel": "Portfolio",
       "portfolioDefault": "Default portfolio",
       "import": "Import",
