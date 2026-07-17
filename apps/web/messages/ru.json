@@ -437,6 +437,10 @@
       "TAG_CORRELATION": "Корреляция с эмоцией",
       "OVERTRADING": "Овертрейдинг",
       "POSITION_SIZE_INCONSISTENCY": "Несоответствие размера позиции"
+    },
+    "widget": {
+      "title": "Находки AI Coach",
+      "viewAll": "Все находки"
     }
   },
   "dashboard": {

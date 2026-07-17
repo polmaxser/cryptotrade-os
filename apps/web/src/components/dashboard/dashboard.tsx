@@ -6,6 +6,7 @@ import { useAnalyticsSummaryQuery } from '@/hooks/use-analytics-summary-query';
 import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
 import { useTradesQuery } from '@/hooks/use-trades-query';
 import { NewTradeDialog } from '@/components/trades';
+import { CoachInsightsWidget } from '@/components/coach';
 import { PerformanceCard } from './performance-card';
 import { RecentTradesCard } from './recent-trades-card';
 import { RiskPerformanceCard } from './risk-performance-card';
@@ -95,6 +96,8 @@ export function Dashboard() {
             <section>
               <RiskPerformanceCard summary={analyticsQuery.data!} portfolio={scopedPortfolio} />
             </section>
+
+            <CoachInsightsWidget />
 
             <section>
               {tradesQuery.data!.length > 0 ? (

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CoachInsightsWidget } from '@/components/coach';
 import { useJournalEntriesQuery } from '@/hooks/use-journal-entries-query';
 import { useJournalTagsQuery } from '@/hooks/use-journal-tags-query';
 import { JournalEntryCard } from './journal-entry-card';
@@ -31,6 +32,8 @@ export function JournalList() {
           </Button>
         </JournalEntryDialog>
       </div>
+
+      <CoachInsightsWidget />
 
       {tags.length > 0 ? (
         <select

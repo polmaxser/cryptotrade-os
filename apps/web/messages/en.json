@@ -437,6 +437,10 @@
       "TAG_CORRELATION": "Emotion tag correlation",
       "OVERTRADING": "Overtrading",
       "POSITION_SIZE_INCONSISTENCY": "Inconsistent position sizing"
+    },
+    "widget": {
+      "title": "Coach Insights",
+      "viewAll": "View all"
     }
   },
   "dashboard": {
