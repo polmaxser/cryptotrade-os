@@ -128,7 +128,14 @@ export class TradeRepository {
     });
   }
 
-  async countByStatus(where: Prisma.TradeWhereInput): Promise<TradeStatusCounts> {
+  /**
+   * `closedAtRange` only narrows the CLOSED count — OPEN trades have no
+   * closedAt, so applying the same range there would incorrectly zero them out.
+   */
+  async countByStatus(
+    where: Prisma.TradeWhereInput,
+    closedAtRange?: { from: Date; to: Date },
+  ): Promise<TradeStatusCounts> {
     const [open, closed] = await Promise.all([
       this.prisma.trade.count({
         where: {
@@ -140,6 +147,9 @@ export class TradeRepository {
         where: {
           ...where,
           status: 'CLOSED',
+          ...(closedAtRange
+            ? { closedAt: { gte: closedAtRange.from, lte: closedAtRange.to } }
+            : {}),
         },
       }),
     ]);

@@ -12,5 +12,7 @@ import { PortfoliosModule } from '@/modules/portfolios/portfolios.module';
   controllers: [AnalyticsController],
 
   providers: [AnalyticsService],
+
+  exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

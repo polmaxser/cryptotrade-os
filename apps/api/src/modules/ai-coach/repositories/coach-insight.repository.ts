@@ -37,6 +37,14 @@ export class CoachInsightRepository {
     });
   }
 
+  /** Insights the detection cron created within a window — the raw input AI Reports summarize. */
+  async findCreatedInRange(userId: string, from: Date, to: Date): Promise<CoachInsight[]> {
+    return this.prisma.coachInsight.findMany({
+      where: { userId, createdAt: { gte: from, lte: to } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async create(data: Prisma.CoachInsightUncheckedCreateInput): Promise<CoachInsight> {
     return this.prisma.coachInsight.create({ data });
   }

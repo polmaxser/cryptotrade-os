@@ -18,7 +18,17 @@ export class AnalyticsService {
     private readonly portfoliosService: PortfoliosService,
   ) {}
 
-  async getSummary(userId: string, portfolioId?: string): Promise<AnalyticsSummary> {
+  /**
+   * `range` scopes closed-trade metrics to a period (used by AI Reports) —
+   * open-trade counts stay unscoped since "currently open" isn't a
+   * date-range concept. Omitting range preserves the original all-time
+   * behavior this method has always had.
+   */
+  async getSummary(
+    userId: string,
+    portfolioId?: string,
+    range?: { from: Date; to: Date },
+  ): Promise<AnalyticsSummary> {
     const startingBalance = portfolioId
       ? await this.resolveStartingBalance(userId, portfolioId)
       : null;
@@ -27,10 +37,14 @@ export class AnalyticsService {
       userId,
       ...(portfolioId ? { portfolioId } : {}),
     };
+    const closedWhere: Prisma.TradeWhereInput = {
+      ...where,
+      ...(range ? { closedAt: { gte: range.from, lte: range.to } } : {}),
+    };
 
     const [closedTrades, counts] = await Promise.all([
-      this.tradeRepository.findClosedForAnalytics(where),
-      this.tradeRepository.countByStatus(where),
+      this.tradeRepository.findClosedForAnalytics(closedWhere),
+      this.tradeRepository.countByStatus(where, range),
     ]);
 
     const tradesWithPnl = closedTrades.filter(hasPnl);

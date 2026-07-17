@@ -30,4 +30,5 @@ export const QUERY_KEYS = {
   defiPositions: ['defi-positions'] as const,
   nftHoldings: ['nft-holdings'] as const,
   coachInsights: (status?: string) => ['coach-insights', status ?? 'all'] as const,
+  aiReports: (type?: string) => ['ai-reports', type ?? 'all'] as const,
 };

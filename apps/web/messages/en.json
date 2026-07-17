@@ -23,7 +23,8 @@
     "defi": "DeFi",
     "nft": "NFTs",
     "coach": "AI Coach",
-    "trades": "Trades"
+    "trades": "Trades",
+    "reports": "AI Reports"
   },
   "auth": {
     "login": {
@@ -441,6 +442,25 @@
     "widget": {
       "title": "Coach Insights",
       "viewAll": "View all"
+    }
+  },
+  "reports": {
+    "title": "AI Reports",
+    "subtitle": "Daily, weekly, and monthly digests of your trading — Premium.",
+    "empty": "No reports yet. Generate one below or check back after the next scheduled run.",
+    "loadError": "Something went wrong while loading your reports.",
+    "generateError": "Something went wrong while generating the report.",
+    "generating": "Generating...",
+    "generateDaily": "Generate daily",
+    "generateWeekly": "Generate weekly",
+    "generateMonthly": "Generate monthly",
+    "filterAll": "All",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "types": {
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly"
     }
   },
   "dashboard": {

@@ -23,6 +23,6 @@ import { CoachInsightRepository } from './repositories/coach-insight.repository'
     CoachInsightRepository,
   ],
 
-  exports: [CoachInsightsService],
+  exports: [CoachInsightsService, CoachInsightRepository],
 })
 export class AiCoachModule {}

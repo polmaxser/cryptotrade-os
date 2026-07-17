@@ -149,6 +149,18 @@ export class BillingService {
     }
   }
 
+  /** AI Reports ships on the same Premium tier as AI Coach (see docs/pricing.md) — same underlying limit, own call site for clarity. */
+  async assertCanUseAiReports(userId: string): Promise<void> {
+    const plan = await this.getEffectivePlan(userId);
+    const limits = getPlanLimits(plan);
+
+    if (!limits.canUseAiCoach) {
+      throw new ForbiddenException(
+        'AI Reports are available on the Premium plan. Upgrade to use it.',
+      );
+    }
+  }
+
   async createCheckoutSession(
     userId: string,
     plan: 'STANDARD' | 'PREMIUM',

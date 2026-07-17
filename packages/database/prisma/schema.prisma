@@ -83,6 +83,12 @@ enum CoachInsightStatus {
   DISMISSED
 }
 
+enum AiReportType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
 //////////////////////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////////////////////
@@ -126,6 +132,7 @@ model User {
   nftHoldings   NftHolding[]
 
   coachInsights CoachInsight[]
+  aiReports     AiReport[]
 
   @@index([email])
   @@map("users")
@@ -675,4 +682,35 @@ model CoachInsight {
   @@index([userId])
   @@index([userId, pattern])
   @@map("coach_insights")
+}
+
+//////////////////////////////////////////////////////////////
+// AI REPORTS
+//////////////////////////////////////////////////////////////
+
+model AiReport {
+  id String @id @default(cuid())
+
+  type AiReportType
+
+  title   String
+  summary String
+
+  /// Computed analytics for the period (and, for weekly/monthly, the prior
+  /// period for comparison) — kept alongside the LLM text for auditability,
+  /// same pattern as CoachInsight.metrics.
+  metrics Json
+
+  periodStart DateTime
+  periodEnd   DateTime
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, periodStart])
+  @@index([userId])
+  @@index([userId, type])
+  @@map("ai_reports")
 }
