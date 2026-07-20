@@ -26,7 +26,8 @@
     "trades": "Сделки",
     "reports": "AI-отчёты",
     "strategies": "Стратегии",
-    "backtests": "Бэктестинг"
+    "backtests": "Бэктестинг",
+    "economicCalendar": "Экономический календарь"
   },
   "auth": {
     "login": {
@@ -551,6 +552,26 @@
         "overbought": "Уровень перекупленности"
       }
     }
+  },
+  "economicCalendar": {
+    "title": "Экономический календарь",
+    "subtitle": "Решения FOMC по ставке, публикации CPI и NFP — Premium.",
+    "empty": "В этом периоде нет событий.",
+    "loadError": "Не удалось загрузить экономический календарь.",
+    "filterAll": "Все",
+    "categories": {
+      "FOMC": "FOMC",
+      "CPI": "CPI",
+      "NFP": "NFP"
+    },
+    "importance": {
+      "HIGH": "Высокая",
+      "MEDIUM": "Средняя",
+      "LOW": "Низкая"
+    },
+    "forecast": "Прогноз",
+    "previous": "Предыдущее",
+    "actual": "Факт"
   },
   "dashboard": {
     "title": "Панель управления",

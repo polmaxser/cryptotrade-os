@@ -812,3 +812,46 @@ model BacktestRun {
   @@index([strategyId])
   @@map("backtest_runs")
 }
+
+enum EconomicEventCategory {
+  FOMC
+  CPI
+  NFP
+}
+
+enum EconomicEventImportance {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+/// Global reference data (not user-owned) — macro calendar entries such as
+/// FOMC rate decisions, CPI releases, and NFP/Employment Situation reports.
+/// Seeded from official schedules (Fed, BLS) rather than a live feed, since
+/// no reliable free real-time economic-calendar API exists (Finnhub gates
+/// it behind a paid plan, Trading Economics is paid-only, FRED has no FOMC
+/// data). Meant to be kept current via the future Admin Panel (Package 6.4).
+model EconomicEvent {
+  id String @id @default(cuid())
+
+  category   EconomicEventCategory
+  importance EconomicEventImportance
+  country    String                   @default("US")
+
+  title       String
+  description String?
+
+  eventDate DateTime
+
+  forecast String?
+  previous String?
+  actual   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([category, eventDate])
+  @@index([eventDate])
+  @@index([category])
+  @@map("economic_events")
+}

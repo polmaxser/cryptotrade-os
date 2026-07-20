@@ -26,7 +26,8 @@
     "trades": "Trades",
     "reports": "AI Reports",
     "strategies": "Strategies",
-    "backtests": "Backtesting"
+    "backtests": "Backtesting",
+    "economicCalendar": "Economic Calendar"
   },
   "auth": {
     "login": {
@@ -551,6 +552,26 @@
         "overbought": "Overbought Level"
       }
     }
+  },
+  "economicCalendar": {
+    "title": "Economic Calendar",
+    "subtitle": "FOMC rate decisions, CPI and NFP releases — Premium.",
+    "empty": "No events in this period.",
+    "loadError": "Something went wrong while loading the economic calendar.",
+    "filterAll": "All",
+    "categories": {
+      "FOMC": "FOMC",
+      "CPI": "CPI",
+      "NFP": "NFP"
+    },
+    "importance": {
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "forecast": "Forecast",
+    "previous": "Previous",
+    "actual": "Actual"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -172,6 +172,17 @@ export class BillingService {
     }
   }
 
+  async assertCanUseEconomicCalendar(userId: string): Promise<void> {
+    const plan = await this.getEffectivePlan(userId);
+    const limits = getPlanLimits(plan);
+
+    if (!limits.canUseEconomicCalendar) {
+      throw new ForbiddenException(
+        'Economic Calendar is available on the Premium plan. Upgrade to use it.',
+      );
+    }
+  }
+
   async createCheckoutSession(
     userId: string,
     plan: 'STANDARD' | 'PREMIUM',

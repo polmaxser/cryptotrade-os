@@ -27,6 +27,7 @@ import { AiCoachModule } from './modules/ai-coach/ai-coach.module';
 import { AiReportsModule } from './modules/ai-reports/ai-reports.module';
 import { StrategiesModule } from './modules/strategies/strategies.module';
 import { BacktestsModule } from './modules/backtests/backtests.module';
+import { EconomicCalendarModule } from './modules/economic-calendar/economic-calendar.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -60,6 +61,7 @@ import configuration from './config/configuration';
     AiReportsModule,
     StrategiesModule,
     BacktestsModule,
+    EconomicCalendarModule,
   ],
   controllers: [AppController],
   providers: [AppService],

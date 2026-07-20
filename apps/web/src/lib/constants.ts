@@ -34,4 +34,6 @@ export const QUERY_KEYS = {
   strategies: ['strategies'] as const,
   strategyPerformance: (id: string) => ['strategies', id, 'performance'] as const,
   backtestRuns: ['backtests'] as const,
+  economicEvents: (from: string, to: string, category?: string) =>
+    ['economic-calendar', from, to, category ?? 'all'] as const,
 };

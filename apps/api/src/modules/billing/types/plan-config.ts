@@ -10,6 +10,7 @@ export interface PlanLimits {
   canUseWorkspace: boolean;
   canUseAiCoach: boolean;
   canUseStrategyBuilder: boolean;
+  canUseEconomicCalendar: boolean;
 }
 
 export interface PlanDefinition {
@@ -38,6 +39,7 @@ export const PLAN_DEFINITIONS: Record<SubscriptionPlan, PlanDefinition> = {
       canUseWorkspace: false,
       canUseAiCoach: false,
       canUseStrategyBuilder: false,
+      canUseEconomicCalendar: false,
     },
   },
   STANDARD: {
@@ -59,6 +61,7 @@ export const PLAN_DEFINITIONS: Record<SubscriptionPlan, PlanDefinition> = {
       canUseWorkspace: false,
       canUseAiCoach: false,
       canUseStrategyBuilder: false,
+      canUseEconomicCalendar: false,
     },
   },
   PREMIUM: {
@@ -82,6 +85,7 @@ export const PLAN_DEFINITIONS: Record<SubscriptionPlan, PlanDefinition> = {
       canUseWorkspace: true,
       canUseAiCoach: true,
       canUseStrategyBuilder: true,
+      canUseEconomicCalendar: true,
     },
   },
 };
