@@ -133,6 +133,7 @@ model User {
 
   coachInsights CoachInsight[]
   aiReports     AiReport[]
+  strategies    Strategy[]
 
   @@index([email])
   @@map("users")
@@ -319,7 +320,12 @@ model Trade {
 
   side String
 
+  /// Free-text label — kept for backward compatibility with trades created before
+  /// Strategy became a formal entity. New/edited trades should set strategyId instead.
   strategy String?
+
+  strategyId String?
+  strategyRef Strategy? @relation(fields: [strategyId], references: [id], onDelete: SetNull)
 
   entryPrice Decimal @db.Decimal(20, 8)
 
@@ -375,6 +381,8 @@ model Trade {
   @@index([status])
 
   @@index([exchangeConnectionId])
+
+  @@index([strategyId])
 
   @@map("trades")
 }
@@ -713,4 +721,39 @@ model AiReport {
   @@index([userId])
   @@index([userId, type])
   @@map("ai_reports")
+}
+
+//////////////////////////////////////////////////////////////
+// STRATEGIES
+//////////////////////////////////////////////////////////////
+
+model Strategy {
+  id String @id @default(cuid())
+
+  name        String
+  description String?
+
+  /// What triggers entering a position under this strategy.
+  entryCriteria String?
+  /// What triggers exiting — take-profit/stop-loss logic, invalidation conditions.
+  exitCriteria String?
+  /// Position sizing, stop-loss placement, max-risk-per-trade rules.
+  riskManagement String?
+
+  /// Free text (e.g. "15m", "4h", "1d") — traders mix conventions, not worth a rigid enum.
+  timeframe String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  trades Trade[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("strategies")
 }

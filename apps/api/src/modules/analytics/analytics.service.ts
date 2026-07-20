@@ -21,13 +21,17 @@ export class AnalyticsService {
   /**
    * `range` scopes closed-trade metrics to a period (used by AI Reports) —
    * open-trade counts stay unscoped since "currently open" isn't a
-   * date-range concept. Omitting range preserves the original all-time
-   * behavior this method has always had.
+   * date-range concept. `strategyId` scopes to trades linked to that
+   * Strategy (used by Strategy Builder's per-strategy performance) and,
+   * unlike range, applies to both open and closed counts equally since a
+   * trade's strategy isn't status-dependent. Omitting both preserves the
+   * original all-time behavior this method has always had.
    */
   async getSummary(
     userId: string,
     portfolioId?: string,
     range?: { from: Date; to: Date },
+    strategyId?: string,
   ): Promise<AnalyticsSummary> {
     const startingBalance = portfolioId
       ? await this.resolveStartingBalance(userId, portfolioId)
@@ -36,6 +40,7 @@ export class AnalyticsService {
     const where: Prisma.TradeWhereInput = {
       userId,
       ...(portfolioId ? { portfolioId } : {}),
+      ...(strategyId ? { strategyId } : {}),
     };
     const closedWhere: Prisma.TradeWhereInput = {
       ...where,

@@ -24,7 +24,8 @@
     "nft": "NFT",
     "coach": "AI Coach",
     "trades": "Сделки",
-    "reports": "AI-отчёты"
+    "reports": "AI-отчёты",
+    "strategies": "Стратегии"
   },
   "auth": {
     "login": {
@@ -131,6 +132,8 @@
       "portfolioLabel": "Портфель",
       "portfolioDefault": "Портфель по умолчанию",
       "strategyLabel": "Стратегия",
+      "formalStrategyLabel": "Формальная стратегия (необязательно)",
+      "formalStrategyNone": "— Нет —",
       "notesLabel": "Заметки",
       "submit": "Создать сделку",
       "submitting": "Создание..."
@@ -146,6 +149,8 @@
       "marginTypeNone": "— Нет (спот) —",
       "marginTypeIsolated": "Изолированная",
       "marginTypeCross": "Кросс",
+      "formalStrategyLabel": "Формальная стратегия (необязательно)",
+      "formalStrategyNone": "— Нет —",
       "exitPriceLabel": "Цена выхода",
       "closedAtLabel": "Дата закрытия",
       "pnlLabel": "PnL",
@@ -461,6 +466,45 @@
       "DAILY": "Дневной",
       "WEEKLY": "Недельный",
       "MONTHLY": "Месячный"
+    }
+  },
+  "strategies": {
+    "title": "Стратегии",
+    "subtitle": "Опишите свои торговые стратегии и отслеживайте эффективность каждой — Premium.",
+    "empty": "Пока нет стратегий. Создайте одну, чтобы начать привязывать к ней сделки.",
+    "loadError": "Не удалось загрузить стратегии.",
+    "newStrategy": "Новая стратегия",
+    "active": "Активна",
+    "inactive": "Неактивна",
+    "expand": "Развернуть",
+    "collapse": "Свернуть",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "entryCriteriaLabel": "Критерии входа",
+    "exitCriteriaLabel": "Критерии выхода",
+    "riskManagementLabel": "Риск-менеджмент",
+    "performance": "Результаты",
+    "performanceLoading": "Загрузка результатов...",
+    "performanceError": "Не удалось загрузить результаты.",
+    "totalPnl": "Общий PnL",
+    "winRate": "Win Rate",
+    "closedTrades": "Закрытых сделок",
+    "expectancy": "Expectancy",
+    "dialog": {
+      "createTitle": "Новая стратегия",
+      "editTitle": "Редактирование стратегии",
+      "nameLabel": "Название",
+      "timeframeLabel": "Таймфрейм (необязательно)",
+      "descriptionLabel": "Описание",
+      "entryCriteriaLabel": "Критерии входа",
+      "exitCriteriaLabel": "Критерии выхода",
+      "riskManagementLabel": "Риск-менеджмент",
+      "statusLabel": "Статус",
+      "active": "Активна",
+      "inactive": "Неактивна",
+      "saving": "Сохранение...",
+      "saveChanges": "Сохранить",
+      "create": "Создать стратегию"
     }
   },
   "dashboard": {

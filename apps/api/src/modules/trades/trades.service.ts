@@ -5,6 +5,7 @@ import { TradeRepository } from './repositories/trade.repository';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
 
+import { PrismaService } from '@/common/database/prisma.service';
 import { PortfoliosService } from '@/modules/portfolios/portfolios.service';
 import { BillingService } from '@/modules/billing/billing.service';
 
@@ -14,6 +15,7 @@ export class TradesService {
     private readonly tradeRepository: TradeRepository,
     private readonly portfoliosService: PortfoliosService,
     private readonly billingService: BillingService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async findAll(userId: string): Promise<Trade[]> {
@@ -37,6 +39,10 @@ export class TradesService {
 
     const portfolioId = await this.portfoliosService.resolvePortfolioId(userId, dto.portfolioId);
 
+    if (dto.strategyId) {
+      await this.assertStrategyOwnership(userId, dto.strategyId);
+    }
+
     return this.tradeRepository.create({
       ...dto,
       portfolioId,
@@ -51,7 +57,28 @@ export class TradesService {
       await this.portfoliosService.findOne(dto.portfolioId, userId);
     }
 
+    if (dto.strategyId) {
+      await this.assertStrategyOwnership(userId, dto.strategyId);
+    }
+
     return this.tradeRepository.update(id, dto);
+  }
+
+  /**
+   * Checked directly via Prisma rather than injecting StrategiesService —
+   * StrategiesModule needs AnalyticsModule (for per-strategy performance),
+   * which itself needs TradesModule, so TradesModule importing
+   * StrategiesModule would create a cycle. A trade's own userId already
+   * scopes every analytics query, so this check is about data integrity
+   * (not silently attaching a trade to someone else's strategy), not a
+   * cross-tenant leak.
+   */
+  private async assertStrategyOwnership(userId: string, strategyId: string): Promise<void> {
+    const strategy = await this.prisma.strategy.findUnique({ where: { id: strategyId } });
+
+    if (!strategy || strategy.userId !== userId) {
+      throw new NotFoundException('Strategy not found');
+    }
   }
 
   async remove(id: string, userId: string): Promise<Trade> {

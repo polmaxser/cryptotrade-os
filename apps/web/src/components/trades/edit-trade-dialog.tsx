@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useStrategiesQuery } from '@/hooks/use-strategies-query';
 import { updateTrade } from '@/lib/api/trades';
 import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
@@ -30,6 +31,8 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
   const t = useTranslations('trades.edit');
   const tErrors = useTranslations('trades.errors');
   const queryClient = useQueryClient();
+  const strategiesQuery = useStrategiesQuery();
+  const strategies = strategiesQuery.data ?? [];
 
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<TradeStatus>(trade.status);
@@ -37,6 +40,7 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
   const [stopLossPrice, setStopLossPrice] = useState(trade.stopLossPrice ?? '');
   const [leverage, setLeverage] = useState(trade.leverage?.toString() ?? '');
   const [marginType, setMarginType] = useState<MarginType | ''>(trade.marginType ?? '');
+  const [strategyId, setStrategyId] = useState(trade.strategyId ?? '');
   const [pnl, setPnl] = useState(trade.pnl ?? '');
   const [pnlPercent, setPnlPercent] = useState(trade.pnlPercent ?? '');
   const [closedAt, setClosedAt] = useState(() =>
@@ -67,6 +71,7 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
       stopLossPrice: stopLossPrice === '' ? undefined : Number(stopLossPrice),
       leverage: leverage === '' ? undefined : Number(leverage),
       marginType: marginType || undefined,
+      strategyId: strategyId || undefined,
       ...(status === 'CLOSED'
         ? {
             exitPrice: exitPrice === '' ? undefined : Number(exitPrice),
@@ -150,6 +155,25 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
               </select>
             </div>
           </div>
+
+          {strategies.length > 0 ? (
+            <div className="space-y-2">
+              <Label htmlFor="editStrategyId">{t('formalStrategyLabel')}</Label>
+              <select
+                id="editStrategyId"
+                value={strategyId}
+                onChange={(event) => setStrategyId(event.target.value)}
+                className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              >
+                <option value="">{t('formalStrategyNone')}</option>
+                {strategies.map((strategyOption) => (
+                  <option key={strategyOption.id} value={strategyOption.id}>
+                    {strategyOption.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
 
           {status === 'CLOSED' ? (
             <>

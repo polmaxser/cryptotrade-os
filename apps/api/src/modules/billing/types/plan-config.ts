@@ -9,6 +9,7 @@ export interface PlanLimits {
   maxTradesPerMonth: number | null;
   canUseWorkspace: boolean;
   canUseAiCoach: boolean;
+  canUseStrategyBuilder: boolean;
 }
 
 export interface PlanDefinition {
@@ -36,6 +37,7 @@ export const PLAN_DEFINITIONS: Record<SubscriptionPlan, PlanDefinition> = {
       maxTradesPerMonth: 30,
       canUseWorkspace: false,
       canUseAiCoach: false,
+      canUseStrategyBuilder: false,
     },
   },
   STANDARD: {
@@ -56,6 +58,7 @@ export const PLAN_DEFINITIONS: Record<SubscriptionPlan, PlanDefinition> = {
       maxTradesPerMonth: null,
       canUseWorkspace: false,
       canUseAiCoach: false,
+      canUseStrategyBuilder: false,
     },
   },
   PREMIUM: {
@@ -78,6 +81,7 @@ export const PLAN_DEFINITIONS: Record<SubscriptionPlan, PlanDefinition> = {
       maxTradesPerMonth: null,
       canUseWorkspace: true,
       canUseAiCoach: true,
+      canUseStrategyBuilder: true,
     },
   },
 };

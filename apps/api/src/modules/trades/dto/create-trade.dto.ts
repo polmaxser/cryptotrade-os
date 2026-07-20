@@ -18,9 +18,14 @@ export class CreateTradeDto {
   @IsEnum(TradeSide)
   side!: TradeSide;
 
+  /** Free-text legacy label — see CreateStrategyDto/strategyId for the formal Strategy entity. */
   @IsOptional()
   @IsString()
   strategy?: string;
+
+  @IsOptional()
+  @IsString()
+  strategyId?: string;
 
   @IsNumber()
   @Min(0)

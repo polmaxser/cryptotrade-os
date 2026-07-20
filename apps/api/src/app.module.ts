@@ -25,6 +25,7 @@ import { DeFiPositionsModule } from './modules/defi-positions/defi-positions.mod
 import { NftHoldingsModule } from './modules/nft-holdings/nft-holdings.module';
 import { AiCoachModule } from './modules/ai-coach/ai-coach.module';
 import { AiReportsModule } from './modules/ai-reports/ai-reports.module';
+import { StrategiesModule } from './modules/strategies/strategies.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -56,6 +57,7 @@ import configuration from './config/configuration';
     NftHoldingsModule,
     AiCoachModule,
     AiReportsModule,
+    StrategiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

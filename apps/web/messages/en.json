@@ -24,7 +24,8 @@
     "nft": "NFTs",
     "coach": "AI Coach",
     "trades": "Trades",
-    "reports": "AI Reports"
+    "reports": "AI Reports",
+    "strategies": "Strategies"
   },
   "auth": {
     "login": {
@@ -131,6 +132,8 @@
       "portfolioLabel": "Portfolio",
       "portfolioDefault": "Default portfolio",
       "strategyLabel": "Strategy",
+      "formalStrategyLabel": "Formal Strategy (optional)",
+      "formalStrategyNone": "— None —",
       "notesLabel": "Notes",
       "submit": "Create Trade",
       "submitting": "Creating..."
@@ -146,6 +149,8 @@
       "marginTypeNone": "— None (spot) —",
       "marginTypeIsolated": "Isolated",
       "marginTypeCross": "Cross",
+      "formalStrategyLabel": "Formal Strategy (optional)",
+      "formalStrategyNone": "— None —",
       "exitPriceLabel": "Exit Price",
       "closedAtLabel": "Closed At",
       "pnlLabel": "PnL",
@@ -461,6 +466,45 @@
       "DAILY": "Daily",
       "WEEKLY": "Weekly",
       "MONTHLY": "Monthly"
+    }
+  },
+  "strategies": {
+    "title": "Strategies",
+    "subtitle": "Define your trading strategies and track how each one performs — Premium.",
+    "empty": "No strategies yet. Create one to start linking trades to it.",
+    "loadError": "Something went wrong while loading your strategies.",
+    "newStrategy": "New Strategy",
+    "active": "Active",
+    "inactive": "Inactive",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "edit": "Edit",
+    "delete": "Delete",
+    "entryCriteriaLabel": "Entry Criteria",
+    "exitCriteriaLabel": "Exit Criteria",
+    "riskManagementLabel": "Risk Management",
+    "performance": "Performance",
+    "performanceLoading": "Loading performance...",
+    "performanceError": "Something went wrong while loading performance.",
+    "totalPnl": "Total PnL",
+    "winRate": "Win Rate",
+    "closedTrades": "Closed Trades",
+    "expectancy": "Expectancy",
+    "dialog": {
+      "createTitle": "New Strategy",
+      "editTitle": "Edit Strategy",
+      "nameLabel": "Name",
+      "timeframeLabel": "Timeframe (optional)",
+      "descriptionLabel": "Description",
+      "entryCriteriaLabel": "Entry Criteria",
+      "exitCriteriaLabel": "Exit Criteria",
+      "riskManagementLabel": "Risk Management",
+      "statusLabel": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "create": "Create Strategy"
     }
   },
   "dashboard": {

@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
+import { useStrategiesQuery } from '@/hooks/use-strategies-query';
 import { createTrade } from '@/lib/api/trades';
 import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
@@ -28,6 +29,7 @@ export function NewTradeDialog() {
   const tErrors = useTranslations('trades.errors');
   const queryClient = useQueryClient();
   const portfoliosQuery = usePortfoliosQuery();
+  const strategiesQuery = useStrategiesQuery();
 
   const [open, setOpen] = useState(false);
   const [symbol, setSymbol] = useState('');
@@ -40,10 +42,12 @@ export function NewTradeDialog() {
   const [openedAt, setOpenedAt] = useState(() => toDatetimeLocalValue(new Date()));
   const [portfolioId, setPortfolioId] = useState<string>('');
   const [strategy, setStrategy] = useState('');
+  const [strategyId, setStrategyId] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const portfolios = portfoliosQuery.data ?? [];
+  const strategies = strategiesQuery.data ?? [];
 
   function resetForm() {
     setSymbol('');
@@ -56,6 +60,7 @@ export function NewTradeDialog() {
     setOpenedAt(toDatetimeLocalValue(new Date()));
     setPortfolioId('');
     setStrategy('');
+    setStrategyId('');
     setNotes('');
     setError(null);
   }
@@ -88,6 +93,7 @@ export function NewTradeDialog() {
       openedAt: fromDatetimeLocalValue(openedAt),
       portfolioId: portfolioId || undefined,
       strategy: strategy.trim() || undefined,
+      strategyId: strategyId || undefined,
       notes: notes.trim() || undefined,
     });
   }
@@ -255,6 +261,25 @@ export function NewTradeDialog() {
               onChange={(event) => setStrategy(event.target.value)}
             />
           </div>
+
+          {strategies.length > 0 ? (
+            <div className="space-y-2">
+              <Label htmlFor="strategyId">{t('formalStrategyLabel')}</Label>
+              <select
+                id="strategyId"
+                value={strategyId}
+                onChange={(event) => setStrategyId(event.target.value)}
+                className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              >
+                <option value="">{t('formalStrategyNone')}</option>
+                {strategies.map((strategyOption) => (
+                  <option key={strategyOption.id} value={strategyOption.id}>
+                    {strategyOption.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
 
           <div className="space-y-2">
             <Label htmlFor="notes">{t('notesLabel')}</Label>

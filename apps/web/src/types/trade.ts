@@ -7,6 +7,7 @@ export type Trade = {
   symbol: string;
   side: TradeSide;
   strategy: string | null;
+  strategyId: string | null;
   entryPrice: string;
   exitPrice: string | null;
   stopLossPrice: string | null;
@@ -29,6 +30,7 @@ export type CreateTradePayload = {
   symbol: string;
   side: TradeSide;
   strategy?: string;
+  strategyId?: string;
   entryPrice: number;
   exitPrice?: number;
   stopLossPrice?: number;

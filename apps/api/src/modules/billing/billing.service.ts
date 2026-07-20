@@ -161,6 +161,17 @@ export class BillingService {
     }
   }
 
+  async assertCanUseStrategyBuilder(userId: string): Promise<void> {
+    const plan = await this.getEffectivePlan(userId);
+    const limits = getPlanLimits(plan);
+
+    if (!limits.canUseStrategyBuilder) {
+      throw new ForbiddenException(
+        'Strategy Builder is available on the Premium plan. Upgrade to use it.',
+      );
+    }
+  }
+
   async createCheckoutSession(
     userId: string,
     plan: 'STANDARD' | 'PREMIUM',
