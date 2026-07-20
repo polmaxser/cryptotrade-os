@@ -25,7 +25,8 @@
     "coach": "AI Coach",
     "trades": "Сделки",
     "reports": "AI-отчёты",
-    "strategies": "Стратегии"
+    "strategies": "Стратегии",
+    "backtests": "Бэктестинг"
   },
   "auth": {
     "login": {
@@ -505,6 +506,50 @@
       "saving": "Сохранение...",
       "saveChanges": "Сохранить",
       "create": "Создать стратегию"
+    }
+  },
+  "backtests": {
+    "title": "Бэктестинг",
+    "subtitle": "Проверьте готовые шаблоны стратегий на исторических данных — Premium.",
+    "empty": "Пока нет запусков бэктеста. Настройте его выше и запустите.",
+    "loadError": "Не удалось загрузить запуски бэктеста.",
+    "expand": "Показать equity curve",
+    "collapse": "Скрыть equity curve",
+    "winRate": "Win Rate",
+    "totalTrades": "Сделок",
+    "maxDrawdown": "Max Drawdown",
+    "finalEquity": "Итоговый капитал",
+    "templates": {
+      "MA_CROSSOVER": "Пересечение MA",
+      "RSI_THRESHOLD": "Пороги RSI",
+      "DONCHIAN_BREAKOUT": "Пробой канала Дончиана"
+    },
+    "form": {
+      "templateLabel": "Шаблон",
+      "symbolLabel": "Символ",
+      "timeframeLabel": "Таймфрейм",
+      "fromLabel": "С",
+      "toLabel": "По",
+      "startingCapitalLabel": "Стартовый капитал (USD)",
+      "feePercentLabel": "Комиссия % за сделку",
+      "strategyLabel": "Привязать к стратегии (необязательно)",
+      "strategyNone": "— Нет —",
+      "run": "Запустить бэктест",
+      "running": "Запуск...",
+      "periodRequired": "Укажите обе даты — начало и конец периода.",
+      "genericError": "Не удалось выполнить бэктест.",
+      "templates": {
+        "MA_CROSSOVER": "Пересечение MA",
+        "RSI_THRESHOLD": "Пороги RSI",
+        "DONCHIAN_BREAKOUT": "Пробой канала Дончиана"
+      },
+      "params": {
+        "fastPeriod": "Период быстрой MA",
+        "slowPeriod": "Период медленной MA",
+        "period": "Период",
+        "oversold": "Уровень перепроданности",
+        "overbought": "Уровень перекупленности"
+      }
     }
   },
   "dashboard": {

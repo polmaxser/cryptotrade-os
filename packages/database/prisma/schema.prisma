@@ -89,6 +89,14 @@ enum AiReportType {
   MONTHLY
 }
 
+/// Ready-made, parametrizable templates — Strategy's entry/exit criteria are free
+/// text (deliberately, see Package 6.1) and so can't be executed programmatically.
+enum BacktestTemplate {
+  MA_CROSSOVER
+  RSI_THRESHOLD
+  DONCHIAN_BREAKOUT
+}
+
 //////////////////////////////////////////////////////////////
 // USER
 //////////////////////////////////////////////////////////////
@@ -134,6 +142,7 @@ model User {
   coachInsights CoachInsight[]
   aiReports     AiReport[]
   strategies    Strategy[]
+  backtestRuns  BacktestRun[]
 
   @@index([email])
   @@map("users")
@@ -752,8 +761,54 @@ model Strategy {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   trades Trade[]
+  backtestRuns BacktestRun[]
 
   @@unique([userId, name])
   @@index([userId])
   @@map("strategies")
+}
+
+//////////////////////////////////////////////////////////////
+// BACKTESTS
+//////////////////////////////////////////////////////////////
+
+model BacktestRun {
+  id String @id @default(cuid())
+
+  template BacktestTemplate
+
+  symbol    String
+  /// Binance kline interval string (e.g. "1h", "4h", "1d").
+  timeframe String
+
+  periodStart DateTime
+  periodEnd   DateTime
+
+  /// Template-specific parameters (e.g. { fastPeriod, slowPeriod } for MA_CROSSOVER).
+  params Json
+
+  startingCapital Decimal @db.Decimal(20, 2)
+  /// Per-trade fee, as a percent (e.g. 0.1 = 0.1%).
+  feePercent      Decimal @db.Decimal(6, 4) @default(0.1)
+
+  /// { totalTrades, winRate, totalPnlPercent, profitFactor, maxDrawdownPercent, finalEquity }
+  summary Json
+  /// [{ time, equity }, ...] — sampled per closed bar.
+  equityCurve Json
+  /// [{ side, entryTime, entryPrice, exitTime, exitPrice, pnlPercent }, ...]
+  trades Json
+
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Optional organizational link — the run isn't derived from the Strategy's
+  /// free-text criteria, it's tagged onto it for the trader's own reference.
+  strategyId String?
+  strategy   Strategy? @relation(fields: [strategyId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([strategyId])
+  @@map("backtest_runs")
 }

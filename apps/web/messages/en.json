@@ -25,7 +25,8 @@
     "coach": "AI Coach",
     "trades": "Trades",
     "reports": "AI Reports",
-    "strategies": "Strategies"
+    "strategies": "Strategies",
+    "backtests": "Backtesting"
   },
   "auth": {
     "login": {
@@ -505,6 +506,50 @@
       "saving": "Saving...",
       "saveChanges": "Save Changes",
       "create": "Create Strategy"
+    }
+  },
+  "backtests": {
+    "title": "Backtesting",
+    "subtitle": "Test ready-made strategy templates against historical price data — Premium.",
+    "empty": "No backtest runs yet. Configure one above and run it.",
+    "loadError": "Something went wrong while loading your backtest runs.",
+    "expand": "Show equity curve",
+    "collapse": "Hide equity curve",
+    "winRate": "Win Rate",
+    "totalTrades": "Trades",
+    "maxDrawdown": "Max Drawdown",
+    "finalEquity": "Final Equity",
+    "templates": {
+      "MA_CROSSOVER": "MA Crossover",
+      "RSI_THRESHOLD": "RSI Threshold",
+      "DONCHIAN_BREAKOUT": "Donchian Breakout"
+    },
+    "form": {
+      "templateLabel": "Template",
+      "symbolLabel": "Symbol",
+      "timeframeLabel": "Timeframe",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "startingCapitalLabel": "Starting Capital (USD)",
+      "feePercentLabel": "Fee % per trade",
+      "strategyLabel": "Link to Strategy (optional)",
+      "strategyNone": "— None —",
+      "run": "Run Backtest",
+      "running": "Running...",
+      "periodRequired": "Set both a start and end date.",
+      "genericError": "Something went wrong while running the backtest.",
+      "templates": {
+        "MA_CROSSOVER": "MA Crossover",
+        "RSI_THRESHOLD": "RSI Threshold",
+        "DONCHIAN_BREAKOUT": "Donchian Breakout"
+      },
+      "params": {
+        "fastPeriod": "Fast MA Period",
+        "slowPeriod": "Slow MA Period",
+        "period": "Period",
+        "oversold": "Oversold Level",
+        "overbought": "Overbought Level"
+      }
     }
   },
   "dashboard": {

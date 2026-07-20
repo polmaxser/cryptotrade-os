@@ -26,6 +26,7 @@ import { NftHoldingsModule } from './modules/nft-holdings/nft-holdings.module';
 import { AiCoachModule } from './modules/ai-coach/ai-coach.module';
 import { AiReportsModule } from './modules/ai-reports/ai-reports.module';
 import { StrategiesModule } from './modules/strategies/strategies.module';
+import { BacktestsModule } from './modules/backtests/backtests.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -58,6 +59,7 @@ import configuration from './config/configuration';
     AiCoachModule,
     AiReportsModule,
     StrategiesModule,
+    BacktestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

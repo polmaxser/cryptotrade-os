@@ -33,4 +33,5 @@ export const QUERY_KEYS = {
   aiReports: (type?: string) => ['ai-reports', type ?? 'all'] as const,
   strategies: ['strategies'] as const,
   strategyPerformance: (id: string) => ['strategies', id, 'performance'] as const,
+  backtestRuns: ['backtests'] as const,
 };
