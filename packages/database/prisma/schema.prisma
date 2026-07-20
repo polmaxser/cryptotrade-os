@@ -111,6 +111,10 @@ model User {
   isActive        Boolean   @default(true)
   emailVerifiedAt DateTime?
 
+  /// Platform-wide admin access (Admin Panel) — distinct from WorkspaceRole,
+  /// which only governs roles within a single workspace.
+  isAdmin Boolean @default(false)
+
   twoFactorSecret  String?
   twoFactorEnabled Boolean @default(false)
 

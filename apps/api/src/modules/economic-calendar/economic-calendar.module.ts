@@ -14,6 +14,6 @@ import { EconomicEventRepository } from './repositories/economic-event.repositor
 
   providers: [EconomicCalendarService, EconomicEventRepository],
 
-  exports: [EconomicCalendarService],
+  exports: [EconomicCalendarService, EconomicEventRepository],
 })
 export class EconomicCalendarModule {}

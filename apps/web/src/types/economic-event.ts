@@ -21,3 +21,17 @@ export type ListEconomicEventsParams = {
   to: string;
   category?: EconomicEventCategory;
 };
+
+export type CreateEconomicEventPayload = {
+  category: EconomicEventCategory;
+  importance: EconomicEventImportance;
+  country?: string;
+  title: string;
+  description?: string;
+  eventDate: string;
+  forecast?: string;
+  previous?: string;
+  actual?: string;
+};
+
+export type UpdateEconomicEventPayload = Partial<CreateEconomicEventPayload>;

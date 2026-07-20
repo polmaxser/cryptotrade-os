@@ -16,6 +16,6 @@ import { UsersModule } from '@/modules/users/users.module';
 
   providers: [BillingService, StripeService, SubscriptionRepository, PromoCodeRepository],
 
-  exports: [BillingService, SubscriptionRepository],
+  exports: [BillingService, SubscriptionRepository, PromoCodeRepository],
 })
 export class BillingModule {}

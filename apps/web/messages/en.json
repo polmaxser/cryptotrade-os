@@ -27,7 +27,8 @@
     "reports": "AI Reports",
     "strategies": "Strategies",
     "backtests": "Backtesting",
-    "economicCalendar": "Economic Calendar"
+    "economicCalendar": "Economic Calendar",
+    "admin": "Admin Panel"
   },
   "auth": {
     "login": {
@@ -572,6 +573,87 @@
     "forecast": "Forecast",
     "previous": "Previous",
     "actual": "Actual"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Manage users, promo codes, and the economic calendar.",
+    "notAuthorized": "You don't have access to this page.",
+    "tabs": {
+      "users": "Users",
+      "promoCodes": "Promo Codes",
+      "economicEvents": "Economic Calendar"
+    },
+    "users": {
+      "searchPlaceholder": "Search by email or name...",
+      "loadError": "Something went wrong while loading users.",
+      "empty": "No users found.",
+      "columnEmail": "Email",
+      "columnPlan": "Plan",
+      "columnStatus": "Status",
+      "columnJoined": "Joined",
+      "active": "Active",
+      "inactive": "Inactive",
+      "adminBadge": "Admin",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "pageInfo": "Page {page} of {totalPages} ({total} total)",
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "promoCodes": {
+      "newCode": "New Promo Code",
+      "loadError": "Something went wrong while loading promo codes.",
+      "empty": "No promo codes yet.",
+      "columnCode": "Code",
+      "columnPlan": "Plan",
+      "columnFreeDays": "Free Days",
+      "columnRedemptions": "Redemptions",
+      "columnStatus": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "dialog": {
+        "title": "New Promo Code",
+        "codeLabel": "Code",
+        "descriptionLabel": "Description",
+        "planLabel": "Grants Plan",
+        "freeDaysLabel": "Free Days",
+        "maxRedemptionsLabel": "Max Redemptions",
+        "expiresAtLabel": "Expires At",
+        "create": "Create",
+        "creating": "Creating...",
+        "genericError": "Something went wrong while creating the promo code."
+      }
+    },
+    "economicEvents": {
+      "filterAll": "All",
+      "newEvent": "New Event",
+      "loadError": "Something went wrong while loading events.",
+      "empty": "No events in this period.",
+      "columnDate": "Date",
+      "columnCategory": "Category",
+      "columnTitle": "Title",
+      "columnActual": "Actual",
+      "edit": "Edit",
+      "delete": "Delete",
+      "dialog": {
+        "createTitle": "New Economic Event",
+        "editTitle": "Edit Economic Event",
+        "categoryLabel": "Category",
+        "importanceLabel": "Importance",
+        "titleLabel": "Title",
+        "descriptionLabel": "Description",
+        "dateLabel": "Date & Time",
+        "forecastLabel": "Forecast",
+        "previousLabel": "Previous",
+        "actualLabel": "Actual",
+        "create": "Create",
+        "saving": "Saving...",
+        "saveChanges": "Save Changes",
+        "genericError": "Something went wrong while saving the event."
+      }
+    }
   },
   "dashboard": {
     "title": "Dashboard",

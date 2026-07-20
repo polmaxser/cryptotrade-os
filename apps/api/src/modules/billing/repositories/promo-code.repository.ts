@@ -55,4 +55,21 @@ export class PromoCodeRepository {
       data,
     });
   }
+
+  async findById(id: string): Promise<PromoCode | null> {
+    return this.prisma.promoCode.findUnique({ where: { id } });
+  }
+
+  async findAll(): Promise<PromoCode[]> {
+    return this.prisma.promoCode.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async update(id: string, data: Prisma.PromoCodeUpdateInput): Promise<PromoCode> {
+    return this.prisma.promoCode.update({
+      where: { id },
+      data,
+    });
+  }
 }

@@ -86,6 +86,9 @@ export function UserMenu() {
           {t('settings')}
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/pricing')}>{t('pricing')}</DropdownMenuItem>
+        {user.isAdmin ? (
+          <DropdownMenuItem onSelect={() => router.push('/admin')}>{t('admin')}</DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem onSelect={handleLogout}>{t('logout')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

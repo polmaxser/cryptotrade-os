@@ -36,4 +36,8 @@ export const QUERY_KEYS = {
   backtestRuns: ['backtests'] as const,
   economicEvents: (from: string, to: string, category?: string) =>
     ['economic-calendar', from, to, category ?? 'all'] as const,
+  adminUsers: (search: string, page: number) => ['admin', 'users', search, page] as const,
+  adminPromoCodes: ['admin', 'promo-codes'] as const,
+  adminEconomicEvents: (from: string, to: string, category?: string) =>
+    ['admin', 'economic-events', from, to, category ?? 'all'] as const,
 };

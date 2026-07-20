@@ -37,4 +37,20 @@ export class EconomicEventRepository {
       update: data,
     });
   }
+
+  async findById(id: string): Promise<EconomicEvent | null> {
+    return this.prisma.economicEvent.findUnique({ where: { id } });
+  }
+
+  async create(data: Prisma.EconomicEventUncheckedCreateInput): Promise<EconomicEvent> {
+    return this.prisma.economicEvent.create({ data });
+  }
+
+  async update(id: string, data: Prisma.EconomicEventUncheckedUpdateInput): Promise<EconomicEvent> {
+    return this.prisma.economicEvent.update({ where: { id }, data });
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.economicEvent.delete({ where: { id } });
+  }
 }

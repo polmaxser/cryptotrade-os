@@ -27,7 +27,8 @@
     "reports": "AI-отчёты",
     "strategies": "Стратегии",
     "backtests": "Бэктестинг",
-    "economicCalendar": "Экономический календарь"
+    "economicCalendar": "Экономический календарь",
+    "admin": "Панель администратора"
   },
   "auth": {
     "login": {
@@ -572,6 +573,87 @@
     "forecast": "Прогноз",
     "previous": "Предыдущее",
     "actual": "Факт"
+  },
+  "admin": {
+    "title": "Панель администратора",
+    "subtitle": "Управление пользователями, промокодами и экономическим календарём.",
+    "notAuthorized": "У вас нет доступа к этой странице.",
+    "tabs": {
+      "users": "Пользователи",
+      "promoCodes": "Промокоды",
+      "economicEvents": "Экономический календарь"
+    },
+    "users": {
+      "searchPlaceholder": "Поиск по email или имени...",
+      "loadError": "Не удалось загрузить пользователей.",
+      "empty": "Пользователи не найдены.",
+      "columnEmail": "Email",
+      "columnPlan": "Тариф",
+      "columnStatus": "Статус",
+      "columnJoined": "Регистрация",
+      "active": "Активен",
+      "inactive": "Заблокирован",
+      "adminBadge": "Админ",
+      "activate": "Разблокировать",
+      "deactivate": "Заблокировать",
+      "pageInfo": "Страница {page} из {totalPages} (всего {total})",
+      "prev": "Назад",
+      "next": "Далее"
+    },
+    "promoCodes": {
+      "newCode": "Новый промокод",
+      "loadError": "Не удалось загрузить промокоды.",
+      "empty": "Промокодов пока нет.",
+      "columnCode": "Код",
+      "columnPlan": "Тариф",
+      "columnFreeDays": "Дней бесплатно",
+      "columnRedemptions": "Использований",
+      "columnStatus": "Статус",
+      "active": "Активен",
+      "inactive": "Неактивен",
+      "activate": "Включить",
+      "deactivate": "Отключить",
+      "dialog": {
+        "title": "Новый промокод",
+        "codeLabel": "Код",
+        "descriptionLabel": "Описание",
+        "planLabel": "Даёт тариф",
+        "freeDaysLabel": "Дней бесплатно",
+        "maxRedemptionsLabel": "Макс. использований",
+        "expiresAtLabel": "Действует до",
+        "create": "Создать",
+        "creating": "Создание...",
+        "genericError": "Не удалось создать промокод."
+      }
+    },
+    "economicEvents": {
+      "filterAll": "Все",
+      "newEvent": "Новое событие",
+      "loadError": "Не удалось загрузить события.",
+      "empty": "В этом периоде нет событий.",
+      "columnDate": "Дата",
+      "columnCategory": "Категория",
+      "columnTitle": "Заголовок",
+      "columnActual": "Факт",
+      "edit": "Изменить",
+      "delete": "Удалить",
+      "dialog": {
+        "createTitle": "Новое экономическое событие",
+        "editTitle": "Изменить событие",
+        "categoryLabel": "Категория",
+        "importanceLabel": "Важность",
+        "titleLabel": "Заголовок",
+        "descriptionLabel": "Описание",
+        "dateLabel": "Дата и время",
+        "forecastLabel": "Прогноз",
+        "previousLabel": "Предыдущее",
+        "actualLabel": "Факт",
+        "create": "Создать",
+        "saving": "Сохранение...",
+        "saveChanges": "Сохранить",
+        "genericError": "Не удалось сохранить событие."
+      }
+    }
   },
   "dashboard": {
     "title": "Панель управления",

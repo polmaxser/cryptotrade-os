@@ -4,6 +4,7 @@ export type PublicUser = {
   name: string | null;
   avatarUrl: string | null;
   isActive: boolean;
+  isAdmin: boolean;
   emailVerifiedAt: string | null;
   twoFactorEnabled: boolean;
   createdAt: string;

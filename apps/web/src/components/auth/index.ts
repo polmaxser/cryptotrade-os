@@ -1,3 +1,4 @@
+export { AdminGuard } from './admin-guard';
 export { AuthCard } from './auth-card';
 export { AuthGuard } from './auth-guard';
 export { GuestOnly } from './guest-only';
