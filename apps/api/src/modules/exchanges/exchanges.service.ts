@@ -49,21 +49,27 @@ export class ExchangesService {
     // Validate the credentials actually work before we ever store them.
     const client = this.clientRegistry.getClient(dto.exchange);
     await client.testConnection({
-      apiKey: dto.apiKey,
-      apiSecret: dto.apiSecret,
+      apiKey: dto.apiKey ?? '',
+      apiSecret: dto.apiSecret ?? '',
       apiPassphrase: dto.apiPassphrase,
+      walletAddress: dto.walletAddress,
     });
+
+    const previewSource = dto.walletAddress ?? dto.apiKey ?? '';
 
     const connection = await this.connectionRepository.create({
       userId,
       exchange: dto.exchange,
       label: dto.label,
-      encryptedApiKey: this.encryptionService.encrypt(dto.apiKey),
-      encryptedApiSecret: this.encryptionService.encrypt(dto.apiSecret),
+      encryptedApiKey: dto.apiKey ? this.encryptionService.encrypt(dto.apiKey) : undefined,
+      encryptedApiSecret: dto.apiSecret ? this.encryptionService.encrypt(dto.apiSecret) : undefined,
       encryptedApiPassphrase: dto.apiPassphrase
         ? this.encryptionService.encrypt(dto.apiPassphrase)
         : undefined,
-      apiKeyPreview: dto.apiKey.slice(-4),
+      encryptedWalletAddress: dto.walletAddress
+        ? this.encryptionService.encrypt(dto.walletAddress)
+        : undefined,
+      apiKeyPreview: previewSource.slice(-4),
     });
 
     return toConnectionSummary(connection);
@@ -83,10 +89,17 @@ export class ExchangesService {
       : (await this.portfoliosService.getDefaultForUser(userId))?.id;
 
     const credentials = {
-      apiKey: this.encryptionService.decrypt(connection.encryptedApiKey),
-      apiSecret: this.encryptionService.decrypt(connection.encryptedApiSecret),
+      apiKey: connection.encryptedApiKey
+        ? this.encryptionService.decrypt(connection.encryptedApiKey)
+        : '',
+      apiSecret: connection.encryptedApiSecret
+        ? this.encryptionService.decrypt(connection.encryptedApiSecret)
+        : '',
       apiPassphrase: connection.encryptedApiPassphrase
         ? this.encryptionService.decrypt(connection.encryptedApiPassphrase)
+        : undefined,
+      walletAddress: connection.encryptedWalletAddress
+        ? this.encryptionService.decrypt(connection.encryptedWalletAddress)
         : undefined,
     };
 
@@ -229,6 +242,8 @@ const EXCHANGE_TO_TRADE_SOURCE: Record<ExchangeProvider, TradeSource> = {
   [ExchangeProvider.BYBIT]: TradeSource.BYBIT,
   [ExchangeProvider.OKX]: TradeSource.OKX,
   [ExchangeProvider.KUCOIN]: TradeSource.KUCOIN,
+  [ExchangeProvider.GATEIO]: TradeSource.GATEIO,
+  [ExchangeProvider.HYPERLIQUID]: TradeSource.HYPERLIQUID,
 };
 
 function toTradeSource(exchange: ExchangeProvider): TradeSource {

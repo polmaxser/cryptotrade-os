@@ -1,10 +1,13 @@
 import { NormalizedFill } from './normalized-fill';
 
 export interface ExchangeCredentials {
+  /** Empty for HYPERLIQUID, which authenticates reads by wallet address instead. */
   apiKey: string;
   apiSecret: string;
   /** Required by some exchanges (e.g. OKX), set at API key creation time. */
   apiPassphrase?: string;
+  /** HYPERLIQUID only — the account's public wallet address. */
+  walletAddress?: string;
 }
 
 export interface FillsRange {

@@ -1,4 +1,4 @@
-export type ExchangeProvider = 'BINANCE' | 'BYBIT' | 'OKX' | 'KUCOIN';
+export type ExchangeProvider = 'BINANCE' | 'BYBIT' | 'OKX' | 'KUCOIN' | 'GATEIO' | 'HYPERLIQUID';
 
 export type ExchangeConnection = {
   id: string;
@@ -12,13 +12,16 @@ export type ExchangeConnection = {
 export type CreateExchangeConnectionPayload = {
   exchange: ExchangeProvider;
   label: string;
-  apiKey: string;
-  apiSecret: string;
+  /** Not required for HYPERLIQUID, which uses walletAddress instead. */
+  apiKey?: string;
+  apiSecret?: string;
   apiPassphrase?: string;
+  /** HYPERLIQUID only — the account's public wallet address, in place of apiKey/apiSecret. */
+  walletAddress?: string;
 };
 
 export type ImportTradesPayload = {
-  /** Omit to import every pair — only supported on some exchanges (Bybit, OKX). */
+  /** Omit to import every pair — only supported on some exchanges (Bybit, OKX, Hyperliquid). */
   symbols?: string[];
   portfolioId?: string;
   /** Both must be set together — omit both to use the exchange's own default recent window. */

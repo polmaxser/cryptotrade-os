@@ -336,13 +336,17 @@
         "BINANCE": "Binance",
         "BYBIT": "Bybit",
         "OKX": "OKX",
-        "KUCOIN": "KuCoin"
+        "KUCOIN": "KuCoin",
+        "GATEIO": "Gate.io",
+        "HYPERLIQUID": "Hyperliquid"
       },
       "labelLabel": "Label",
       "labelPlaceholder": "My Exchange Account",
       "apiKeyLabel": "API Key",
       "apiSecretLabel": "API Secret",
       "apiPassphraseLabel": "API Passphrase",
+      "walletAddressLabel": "Wallet Address",
+      "walletAddressHint": "Hyperliquid trade history is public on-chain data — no API key or signature is needed, just the account's wallet address.",
       "connect": "Connect",
       "connecting": "Connecting..."
     },

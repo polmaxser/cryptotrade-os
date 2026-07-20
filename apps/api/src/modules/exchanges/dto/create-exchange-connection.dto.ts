@@ -6,6 +6,13 @@ const EXCHANGES_REQUIRING_PASSPHRASE: ExchangeProvider[] = [
   ExchangeProvider.KUCOIN,
 ];
 
+/** Identifies accounts by wallet address instead of an API key/secret pair — see ExchangeCredentials. */
+const WALLET_ADDRESS_EXCHANGES: ExchangeProvider[] = [ExchangeProvider.HYPERLIQUID];
+
+function isWalletAddressExchange(dto: CreateExchangeConnectionDto): boolean {
+  return WALLET_ADDRESS_EXCHANGES.includes(dto.exchange);
+}
+
 export class CreateExchangeConnectionDto {
   @IsEnum(ExchangeProvider)
   exchange!: ExchangeProvider;
@@ -15,13 +22,15 @@ export class CreateExchangeConnectionDto {
   @MaxLength(60)
   label!: string;
 
+  @ValidateIf((dto: CreateExchangeConnectionDto) => !isWalletAddressExchange(dto))
   @IsString()
   @MinLength(1)
-  apiKey!: string;
+  apiKey?: string;
 
+  @ValidateIf((dto: CreateExchangeConnectionDto) => !isWalletAddressExchange(dto))
   @IsString()
   @MinLength(1)
-  apiSecret!: string;
+  apiSecret?: string;
 
   /** Required for exchanges (e.g. OKX, KuCoin) that set a passphrase at API key creation time. */
   @ValidateIf((dto: CreateExchangeConnectionDto) =>
@@ -30,4 +39,10 @@ export class CreateExchangeConnectionDto {
   @IsString()
   @MinLength(1)
   apiPassphrase?: string;
+
+  /** Required for HYPERLIQUID — the account's public wallet address, in place of an API key/secret. */
+  @ValidateIf((dto: CreateExchangeConnectionDto) => isWalletAddressExchange(dto))
+  @IsString()
+  @MinLength(1)
+  walletAddress?: string;
 }

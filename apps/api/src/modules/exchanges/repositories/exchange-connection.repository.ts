@@ -22,9 +22,10 @@ export class ExchangeConnectionRepository {
     userId: string;
     exchange: ExchangeProvider;
     label: string;
-    encryptedApiKey: string;
-    encryptedApiSecret: string;
+    encryptedApiKey?: string;
+    encryptedApiSecret?: string;
     encryptedApiPassphrase?: string;
+    encryptedWalletAddress?: string;
     apiKeyPreview: string;
   }): Promise<ExchangeConnection> {
     return this.prisma.exchangeConnection.create({ data });

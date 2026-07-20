@@ -20,8 +20,8 @@ import { QUERY_KEYS } from '@/lib/constants';
 import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
 import type { ExchangeProvider, ImportResult } from '@/types/exchange';
 
-/** Mirrors ExchangeClient.supportsAllSymbolsFetch on the backend — Binance/KuCoin's APIs require a symbol per request. */
-const EXCHANGES_SUPPORTING_ALL_SYMBOLS: ExchangeProvider[] = ['BYBIT', 'OKX'];
+/** Mirrors ExchangeClient.supportsAllSymbolsFetch on the backend — Binance/KuCoin/Gate.io's APIs require a symbol per request. */
+const EXCHANGES_SUPPORTING_ALL_SYMBOLS: ExchangeProvider[] = ['BYBIT', 'OKX', 'HYPERLIQUID'];
 
 type ImportTradesDialogProps = {
   connectionId: string;

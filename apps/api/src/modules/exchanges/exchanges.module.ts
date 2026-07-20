@@ -14,6 +14,8 @@ import { BinanceClientService } from './binance/binance-client.service';
 import { BybitClientService } from './bybit/bybit-client.service';
 import { OkxClientService } from './okx/okx-client.service';
 import { KucoinClientService } from './kucoin/kucoin-client.service';
+import { GateioClientService } from './gateio/gateio-client.service';
+import { HyperliquidClientService } from './hyperliquid/hyperliquid-client.service';
 
 @Module({
   imports: [DatabaseModule, CryptoModule, TradesModule, PortfoliosModule, BillingModule],
@@ -28,6 +30,8 @@ import { KucoinClientService } from './kucoin/kucoin-client.service';
     BybitClientService,
     OkxClientService,
     KucoinClientService,
+    GateioClientService,
+    HyperliquidClientService,
   ],
 
   exports: [ExchangesService],

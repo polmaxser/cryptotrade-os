@@ -20,8 +20,17 @@ import { ApiError } from '@/lib/api/errors';
 import { QUERY_KEYS } from '@/lib/constants';
 import type { ExchangeProvider } from '@/types/exchange';
 
-const SUPPORTED_EXCHANGES: ExchangeProvider[] = ['BINANCE', 'BYBIT', 'OKX', 'KUCOIN'];
+const SUPPORTED_EXCHANGES: ExchangeProvider[] = [
+  'BINANCE',
+  'BYBIT',
+  'OKX',
+  'KUCOIN',
+  'GATEIO',
+  'HYPERLIQUID',
+];
 const EXCHANGES_REQUIRING_PASSPHRASE: ExchangeProvider[] = ['OKX', 'KUCOIN'];
+/** Identifies accounts by wallet address instead of an API key/secret pair. */
+const WALLET_ADDRESS_EXCHANGES: ExchangeProvider[] = ['HYPERLIQUID'];
 
 export function ConnectExchangeDialog() {
   const t = useTranslations('exchanges.connect');
@@ -34,9 +43,11 @@ export function ConnectExchangeDialog() {
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
   const [apiPassphrase, setApiPassphrase] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const needsPassphrase = EXCHANGES_REQUIRING_PASSPHRASE.includes(exchange);
+  const needsWalletAddress = WALLET_ADDRESS_EXCHANGES.includes(exchange);
 
   const mutation = useMutation({
     mutationFn: createExchangeConnection,
@@ -48,6 +59,7 @@ export function ConnectExchangeDialog() {
       setApiKey('');
       setApiSecret('');
       setApiPassphrase('');
+      setWalletAddress('');
     },
     onError: (err) => setError(err instanceof ApiError ? err.message : tErrors('generic')),
   });
@@ -58,9 +70,10 @@ export function ConnectExchangeDialog() {
     mutation.mutate({
       exchange,
       label,
-      apiKey,
-      apiSecret,
+      apiKey: needsWalletAddress ? undefined : apiKey,
+      apiSecret: needsWalletAddress ? undefined : apiSecret,
       apiPassphrase: needsPassphrase ? apiPassphrase : undefined,
+      walletAddress: needsWalletAddress ? walletAddress : undefined,
     });
   }
 
@@ -109,42 +122,59 @@ export function ConnectExchangeDialog() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="apiKey">{t('apiKeyLabel')}</Label>
-            <Input
-              id="apiKey"
-              required
-              autoComplete="off"
-              value={apiKey}
-              onChange={(event) => setApiKey(event.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="apiSecret">{t('apiSecretLabel')}</Label>
-            <Input
-              id="apiSecret"
-              type="password"
-              required
-              autoComplete="off"
-              value={apiSecret}
-              onChange={(event) => setApiSecret(event.target.value)}
-            />
-          </div>
-
-          {needsPassphrase ? (
+          {needsWalletAddress ? (
             <div className="space-y-2">
-              <Label htmlFor="apiPassphrase">{t('apiPassphraseLabel')}</Label>
+              <Label htmlFor="walletAddress">{t('walletAddressLabel')}</Label>
               <Input
-                id="apiPassphrase"
-                type="password"
+                id="walletAddress"
                 required
                 autoComplete="off"
-                value={apiPassphrase}
-                onChange={(event) => setApiPassphrase(event.target.value)}
+                placeholder="0x..."
+                value={walletAddress}
+                onChange={(event) => setWalletAddress(event.target.value)}
               />
+              <p className="text-muted-foreground text-xs">{t('walletAddressHint')}</p>
             </div>
-          ) : null}
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="apiKey">{t('apiKeyLabel')}</Label>
+                <Input
+                  id="apiKey"
+                  required
+                  autoComplete="off"
+                  value={apiKey}
+                  onChange={(event) => setApiKey(event.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="apiSecret">{t('apiSecretLabel')}</Label>
+                <Input
+                  id="apiSecret"
+                  type="password"
+                  required
+                  autoComplete="off"
+                  value={apiSecret}
+                  onChange={(event) => setApiSecret(event.target.value)}
+                />
+              </div>
+
+              {needsPassphrase ? (
+                <div className="space-y-2">
+                  <Label htmlFor="apiPassphrase">{t('apiPassphraseLabel')}</Label>
+                  <Input
+                    id="apiPassphrase"
+                    type="password"
+                    required
+                    autoComplete="off"
+                    value={apiPassphrase}
+                    onChange={(event) => setApiPassphrase(event.target.value)}
+                  />
+                </div>
+              ) : null}
+            </>
+          )}
 
           {error ? <p className="text-sm text-red-400">{error}</p> : null}
 

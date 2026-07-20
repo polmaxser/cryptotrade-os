@@ -336,13 +336,17 @@
         "BINANCE": "Binance",
         "BYBIT": "Bybit",
         "OKX": "OKX",
-        "KUCOIN": "KuCoin"
+        "KUCOIN": "KuCoin",
+        "GATEIO": "Gate.io",
+        "HYPERLIQUID": "Hyperliquid"
       },
       "labelLabel": "Название",
       "labelPlaceholder": "Мой аккаунт на бирже",
       "apiKeyLabel": "API Key",
       "apiSecretLabel": "API Secret",
       "apiPassphraseLabel": "API Passphrase",
+      "walletAddressLabel": "Адрес кошелька",
+      "walletAddressHint": "История сделок на Hyperliquid — открытые ончейн-данные: не нужен ни API-ключ, ни подпись, только адрес кошелька аккаунта.",
       "connect": "Подключить",
       "connecting": "Подключение..."
     },

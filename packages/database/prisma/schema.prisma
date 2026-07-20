@@ -58,6 +58,8 @@ enum TradeSource {
   BYBIT
   OKX
   KUCOIN
+  GATEIO
+  HYPERLIQUID
 }
 
 enum ExchangeProvider {
@@ -65,6 +67,8 @@ enum ExchangeProvider {
   BYBIT
   OKX
   KUCOIN
+  GATEIO
+  HYPERLIQUID
 }
 
 enum CoachInsightPattern {
@@ -300,12 +304,19 @@ model ExchangeConnection {
   label    String
 
   /// AES-256-GCM encrypted — never stored or returned in plaintext.
-  encryptedApiKey    String
-  encryptedApiSecret String
+  /// Null for HYPERLIQUID, which identifies an account by wallet address
+  /// instead of an API key/secret pair — see encryptedWalletAddress below.
+  encryptedApiKey    String?
+  encryptedApiSecret String?
   /// Some exchanges (e.g. OKX) require a third credential set at key creation time.
   encryptedApiPassphrase String?
+  /// HYPERLIQUID only: the account's public wallet address. Not a secret —
+  /// Hyperliquid's read-only fills endpoint is keyed on this alone, with no
+  /// signature — but encrypted at rest anyway for consistency with the
+  /// other credential columns.
+  encryptedWalletAddress String?
 
-  /// Last 4 characters of the real key, for display/identification only.
+  /// Last 4 characters of the real key (or wallet address), for display/identification only.
   apiKeyPreview String
 
   lastImportedAt DateTime?
