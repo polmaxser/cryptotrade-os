@@ -74,7 +74,7 @@ export function TopNav() {
   }
 
   return (
-    <nav className="hidden items-center gap-1 md:flex">
+    <nav className="flex items-center gap-1 overflow-x-auto">
       {NAV_GROUPS.map((group) => {
         const Icon = group.icon;
         const isActive = group.items.some((item) => pathname.startsWith(item.href));
