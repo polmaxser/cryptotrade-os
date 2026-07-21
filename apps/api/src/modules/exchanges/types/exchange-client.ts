@@ -43,4 +43,13 @@ export interface ExchangeClient {
     symbol: string | undefined,
     range?: FillsRange,
   ): Promise<NormalizedFill[]>;
+  /**
+   * Total account balance in USD (or a USD-pegged stablecoin, treated as
+   * 1:1). Display-only — never used for trade matching or PnL. Exchanges
+   * that already report a ready-made total (Bybit, OKX, Gate.io) return it
+   * directly; others (Binance, KuCoin) sum per-asset spot balances converted
+   * via the exchange's own ticker prices, since no single endpoint gives a
+   * pre-converted total.
+   */
+  fetchBalance(credentials: ExchangeCredentials): Promise<number>;
 }

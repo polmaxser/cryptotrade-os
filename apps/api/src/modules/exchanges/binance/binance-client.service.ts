@@ -16,6 +16,22 @@ const FUTURES_MAX_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_PAGES = 30;
 const PAGE_LIMIT = '1000';
 
+interface BinanceSpotAccount {
+  balances: { asset: string; free: string; locked: string }[];
+}
+
+interface BinanceFuturesAccount {
+  totalWalletBalance: string;
+}
+
+interface BinanceTickerPrice {
+  symbol: string;
+  price: string;
+}
+
+/** Stablecoins already treated as 1:1 with USD — no ticker lookup needed. */
+const USD_STABLE_ASSETS = new Set(['USDT', 'USDC', 'BUSD', 'FDUSD', 'DAI']);
+
 interface BinanceSpotFill {
   symbol: string;
   id: number;
@@ -198,6 +214,63 @@ export class BinanceClientService implements ExchangeClient {
     return fills;
   }
 
+  /**
+   * No single Binance endpoint reports a combined USD total, so this sums
+   * spot (converted per-asset via live ticker prices) and USDⓈ-M futures
+   * (whose totalWalletBalance is already USDT). If futures isn't enabled on
+   * the account, that call fails and spot alone is used — same
+   * graceful-degradation the fills fetch already relies on.
+   */
+  async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
+    const [spotResult, futuresResult] = await Promise.allSettled([
+      this.fetchSpotBalanceUsd(credentials),
+      this.signedGet<BinanceFuturesAccount>(
+        BINANCE_FUTURES_BASE_URL,
+        '/fapi/v2/account',
+        credentials,
+        {},
+      ),
+    ]);
+
+    if (spotResult.status === 'rejected' && futuresResult.status === 'rejected') {
+      throw spotResult.reason;
+    }
+
+    const spotUsd = spotResult.status === 'fulfilled' ? spotResult.value : 0;
+    const futuresUsd =
+      futuresResult.status === 'fulfilled' ? Number(futuresResult.value.totalWalletBalance) : 0;
+
+    return spotUsd + futuresUsd;
+  }
+
+  private async fetchSpotBalanceUsd(credentials: ExchangeCredentials): Promise<number> {
+    const [account, prices] = await Promise.all([
+      this.signedGet<BinanceSpotAccount>(BINANCE_SPOT_BASE_URL, '/api/v3/account', credentials, {}),
+      fetchTickerPrices(),
+    ]);
+
+    let total = 0;
+
+    for (const balance of account.balances) {
+      const amount = Number(balance.free) + Number(balance.locked);
+      if (amount === 0) continue;
+
+      if (USD_STABLE_ASSETS.has(balance.asset)) {
+        total += amount;
+        continue;
+      }
+
+      const price = prices.get(`${balance.asset}USDT`);
+      if (price !== undefined) {
+        total += amount * price;
+      }
+      // No direct USDT pair (e.g. a dust/delisted asset) — skipped rather
+      // than guessing a conversion path through an intermediate asset.
+    }
+
+    return total;
+  }
+
   private async signedGet<T>(
     baseUrl: string,
     path: string,
@@ -235,6 +308,24 @@ export class BinanceClientService implements ExchangeClient {
 
     return response.json() as Promise<T>;
   }
+}
+
+/** Public, unauthenticated — one call prices every symbol at once. */
+async function fetchTickerPrices(): Promise<Map<string, number>> {
+  let response: globalThis.Response;
+
+  try {
+    response = await fetch(`${BINANCE_SPOT_BASE_URL}/api/v3/ticker/price`);
+  } catch {
+    throw new ServiceUnavailableException('Could not reach Binance');
+  }
+
+  if (!response.ok) {
+    throw new ServiceUnavailableException(`Binance API error (${response.status})`);
+  }
+
+  const tickers = (await response.json()) as BinanceTickerPrice[];
+  return new Map(tickers.map((t) => [t.symbol, Number(t.price)]));
 }
 
 function mapSpotFill(fill: BinanceSpotFill): NormalizedFill {

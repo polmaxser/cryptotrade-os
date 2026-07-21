@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { DashboardCard, DashboardCardContent } from '@/components/dashboard/dashboard-card';
 import { deleteExchangeConnection } from '@/lib/api/exchanges';
 import { QUERY_KEYS } from '@/lib/constants';
+import { formatCurrency } from '@/lib/dashboard/formatters';
+import { useExchangeBalanceQuery } from '@/hooks/use-exchange-balance-query';
 import type { ExchangeConnection } from '@/types/exchange';
 import { ImportTradesDialog } from './import-trades-dialog';
 
@@ -17,6 +19,7 @@ type ExchangeConnectionCardProps = {
 export function ExchangeConnectionCard({ connection }: ExchangeConnectionCardProps) {
   const t = useTranslations('exchanges');
   const queryClient = useQueryClient();
+  const balanceQuery = useExchangeBalanceQuery(connection.id);
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteExchangeConnection(connection.id),
@@ -36,6 +39,19 @@ export function ExchangeConnectionCard({ connection }: ExchangeConnectionCardPro
             {connection.lastImportedAt
               ? ` · ${t('lastImported', { date: new Date(connection.lastImportedAt).toLocaleDateString() })}`
               : ''}
+          </p>
+          <p className="text-sm">
+            {balanceQuery.isLoading ? (
+              <span className="text-muted-foreground">{t('balanceLoading')}</span>
+            ) : balanceQuery.isError ? (
+              <span className="text-muted-foreground">{t('balanceError')}</span>
+            ) : (
+              <span className="font-medium">
+                {t('balanceLabel', {
+                  amount: formatCurrency(balanceQuery.data?.balanceUsd ?? 0, 'USD'),
+                })}
+              </span>
+            )}
           </p>
         </div>
 

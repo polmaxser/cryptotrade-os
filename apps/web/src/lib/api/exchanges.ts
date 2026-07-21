@@ -32,3 +32,7 @@ export async function importTrades(
     body: JSON.stringify(payload),
   });
 }
+
+export async function fetchExchangeBalance(id: string): Promise<{ balanceUsd: number }> {
+  return apiFetch<{ balanceUsd: number }>(`/exchanges/connections/${id}/balance`);
+}

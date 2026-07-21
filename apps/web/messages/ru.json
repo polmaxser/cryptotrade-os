@@ -325,6 +325,9 @@
     "empty": "Пока нет подключённых бирж.",
     "keyPreview": "Ключ, оканчивающийся на {preview}",
     "lastImported": "последний импорт {date}",
+    "balanceLabel": "Баланс: {amount}",
+    "balanceLoading": "Загрузка баланса...",
+    "balanceError": "Не удалось загрузить баланс",
     "importButton": "Импорт",
     "disconnect": "Отключить",
     "connect": {

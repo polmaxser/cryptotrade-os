@@ -13,6 +13,10 @@ const MAX_PAGES = 30;
 /** No documented per-request max window for Gate.io's ranged trade endpoints — chosen conservatively. */
 const CHUNK_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
+interface GateioTotalBalance {
+  total?: { amount?: string; currency?: string };
+}
+
 interface GateioSpotTrade {
   id: string;
   create_time_ms: string;
@@ -46,6 +50,18 @@ export class GateioClientService implements ExchangeClient {
 
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet('GET', '/spot/accounts', credentials, {});
+  }
+
+  /** wallet/total_balance already sums every account type (spot/margin/futures/...) converted to USDT. */
+  async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
+    const response = await this.signedGet<GateioTotalBalance>(
+      'GET',
+      '/wallet/total_balance',
+      credentials,
+      { currency: 'USDT' },
+    );
+
+    return Number(response.total?.amount ?? 0);
   }
 
   async fetchFills(

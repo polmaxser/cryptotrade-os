@@ -325,6 +325,9 @@
     "empty": "No exchanges connected yet.",
     "keyPreview": "Key ending in {preview}",
     "lastImported": "last imported {date}",
+    "balanceLabel": "Balance: {amount}",
+    "balanceLoading": "Loading balance...",
+    "balanceError": "Couldn't load balance",
     "importButton": "Import",
     "disconnect": "Disconnect",
     "connect": {

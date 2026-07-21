@@ -34,4 +34,9 @@ export class ExchangesController {
   ) {
     return this.exchangesService.importTrades(id, userId, dto);
   }
+
+  @Get(':id/balance')
+  async balance(@CurrentUser('id') userId: string, @Param('id') id: string) {
+    return this.exchangesService.getBalance(id, userId);
+  }
 }

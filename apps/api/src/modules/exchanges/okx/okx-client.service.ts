@@ -11,6 +11,10 @@ const MAX_PAGES = 30;
 
 const ALL_INST_TYPES = ['SPOT', 'SWAP', 'FUTURES'] as const;
 
+interface OkxBalance {
+  totalEq: string;
+}
+
 interface OkxFill {
   billId: string;
   instId: string;
@@ -45,6 +49,16 @@ export class OkxClientService implements ExchangeClient {
 
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet('/api/v5/account/config', credentials, {});
+  }
+
+  /** totalEq already aggregates every account (spot/margin/swap/futures) into one USD figure. */
+  async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
+    const [balance] = await this.signedGet<OkxBalance[]>(
+      '/api/v5/account/balance',
+      credentials,
+      {},
+    );
+    return Number(balance?.totalEq ?? 0);
   }
 
   /**

@@ -88,20 +88,7 @@ export class ExchangesService {
       ? (await this.portfoliosService.findOne(dto.portfolioId, userId)).id
       : (await this.portfoliosService.getDefaultForUser(userId))?.id;
 
-    const credentials = {
-      apiKey: connection.encryptedApiKey
-        ? this.encryptionService.decrypt(connection.encryptedApiKey)
-        : '',
-      apiSecret: connection.encryptedApiSecret
-        ? this.encryptionService.decrypt(connection.encryptedApiSecret)
-        : '',
-      apiPassphrase: connection.encryptedApiPassphrase
-        ? this.encryptionService.decrypt(connection.encryptedApiPassphrase)
-        : undefined,
-      walletAddress: connection.encryptedWalletAddress
-        ? this.encryptionService.decrypt(connection.encryptedWalletAddress)
-        : undefined,
-    };
+    const credentials = this.decryptCredentials(connection);
 
     const range = this.resolveImportRange(dto);
     const matchedBySymbol = await this.fetchAndMatchBySymbol(
@@ -154,6 +141,33 @@ export class ExchangesService {
     await this.connectionRepository.touchLastImported(connection.id);
 
     return results;
+  }
+
+  async getBalance(id: string, userId: string): Promise<{ balanceUsd: number }> {
+    const connection = await this.getConnectionOrThrow(id, userId);
+    const client = this.clientRegistry.getClient(connection.exchange);
+    const credentials = this.decryptCredentials(connection);
+
+    const balanceUsd = await client.fetchBalance(credentials);
+
+    return { balanceUsd };
+  }
+
+  private decryptCredentials(connection: ExchangeConnection): ExchangeCredentials {
+    return {
+      apiKey: connection.encryptedApiKey
+        ? this.encryptionService.decrypt(connection.encryptedApiKey)
+        : '',
+      apiSecret: connection.encryptedApiSecret
+        ? this.encryptionService.decrypt(connection.encryptedApiSecret)
+        : '',
+      apiPassphrase: connection.encryptedApiPassphrase
+        ? this.encryptionService.decrypt(connection.encryptedApiPassphrase)
+        : undefined,
+      walletAddress: connection.encryptedWalletAddress
+        ? this.encryptionService.decrypt(connection.encryptedWalletAddress)
+        : undefined,
+    };
   }
 
   /**

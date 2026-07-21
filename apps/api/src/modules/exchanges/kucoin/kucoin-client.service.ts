@@ -17,6 +17,19 @@ const FUTURES_MAX_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 /** Safety cap on paginated requests so a huge range/history can't hang the import. */
 const MAX_PAGES = 30;
 
+interface KucoinAccount {
+  currency: string;
+  balance: string;
+}
+
+interface KucoinTicker {
+  symbol: string;
+  last: string | null;
+}
+
+/** Stablecoins already treated as 1:1 with USD — no ticker lookup needed. */
+const USD_STABLE_CURRENCIES = new Set(['USDT', 'USDC', 'USD']);
+
 interface KucoinSpotFill {
   id: string;
   symbol: string;
@@ -70,6 +83,45 @@ export class KucoinClientService implements ExchangeClient {
 
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet(KUCOIN_SPOT_BASE_URL, '/api/v1/accounts', credentials, {});
+  }
+
+  /**
+   * Spot only — KuCoin has no single endpoint reporting a combined
+   * spot+futures USD total (its newer Unified Trading Account API isn't yet
+   * production-ready per KuCoin's own docs), so per-asset spot balances are
+   * summed here and converted via the exchange's own public ticker prices.
+   */
+  async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
+    const [accounts, prices] = await Promise.all([
+      this.signedGet<KucoinAccount[]>(KUCOIN_SPOT_BASE_URL, '/api/v1/accounts', credentials, {}),
+      fetchAllTickerPrices(),
+    ]);
+
+    const totalsByCurrency = new Map<string, number>();
+    for (const account of accounts) {
+      const amount = Number(account.balance);
+      if (amount === 0) continue;
+      totalsByCurrency.set(
+        account.currency,
+        (totalsByCurrency.get(account.currency) ?? 0) + amount,
+      );
+    }
+
+    let total = 0;
+    for (const [currency, amount] of totalsByCurrency) {
+      if (USD_STABLE_CURRENCIES.has(currency)) {
+        total += amount;
+        continue;
+      }
+
+      const price = prices.get(`${currency}-USDT`);
+      if (price !== undefined) {
+        total += amount * price;
+      }
+      // No direct USDT pair — skipped rather than guessing a conversion path.
+    }
+
+    return total;
   }
 
   /**
@@ -260,4 +312,30 @@ export class KucoinClientService implements ExchangeClient {
 
     return payload.data;
   }
+}
+
+/** Public, unauthenticated — one call prices every spot symbol at once. */
+async function fetchAllTickerPrices(): Promise<Map<string, number>> {
+  let response: globalThis.Response;
+
+  try {
+    response = await fetch(`${KUCOIN_SPOT_BASE_URL}/api/v1/market/allTickers`);
+  } catch {
+    throw new ServiceUnavailableException('Could not reach KuCoin');
+  }
+
+  if (!response.ok) {
+    throw new ServiceUnavailableException(`KuCoin API error (${response.status})`);
+  }
+
+  const payload = (await response.json()) as KucoinResponse<{ ticker: KucoinTicker[] }>;
+  const prices = new Map<string, number>();
+
+  for (const ticker of payload.data.ticker) {
+    if (ticker.last !== null) {
+      prices.set(ticker.symbol, Number(ticker.last));
+    }
+  }
+
+  return prices;
 }

@@ -16,6 +16,10 @@ const MAX_PAGES_PER_CATEGORY = 30;
 /** spot + USDT/USDC-margined perpetuals — inverse (coin-margined) contracts are out of scope for now. */
 const EXECUTION_CATEGORIES = ['spot', 'linear'] as const;
 
+interface BybitWalletBalance {
+  list: { totalEquity: string }[];
+}
+
 interface BybitExecution {
   execId: string;
   symbol: string;
@@ -50,6 +54,19 @@ export class BybitClientService implements ExchangeClient {
 
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     await this.signedGet('/v5/user/query-api', credentials, {});
+  }
+
+  /** The Unified Trading Account's totalEquity is already a ready USD figure — no conversion needed. */
+  async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
+    const response = await this.signedGet<BybitWalletBalance>(
+      '/v5/account/wallet-balance',
+      credentials,
+      {
+        accountType: 'UNIFIED',
+      },
+    );
+
+    return Number(response.list[0]?.totalEquity ?? 0);
   }
 
   /**

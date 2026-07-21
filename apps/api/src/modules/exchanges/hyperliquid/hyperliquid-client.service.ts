@@ -20,6 +20,19 @@ interface HyperliquidFill {
   tid: number;
 }
 
+interface HyperliquidClearinghouseState {
+  marginSummary: { accountValue: string };
+}
+
+interface HyperliquidSpotBalance {
+  coin: string;
+  total: string;
+}
+
+interface HyperliquidSpotState {
+  balances: HyperliquidSpotBalance[];
+}
+
 /**
  * Thin, read-only wrapper over Hyperliquid's public `/info` endpoint.
  *
@@ -41,6 +54,37 @@ export class HyperliquidClientService implements ExchangeClient {
   async testConnection(credentials: ExchangeCredentials): Promise<void> {
     const walletAddress = requireWalletAddress(credentials);
     await this.postInfo<HyperliquidFill[]>({ type: 'userFills', user: walletAddress });
+  }
+
+  /**
+   * accountValue from the perpetuals clearinghouse is already in USD; spot
+   * holdings are only counted for USDC (1:1) since other spot tokens (e.g.
+   * PURR) would need their own price conversion, which this deliberately
+   * skips rather than guessing.
+   */
+  async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
+    const walletAddress = requireWalletAddress(credentials);
+
+    const [perpResult, spotResult] = await Promise.allSettled([
+      this.postInfo<HyperliquidClearinghouseState>({
+        type: 'clearinghouseState',
+        user: walletAddress,
+      }),
+      this.postInfo<HyperliquidSpotState>({ type: 'spotClearinghouseState', user: walletAddress }),
+    ]);
+
+    if (perpResult.status === 'rejected' && spotResult.status === 'rejected') {
+      throw perpResult.reason;
+    }
+
+    const perpUsd =
+      perpResult.status === 'fulfilled' ? Number(perpResult.value.marginSummary.accountValue) : 0;
+    const spotUsdc =
+      spotResult.status === 'fulfilled'
+        ? Number(spotResult.value.balances.find((b) => b.coin === 'USDC')?.total ?? 0)
+        : 0;
+
+    return perpUsd + spotUsdc;
   }
 
   async fetchFills(
