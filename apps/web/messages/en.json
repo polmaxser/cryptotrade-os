@@ -17,6 +17,7 @@
     "journal": "Journal",
     "calendar": "Calendar",
     "watchlist": "Watchlist",
+    "charts": "Charts",
     "alerts": "Alerts",
     "notes": "Notes",
     "exchanges": "Exchanges",
@@ -560,6 +561,15 @@
         "overbought": "Overbought Level"
       }
     }
+  },
+  "charts": {
+    "title": "Charts",
+    "subtitle": "Live candlestick charts from Binance market data.",
+    "symbolLabel": "Symbol",
+    "timeframeLabel": "Timeframe",
+    "apply": "Apply",
+    "loadError": "Something went wrong while loading chart data.",
+    "empty": "No candle data for this symbol/timeframe."
   },
   "economicCalendar": {
     "title": "Economic Calendar",

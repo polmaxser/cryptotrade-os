@@ -1,4 +1,5 @@
-import { Candle } from './types/candle';
+import { Candle } from '@/modules/market-data/types/candle';
+
 import { Signal } from './templates/signals';
 
 export interface SimulatedTrade {

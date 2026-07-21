@@ -29,6 +29,7 @@ import { StrategiesModule } from './modules/strategies/strategies.module';
 import { BacktestsModule } from './modules/backtests/backtests.module';
 import { EconomicCalendarModule } from './modules/economic-calendar/economic-calendar.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { MarketDataModule } from './modules/market-data/market-data.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -64,6 +65,7 @@ import configuration from './config/configuration';
     BacktestsModule,
     EconomicCalendarModule,
     AdminModule,
+    MarketDataModule,
   ],
   controllers: [AppController],
   providers: [AppService],

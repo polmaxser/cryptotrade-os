@@ -1,5 +1,6 @@
+import { Candle } from '@/modules/market-data/types/candle';
+
 import { simulate } from './simulator';
-import { Candle } from './types/candle';
 import { Signal } from './templates/signals';
 
 function candle(openTime: number, close: number): Candle {

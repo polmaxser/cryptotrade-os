@@ -28,6 +28,8 @@ export const QUERY_KEYS = {
   calendarMonth: (month: string) => ['calendar', month] as const,
   exchangeConnections: ['exchanges', 'connections'] as const,
   exchangeBalance: (id: string) => ['exchanges', 'connections', id, 'balance'] as const,
+  klines: (symbol: string, timeframe: string, from: string, to: string) =>
+    ['market-data', 'klines', symbol, timeframe, from, to] as const,
   defiPositions: ['defi-positions'] as const,
   nftHoldings: ['nft-holdings'] as const,
   coachInsights: (status?: string) => ['coach-insights', status ?? 'all'] as const,

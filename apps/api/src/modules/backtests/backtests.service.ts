@@ -8,9 +8,9 @@ import { BacktestRun, Prisma } from '@cryptotrade/database';
 
 import { PrismaService } from '@/common/database/prisma.service';
 import { BillingService } from '@/modules/billing/billing.service';
+import { BinanceKlinesService } from '@/modules/market-data/binance-klines.service';
 
 import { BacktestRunRepository } from './repositories/backtest-run.repository';
-import { BinanceKlinesService } from './binance-klines.service';
 import { RunBacktestDto } from './dto/run-backtest.dto';
 import { computeSignal, validateTemplateParams } from './templates/signals';
 import { simulate } from './simulator';

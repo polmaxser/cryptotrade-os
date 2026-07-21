@@ -1,7 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { BacktestTemplate } from '@cryptotrade/database';
 
-import { Candle } from '../types/candle';
+import { Candle } from '@/modules/market-data/types/candle';
+
 import { donchian, rsi, sma } from '../indicators';
 
 /**

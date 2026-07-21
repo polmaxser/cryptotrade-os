@@ -1,7 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { Candle } from '@/modules/market-data/types/candle';
+
 import { computeSignal, validateTemplateParams } from './signals';
-import { Candle } from '../types/candle';
 
 function candle(openTime: number, close: number, high = close, low = close): Candle {
   return { openTime, open: close, high, low, close, volume: 0 };

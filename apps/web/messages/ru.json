@@ -17,6 +17,7 @@
     "journal": "Журнал",
     "calendar": "Календарь",
     "watchlist": "Watchlist",
+    "charts": "Графики",
     "alerts": "Алерты",
     "notes": "Заметки",
     "exchanges": "Биржи",
@@ -560,6 +561,15 @@
         "overbought": "Уровень перекупленности"
       }
     }
+  },
+  "charts": {
+    "title": "Графики",
+    "subtitle": "Живые свечные графики по данным Binance.",
+    "symbolLabel": "Символ",
+    "timeframeLabel": "Таймфрейм",
+    "apply": "Применить",
+    "loadError": "Не удалось загрузить данные графика.",
+    "empty": "Нет данных по этому символу/таймфрейму."
   },
   "economicCalendar": {
     "title": "Экономический календарь",
