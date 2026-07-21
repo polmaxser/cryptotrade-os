@@ -53,36 +53,6 @@ export function UserMenu() {
         <DropdownMenuLabel className="text-muted-foreground max-w-[220px] truncate font-normal">
           {user.email}
         </DropdownMenuLabel>
-        <DropdownMenuItem onSelect={() => router.push('/trades')}>{t('trades')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/journal')}>{t('journal')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/calendar')}>
-          {t('calendar')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/watchlist')}>
-          {t('watchlist')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/charts')}>{t('charts')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/alerts')}>{t('alerts')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/notes')}>{t('notes')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/exchanges')}>
-          {t('exchanges')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/defi')}>{t('defi')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/nft')}>{t('nft')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/coach')}>{t('coach')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/reports')}>{t('reports')}</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/strategies')}>
-          {t('strategies')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/backtests')}>
-          {t('backtests')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/economic-calendar')}>
-          {t('economicCalendar')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => router.push('/workspaces')}>
-          {t('workspaces')}
-        </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => router.push('/settings')}>
           {t('settings')}
         </DropdownMenuItem>

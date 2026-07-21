@@ -1,4 +1,9 @@
 {
+  "nav": {
+    "portfolio": "Portfolio",
+    "analytics": "Analytics",
+    "markets": "Markets"
+  },
   "common": {
     "appName": "CryptoTrade OS",
     "tagline": "Modern crypto trading platform",

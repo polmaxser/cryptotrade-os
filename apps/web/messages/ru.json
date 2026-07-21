@@ -1,4 +1,9 @@
 {
+  "nav": {
+    "portfolio": "Портфель",
+    "analytics": "Аналитика",
+    "markets": "Рынки"
+  },
   "common": {
     "appName": "CryptoTrade OS",
     "tagline": "Современная платформа для криптотрейдинга",
