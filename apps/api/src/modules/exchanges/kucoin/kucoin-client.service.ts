@@ -1,9 +1,15 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 
+import { CacheService } from '@/common/cache/cache.service';
+
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
+
+/** Same rationale as Binance's ticker cache — see binance-client.service.ts. */
+const TICKER_PRICE_CACHE_TTL_SECONDS = 30;
+const TICKER_PRICE_CACHE_KEY = 'exchange-tickers:kucoin';
 
 const KUCOIN_SPOT_BASE_URL = 'https://api.kucoin.com';
 /** Futures live on a separate host with their own symbol namespace (e.g. spot "BTC-USDT" vs futures "XBTUSDTM"). */
@@ -73,6 +79,8 @@ interface KucoinFuturesFillsPage {
  */
 @Injectable()
 export class KucoinClientService implements ExchangeClient {
+  constructor(private readonly cache: CacheService) {}
+
   /**
    * Spot fills require a symbol; futures technically don't, but treating the
    * whole client as symbol-required keeps the behavior simple and honest —
@@ -94,7 +102,7 @@ export class KucoinClientService implements ExchangeClient {
   async fetchBalance(credentials: ExchangeCredentials): Promise<number> {
     const [accounts, prices] = await Promise.all([
       this.signedGet<KucoinAccount[]>(KUCOIN_SPOT_BASE_URL, '/api/v1/accounts', credentials, {}),
-      fetchAllTickerPrices(),
+      this.fetchAllTickerPrices(),
     ]);
 
     const totalsByCurrency = new Map<string, number>();
@@ -312,30 +320,41 @@ export class KucoinClientService implements ExchangeClient {
 
     return payload.data;
   }
-}
 
-/** Public, unauthenticated — one call prices every spot symbol at once. */
-async function fetchAllTickerPrices(): Promise<Map<string, number>> {
-  let response: globalThis.Response;
-
-  try {
-    response = await fetch(`${KUCOIN_SPOT_BASE_URL}/api/v1/market/allTickers`);
-  } catch {
-    throw new ServiceUnavailableException('Could not reach KuCoin');
-  }
-
-  if (!response.ok) {
-    throw new ServiceUnavailableException(`KuCoin API error (${response.status})`);
-  }
-
-  const payload = (await response.json()) as KucoinResponse<{ ticker: KucoinTicker[] }>;
-  const prices = new Map<string, number>();
-
-  for (const ticker of payload.data.ticker) {
-    if (ticker.last !== null) {
-      prices.set(ticker.symbol, Number(ticker.last));
+  /** Public, unauthenticated — one call prices every spot symbol at once. Cached, same rationale as Binance's. */
+  private async fetchAllTickerPrices(): Promise<Map<string, number>> {
+    const cached = await this.cache.get<Record<string, number>>(TICKER_PRICE_CACHE_KEY);
+    if (cached) {
+      return new Map(Object.entries(cached));
     }
-  }
 
-  return prices;
+    let response: globalThis.Response;
+
+    try {
+      response = await fetch(`${KUCOIN_SPOT_BASE_URL}/api/v1/market/allTickers`);
+    } catch {
+      throw new ServiceUnavailableException('Could not reach KuCoin');
+    }
+
+    if (!response.ok) {
+      throw new ServiceUnavailableException(`KuCoin API error (${response.status})`);
+    }
+
+    const payload = (await response.json()) as KucoinResponse<{ ticker: KucoinTicker[] }>;
+    const prices = new Map<string, number>();
+
+    for (const ticker of payload.data.ticker) {
+      if (ticker.last !== null) {
+        prices.set(ticker.symbol, Number(ticker.last));
+      }
+    }
+
+    await this.cache.set(
+      TICKER_PRICE_CACHE_KEY,
+      Object.fromEntries(prices),
+      TICKER_PRICE_CACHE_TTL_SECONDS,
+    );
+
+    return prices;
+  }
 }

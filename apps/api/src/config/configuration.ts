@@ -38,8 +38,9 @@ export default () => ({
   security: {
     encryptionKey: process.env.ENCRYPTION_KEY,
   },
-  queue: {
-    redisUrl: process.env.REDIS_URL ?? 'redis://localhost:6379',
+  /** One Redis instance, two purposes: BullMQ queues and the short-TTL cache below. */
+  redis: {
+    url: process.env.REDIS_URL ?? 'redis://localhost:6379',
   },
   aiCoach: {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,

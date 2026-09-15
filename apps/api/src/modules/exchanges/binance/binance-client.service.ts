@@ -1,9 +1,15 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { createHmac } from 'node:crypto';
 
+import { CacheService } from '@/common/cache/cache.service';
+
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
+
+/** Prices move within this window, but not enough to meaningfully change a portfolio's USD-equivalent total. */
+const TICKER_PRICE_CACHE_TTL_SECONDS = 30;
+const TICKER_PRICE_CACHE_KEY = 'exchange-tickers:binance';
 
 const BINANCE_SPOT_BASE_URL = 'https://api.binance.com';
 /** USDⓈ-M futures live on an entirely separate host from spot, with their own endpoint — same HMAC scheme though. */
@@ -64,6 +70,8 @@ interface BinanceFuturesFill {
  */
 @Injectable()
 export class BinanceClientService implements ExchangeClient {
+  constructor(private readonly cache: CacheService) {}
+
   /** Both myTrades endpoints require a symbol — Binance has no "every pair" trade-history call. */
   readonly supportsAllSymbolsFetch = false;
 
@@ -246,7 +254,7 @@ export class BinanceClientService implements ExchangeClient {
   private async fetchSpotBalanceUsd(credentials: ExchangeCredentials): Promise<number> {
     const [account, prices] = await Promise.all([
       this.signedGet<BinanceSpotAccount>(BINANCE_SPOT_BASE_URL, '/api/v3/account', credentials, {}),
-      fetchTickerPrices(),
+      this.fetchTickerPrices(),
     ]);
 
     let total = 0;
@@ -308,24 +316,42 @@ export class BinanceClientService implements ExchangeClient {
 
     return response.json() as Promise<T>;
   }
-}
 
-/** Public, unauthenticated — one call prices every symbol at once. */
-async function fetchTickerPrices(): Promise<Map<string, number>> {
-  let response: globalThis.Response;
+  /**
+   * Public, unauthenticated — one call prices every symbol at once. Cached
+   * briefly since this is called on every balance check, regardless of user;
+   * without it, N concurrent balance checks make N full-ticker-list calls to
+   * Binance for the same data.
+   */
+  private async fetchTickerPrices(): Promise<Map<string, number>> {
+    const cached = await this.cache.get<Record<string, number>>(TICKER_PRICE_CACHE_KEY);
+    if (cached) {
+      return new Map(Object.entries(cached));
+    }
 
-  try {
-    response = await fetch(`${BINANCE_SPOT_BASE_URL}/api/v3/ticker/price`);
-  } catch {
-    throw new ServiceUnavailableException('Could not reach Binance');
+    let response: globalThis.Response;
+
+    try {
+      response = await fetch(`${BINANCE_SPOT_BASE_URL}/api/v3/ticker/price`);
+    } catch {
+      throw new ServiceUnavailableException('Could not reach Binance');
+    }
+
+    if (!response.ok) {
+      throw new ServiceUnavailableException(`Binance API error (${response.status})`);
+    }
+
+    const tickers = (await response.json()) as BinanceTickerPrice[];
+    const prices = new Map(tickers.map((t) => [t.symbol, Number(t.price)]));
+
+    await this.cache.set(
+      TICKER_PRICE_CACHE_KEY,
+      Object.fromEntries(prices),
+      TICKER_PRICE_CACHE_TTL_SECONDS,
+    );
+
+    return prices;
   }
-
-  if (!response.ok) {
-    throw new ServiceUnavailableException(`Binance API error (${response.status})`);
-  }
-
-  const tickers = (await response.json()) as BinanceTickerPrice[];
-  return new Map(tickers.map((t) => [t.symbol, Number(t.price)]));
 }
 
 function mapSpotFill(fill: BinanceSpotFill): NormalizedFill {

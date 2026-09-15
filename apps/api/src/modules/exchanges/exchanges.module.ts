@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { DatabaseModule } from '@/common/database/database.module';
 import { CryptoModule } from '@/common/crypto/crypto.module';
+import { CacheModule } from '@/common/cache/cache.module';
 import { TradesModule } from '@/modules/trades/trades.module';
 import { PortfoliosModule } from '@/modules/portfolios/portfolios.module';
 import { BillingModule } from '@/modules/billing/billing.module';
@@ -18,7 +19,14 @@ import { GateioClientService } from './gateio/gateio-client.service';
 import { HyperliquidClientService } from './hyperliquid/hyperliquid-client.service';
 
 @Module({
-  imports: [DatabaseModule, CryptoModule, TradesModule, PortfoliosModule, BillingModule],
+  imports: [
+    DatabaseModule,
+    CryptoModule,
+    CacheModule,
+    TradesModule,
+    PortfoliosModule,
+    BillingModule,
+  ],
 
   controllers: [ExchangesController],
 
