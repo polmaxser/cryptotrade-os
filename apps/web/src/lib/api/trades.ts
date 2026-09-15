@@ -1,8 +1,18 @@
 import type { CreateTradePayload, Trade, UpdateTradePayload } from '@/types/trade';
+import type { Paginated } from '@/types/pagination';
 import { apiFetch } from './client';
 
-export async function fetchTrades(): Promise<Trade[]> {
-  return apiFetch<Trade[]>('/trades');
+export type ListTradesParams = {
+  page?: number;
+  pageSize?: number;
+};
+
+export async function fetchTrades(params: ListTradesParams = {}): Promise<Paginated<Trade>> {
+  const query = new URLSearchParams();
+  if (params.page) query.set('page', String(params.page));
+  if (params.pageSize) query.set('pageSize', String(params.pageSize));
+
+  return apiFetch<Paginated<Trade>>(`/trades?${query.toString()}`);
 }
 
 export async function createTrade(payload: CreateTradePayload): Promise<Trade> {

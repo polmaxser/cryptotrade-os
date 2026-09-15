@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { Trade } from '@cryptotrade/database';
 
 import { TradesService } from './trades.service';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
+import { ListTradesDto } from './dto/list-trades.dto';
 
+import { Paginated } from '@/common/types/paginated';
 import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
 
 @Controller('trades')
@@ -12,8 +14,11 @@ export class TradesController {
   constructor(private readonly tradesService: TradesService) {}
 
   @Get()
-  async findAll(@CurrentUser('id') userId: string): Promise<Trade[]> {
-    return this.tradesService.findAll(userId);
+  async findAll(
+    @CurrentUser('id') userId: string,
+    @Query() query: ListTradesDto,
+  ): Promise<Paginated<Trade>> {
+    return this.tradesService.findAll(userId, query);
   }
 
   @Get(':id')

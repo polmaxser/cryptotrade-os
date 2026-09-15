@@ -188,7 +188,10 @@
       "statusOpen": "Open",
       "statusClosed": "Closed",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "pageInfo": "Page {page} of {totalPages} ({total} total)",
+      "prev": "Previous",
+      "next": "Next"
     }
   },
   "workspaces": {

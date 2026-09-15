@@ -18,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useStrategiesQuery } from '@/hooks/use-strategies-query';
 import { updateTrade } from '@/lib/api/trades';
 import { ApiError } from '@/lib/api/errors';
-import { QUERY_KEYS } from '@/lib/constants';
 import { toDatetimeLocalValue, fromDatetimeLocalValue } from '@/lib/date';
 import type { MarginType, Trade, TradeStatus } from '@/types/trade';
 
@@ -52,7 +51,7 @@ export function EditTradeDialog({ trade, children }: EditTradeDialogProps) {
   const mutation = useMutation({
     mutationFn: (payload: Parameters<typeof updateTrade>[1]) => updateTrade(trade.id, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trades });
+      queryClient.invalidateQueries({ queryKey: ['trades'] });
       queryClient.invalidateQueries({ queryKey: ['analytics', 'summary'] });
       setOpen(false);
     },

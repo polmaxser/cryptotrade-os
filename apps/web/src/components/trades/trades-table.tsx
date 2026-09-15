@@ -5,7 +5,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { deleteTrade } from '@/lib/api/trades';
-import { QUERY_KEYS } from '@/lib/constants';
 import { formatSignedPnl } from '@/lib/dashboard/formatters';
 import type { Trade } from '@/types/trade';
 import { EditTradeDialog } from './edit-trade-dialog';
@@ -21,7 +20,7 @@ export function TradesTable({ trades }: TradesTableProps) {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteTrade(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trades });
+      queryClient.invalidateQueries({ queryKey: ['trades'] });
       queryClient.invalidateQueries({ queryKey: ['analytics', 'summary'] });
     },
   });

@@ -5,7 +5,8 @@ import { UserRepository } from '@/modules/users/repositories/user.repository';
 import { ListUsersDto } from './dto/list-users.dto';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 import { AdminUserSummary, toAdminUserSummary } from './types/admin-user-summary';
-import { Paginated } from './types/paginated';
+
+import { Paginated } from '@/common/types/paginated';
 
 const DEFAULT_PAGE_SIZE = 25;
 const MAX_PAGE_SIZE = 100;

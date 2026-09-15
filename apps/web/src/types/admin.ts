@@ -1,11 +1,6 @@
 import type { PaidPlan, SubscriptionPlan } from './billing';
 
-export type Paginated<T> = {
-  items: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-};
+export type { Paginated } from './pagination';
 
 export type AdminUserSummary = {
   id: string;

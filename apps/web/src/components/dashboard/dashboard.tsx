@@ -26,7 +26,7 @@ export function Dashboard() {
     : undefined;
 
   const analyticsQuery = useAnalyticsSummaryQuery(effectivePortfolioId, !portfoliosQuery.isLoading);
-  const tradesQuery = useTradesQuery();
+  const tradesQuery = useTradesQuery(1, 5);
 
   const isLoading = analyticsQuery.isLoading || tradesQuery.isLoading || portfoliosQuery.isLoading;
   const isError = analyticsQuery.isError || tradesQuery.isError || portfoliosQuery.isError;
@@ -100,9 +100,9 @@ export function Dashboard() {
             <CoachInsightsWidget />
 
             <section>
-              {tradesQuery.data!.length > 0 ? (
+              {tradesQuery.data!.items.length > 0 ? (
                 <RecentTradesCard
-                  trades={tradesQuery.data!}
+                  trades={tradesQuery.data!.items}
                   title={t('recentTrades.title')}
                   openLabel={t('recentTrades.open')}
                 />

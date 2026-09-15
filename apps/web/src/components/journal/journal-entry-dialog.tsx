@@ -36,7 +36,7 @@ export function JournalEntryDialog({ entry, children }: JournalEntryDialogProps)
   const t = useTranslations('journal.dialog');
   const tErrors = useTranslations('auth.errors');
   const queryClient = useQueryClient();
-  const tradesQuery = useTradesQuery();
+  const tradesQuery = useTradesQuery(1, 200);
 
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState(entry?.content ?? '');
@@ -108,7 +108,7 @@ export function JournalEntryDialog({ entry, children }: JournalEntryDialogProps)
     }
   }
 
-  const trades = tradesQuery.data ?? [];
+  const trades = tradesQuery.data?.items ?? [];
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

@@ -4,10 +4,15 @@ import { Trade } from '@cryptotrade/database';
 import { TradeRepository } from './repositories/trade.repository';
 import { CreateTradeDto } from './dto/create-trade.dto';
 import { UpdateTradeDto } from './dto/update-trade.dto';
+import { ListTradesDto } from './dto/list-trades.dto';
 
 import { PrismaService } from '@/common/database/prisma.service';
+import { Paginated } from '@/common/types/paginated';
 import { PortfoliosService } from '@/modules/portfolios/portfolios.service';
 import { BillingService } from '@/modules/billing/billing.service';
+
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 200;
 
 @Injectable()
 export class TradesService {
@@ -18,8 +23,17 @@ export class TradesService {
     private readonly prisma: PrismaService,
   ) {}
 
-  async findAll(userId: string): Promise<Trade[]> {
-    return this.tradeRepository.findAllByUser(userId);
+  async findAll(userId: string, query: ListTradesDto): Promise<Paginated<Trade>> {
+    const page = query.page ?? 1;
+    const pageSize = Math.min(query.pageSize ?? DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE);
+    const skip = (page - 1) * pageSize;
+
+    const [items, total] = await Promise.all([
+      this.tradeRepository.findAllByUser(userId, skip, pageSize),
+      this.tradeRepository.countByUser(userId),
+    ]);
+
+    return { items, total, page, pageSize };
   }
 
   async findOne(id: string, userId: string): Promise<Trade> {

@@ -63,7 +63,7 @@ export function ImportTradesDialog({ connectionId, exchange, children }: ImportT
     onSuccess: (data) => {
       setResults(data);
       setError(null);
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trades });
+      queryClient.invalidateQueries({ queryKey: ['trades'] });
       queryClient.invalidateQueries({ queryKey: ['analytics', 'summary'] });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.exchangeConnections });
     },

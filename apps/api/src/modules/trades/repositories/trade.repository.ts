@@ -7,13 +7,23 @@ import { PrismaService } from '@/common/database/prisma.service';
 export class TradeRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAllByUser(userId: string): Promise<Trade[]> {
+  async findAllByUser(userId: string, skip: number, take: number): Promise<Trade[]> {
     return this.prisma.trade.findMany({
       where: {
         userId,
       },
       orderBy: {
         openedAt: 'desc',
+      },
+      skip,
+      take,
+    });
+  }
+
+  async countByUser(userId: string): Promise<number> {
+    return this.prisma.trade.count({
+      where: {
+        userId,
       },
     });
   }

@@ -8,7 +8,7 @@ export const QUERY_KEYS = {
   health: ['health'] as const,
   analyticsSummary: (portfolioId?: string) =>
     ['analytics', 'summary', portfolioId ?? 'all'] as const,
-  trades: ['trades'] as const,
+  trades: (page: number, pageSize: number) => ['trades', page, pageSize] as const,
   portfolios: ['portfolios'] as const,
   workspaces: ['workspaces'] as const,
   workspace: (workspaceId: string) => ['workspaces', workspaceId] as const,

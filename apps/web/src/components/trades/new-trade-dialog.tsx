@@ -20,7 +20,6 @@ import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
 import { useStrategiesQuery } from '@/hooks/use-strategies-query';
 import { createTrade } from '@/lib/api/trades';
 import { ApiError } from '@/lib/api/errors';
-import { QUERY_KEYS } from '@/lib/constants';
 import { toDatetimeLocalValue, fromDatetimeLocalValue } from '@/lib/date';
 import type { MarginType, TradeSide } from '@/types/trade';
 
@@ -68,7 +67,7 @@ export function NewTradeDialog() {
   const mutation = useMutation({
     mutationFn: createTrade,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.trades });
+      queryClient.invalidateQueries({ queryKey: ['trades'] });
       queryClient.invalidateQueries({ queryKey: ['analytics', 'summary'] });
       setOpen(false);
       resetForm();

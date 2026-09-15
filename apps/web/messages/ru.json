@@ -188,7 +188,10 @@
       "statusOpen": "Открыта",
       "statusClosed": "Закрыта",
       "edit": "Редактировать",
-      "delete": "Удалить"
+      "delete": "Удалить",
+      "pageInfo": "Страница {page} из {totalPages} (всего {total})",
+      "prev": "Назад",
+      "next": "Далее"
     }
   },
   "workspaces": {
