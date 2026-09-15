@@ -14,13 +14,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     configService: ConfigService,
     private readonly usersService: UsersService,
   ) {
+    const secret = configService.get<string>('auth.accessTokenSecret');
+
+    if (!secret) {
+      throw new Error('JWT_ACCESS_SECRET is not set — required to verify access tokens securely.');
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>(
-        'auth.accessTokenSecret',
-        'dev-access-secret-change-me',
-      ),
+      secretOrKey: secret,
     });
   }
 

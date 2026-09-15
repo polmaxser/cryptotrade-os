@@ -10,7 +10,7 @@ export default () => ({
     url: process.env.DATABASE_URL,
   },
   auth: {
-    accessTokenSecret: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-me',
+    accessTokenSecret: process.env.JWT_ACCESS_SECRET,
     accessTokenTtlSeconds: parseInt(process.env.JWT_ACCESS_TTL_SECONDS ?? '900', 10),
     refreshTokenTtlDays: parseInt(process.env.JWT_REFRESH_TTL_DAYS ?? '30', 10),
     cookieDomain: process.env.AUTH_COOKIE_DOMAIN,

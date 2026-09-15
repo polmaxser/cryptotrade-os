@@ -1,5 +1,6 @@
 import { Body, Controller, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 
 import { PublicUser } from '@/modules/users/types/public-user';
@@ -28,6 +29,7 @@ export class AuthController {
   ) {}
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('register')
   async register(
     @Body() dto: RegisterDto,
@@ -42,6 +44,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('login')
   async login(
     @Body() dto: LoginDto,
@@ -64,6 +67,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('2fa/verify')
   async verifyTwoFactor(
     @Body() dto: TwoFactorVerifyDto,
@@ -86,6 +90,7 @@ export class AuthController {
     return this.authService.setupTwoFactor(userId);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('2fa/enable')
   async enableTwoFactor(
     @CurrentUser('id') userId: string,
@@ -96,6 +101,7 @@ export class AuthController {
     return { success: true };
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('2fa/disable')
   async disableTwoFactor(
     @CurrentUser('id') userId: string,

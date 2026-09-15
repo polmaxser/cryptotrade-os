@@ -25,12 +25,22 @@ import { BillingModule } from '@/modules/billing/billing.module';
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('auth.accessTokenSecret', 'dev-access-secret-change-me'),
-        signOptions: {
-          expiresIn: configService.get<number>('auth.accessTokenTtlSeconds', 900),
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('auth.accessTokenSecret');
+
+        if (!secret) {
+          throw new Error(
+            'JWT_ACCESS_SECRET is not set — required to sign access tokens securely.',
+          );
+        }
+
+        return {
+          secret,
+          signOptions: {
+            expiresIn: configService.get<number>('auth.accessTokenTtlSeconds', 900),
+          },
+        };
+      },
     }),
   ],
 

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -20,6 +21,8 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
 
+  app.use(helmet());
+
   app.enableCors({
     origin: corsOrigin,
     credentials: true,
@@ -30,6 +33,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
     }),
   );
