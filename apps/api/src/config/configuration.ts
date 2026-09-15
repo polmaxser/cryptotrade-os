@@ -38,6 +38,9 @@ export default () => ({
   security: {
     encryptionKey: process.env.ENCRYPTION_KEY,
   },
+  queue: {
+    redisUrl: process.env.REDIS_URL ?? 'redis://localhost:6379',
+  },
   aiCoach: {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
     anthropicModel: process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-5',

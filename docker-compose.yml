@@ -13,7 +13,20 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-cryptotrade} -d ${POSTGRES_DB:-cryptotrade}']
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-cryptotrade} -d ${POSTGRES_DB:-cryptotrade}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cryptotrade-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -27,13 +40,26 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       NODE_ENV: production
       API_PORT: 4000
       API_HOST: 0.0.0.0
       API_PREFIX: api/v1
-      CORS_ORIGIN: http://localhost:3000
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
       DATABASE_URL: postgresql://${POSTGRES_USER:-cryptotrade}:${POSTGRES_PASSWORD:-cryptotrade}@postgres:5432/${POSTGRES_DB:-cryptotrade}?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_ACCESS_TTL_SECONDS: ${JWT_ACCESS_TTL_SECONDS:-900}
+      JWT_REFRESH_TTL_DAYS: ${JWT_REFRESH_TTL_DAYS:-30}
+      AUTH_COOKIE_DOMAIN: ${AUTH_COOKIE_DOMAIN:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_ID_STANDARD: ${STRIPE_PRICE_ID_STANDARD:-}
+      STRIPE_PRICE_ID_PREMIUM: ${STRIPE_PRICE_ID_PREMIUM:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     ports:
       - '4000:4000'
 
@@ -42,18 +68,19 @@ services:
       context: .
       dockerfile: docker/Dockerfile.web
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
-        NEXT_PUBLIC_APP_URL: http://localhost:3000
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api/v1}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     container_name: cryptotrade-web
     restart: unless-stopped
     depends_on:
       - api
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api/v1}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
     ports:
       - '3000:3000'
 
 volumes:
   postgres_data:
+  redis_data:

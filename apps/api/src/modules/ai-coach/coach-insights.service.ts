@@ -6,6 +6,8 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import {
   CoachInsight,
   CoachInsightPattern,
@@ -22,9 +24,16 @@ import { CoachInsightRepository } from './repositories/coach-insight.repository'
 import { PatternDetectorService } from './pattern-detector.service';
 import { CoachLlmService } from './coach-llm.service';
 import { CoachTradeInput } from './types/pattern-detection';
+import {
+  COACH_DETECTION_JOB,
+  COACH_DETECTION_QUEUE,
+  CoachDetectionJobData,
+} from './coach-detection.types';
+import { CoachQueueEventsListener } from './coach-queue-events.listener';
 
 const ANALYSIS_WINDOW_DAYS = 90;
 const DISMISS_COOLDOWN_DAYS = 14;
+const ANALYZE_NOW_TIMEOUT_MS = 60_000;
 
 @Injectable()
 export class CoachInsightsService {
@@ -38,6 +47,9 @@ export class CoachInsightsService {
     private readonly coachLlm: CoachLlmService,
     private readonly billingService: BillingService,
     private readonly subscriptionRepository: SubscriptionRepository,
+    @InjectQueue(COACH_DETECTION_QUEUE)
+    private readonly coachQueue: Queue<CoachDetectionJobData>,
+    private readonly queueEvents: CoachQueueEventsListener,
   ) {}
 
   async listForUser(userId: string, status?: CoachInsightStatus): Promise<CoachInsight[]> {
@@ -58,6 +70,11 @@ export class CoachInsightsService {
   /**
    * User-triggered re-run of the same detection the nightly cron does — a pull,
    * not a notification, so it doesn't conflict with the "not a noisy stream" rule.
+   *
+   * Runs through the same queue as the cron (rather than calling the LLM
+   * directly in the request), so a single code path owns Anthropic call
+   * concurrency and retries — but waits for the job here so the response
+   * contract stays synchronous for the frontend.
    */
   async analyzeNow(userId: string): Promise<CoachInsight[]> {
     await this.billingService.assertCanUseAiCoach(userId);
@@ -68,10 +85,23 @@ export class CoachInsightsService {
       );
     }
 
-    return this.runDetectionForUser(userId);
+    const job = await this.coachQueue.add(
+      COACH_DETECTION_JOB,
+      { userId },
+      { removeOnComplete: true, removeOnFail: 100 },
+    );
+
+    return job.waitUntilFinished(this.queueEvents.queueEvents, ANALYZE_NOW_TIMEOUT_MS);
   }
 
-  /** Runs detection for every non-lapsed Premium user. Failures are per-user and don't abort the batch. */
+  /**
+   * Enqueues detection for every non-lapsed Premium user instead of running it
+   * in-process — a sequential loop of synchronous Anthropic calls would hold
+   * this cron open for as long as the whole user base takes to process. The
+   * queue's worker concurrency (see CoachDetectionProcessor) throttles the
+   * actual LLM call rate, and failed jobs retry with backoff instead of just
+   * being logged once and dropped.
+   */
   @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async runDailyDetection(): Promise<void> {
     if (!this.coachLlm.isConfigured) {
@@ -82,15 +112,20 @@ export class CoachInsightsService {
     const userIds = await this.subscriptionRepository.findActivePremiumUserIds();
 
     for (const userId of userIds) {
-      try {
-        await this.runDetectionForUser(userId);
-      } catch (err) {
-        this.logger.warn(`AI Coach detection failed for user ${userId}: ${(err as Error).message}`);
-      }
+      await this.coachQueue.add(
+        COACH_DETECTION_JOB,
+        { userId },
+        {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 30_000 },
+          removeOnComplete: true,
+          removeOnFail: 100,
+        },
+      );
     }
   }
 
-  private async runDetectionForUser(userId: string): Promise<CoachInsight[]> {
+  async runDetectionForUser(userId: string): Promise<CoachInsight[]> {
     const periodEnd = new Date();
     const periodStart = new Date(periodEnd.getTime() - ANALYSIS_WINDOW_DAYS * 24 * 60 * 60 * 1000);
 

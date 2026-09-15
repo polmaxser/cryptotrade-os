@@ -6,6 +6,8 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { AiReport, AiReportType, Prisma } from '@cryptotrade/database';
 
 import { AnalyticsService } from '@/modules/analytics/analytics.service';
@@ -23,6 +25,14 @@ import {
   previousPeriod,
   weeklyPeriod,
 } from './types/report-period';
+import {
+  REPORT_GENERATION_JOB,
+  REPORT_GENERATION_QUEUE,
+  ReportGenerationJobData,
+} from './report-generation.types';
+import { ReportQueueEventsListener } from './report-queue-events.listener';
+
+const GENERATE_NOW_TIMEOUT_MS = 60_000;
 
 const PERIOD_BUILDERS: Record<AiReportType, (reference: Date) => ReportPeriod> = {
   DAILY: dailyPeriod,
@@ -48,6 +58,9 @@ export class AiReportsService {
     private readonly reportLlm: ReportLlmService,
     private readonly billingService: BillingService,
     private readonly subscriptionRepository: SubscriptionRepository,
+    @InjectQueue(REPORT_GENERATION_QUEUE)
+    private readonly reportQueue: Queue<ReportGenerationJobData>,
+    private readonly queueEvents: ReportQueueEventsListener,
   ) {}
 
   async listForUser(userId: string, type?: AiReportType): Promise<AiReport[]> {
@@ -64,6 +77,10 @@ export class AiReportsService {
    * User-triggered generation for the *current, still in-progress* period —
    * "generate now" reads as "summarize today/this week/this month so far",
    * unlike the cron runs below which always cover a period that just ended.
+   *
+   * Routed through the same queue as the cron so both share one worker's
+   * concurrency limit on Anthropic calls; waits for the job so the response
+   * contract stays synchronous for the frontend.
    */
   async generateNow(userId: string, type: AiReportType): Promise<AiReport> {
     await this.billingService.assertCanUseAiReports(userId);
@@ -74,7 +91,13 @@ export class AiReportsService {
       );
     }
 
-    return this.generateForPeriod(userId, type, new Date());
+    const job = await this.reportQueue.add(
+      REPORT_GENERATION_JOB,
+      { userId, type, reference: new Date().toISOString() },
+      { removeOnComplete: true, removeOnFail: 100 },
+    );
+
+    return job.waitUntilFinished(this.queueEvents.queueEvents, GENERATE_NOW_TIMEOUT_MS);
   }
 
   /** Runs after AI Coach's 1am detection so the day's findings are already in place. */
@@ -96,6 +119,12 @@ export class AiReportsService {
     await this.runForAllPremiumUsers('MONTHLY', lastMonthReference);
   }
 
+  /**
+   * Enqueues one job per user instead of generating reports in-process —
+   * same rationale as CoachInsightsService.runDailyDetection: a sequential
+   * loop of synchronous Anthropic calls would hold the cron open for as long
+   * as the whole Premium user base takes, with no retry on failure.
+   */
   private async runForAllPremiumUsers(type: AiReportType, reference: Date): Promise<void> {
     if (!this.reportLlm.isConfigured) {
       this.logger.warn(`Skipping ${type} AI Reports run — Anthropic API key is not configured`);
@@ -105,22 +134,21 @@ export class AiReportsService {
     const userIds = await this.subscriptionRepository.findActivePremiumUserIds();
 
     for (const userId of userIds) {
-      try {
-        await this.generateForPeriod(userId, type, reference);
-      } catch (err) {
-        this.logger.warn(
-          `AI Report (${type}) generation failed for user ${userId}: ${(err as Error).message}`,
-        );
-      }
+      await this.reportQueue.add(
+        REPORT_GENERATION_JOB,
+        { userId, type, reference: reference.toISOString() },
+        {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 30_000 },
+          removeOnComplete: true,
+          removeOnFail: 100,
+        },
+      );
     }
   }
 
   /** Idempotent per (userId, type, periodStart) — a repeat call for an already-covered period returns the existing row. */
-  private async generateForPeriod(
-    userId: string,
-    type: AiReportType,
-    reference: Date,
-  ): Promise<AiReport> {
+  async generateForPeriod(userId: string, type: AiReportType, reference: Date): Promise<AiReport> {
     const period = PERIOD_BUILDERS[type](reference);
 
     const existing = await this.reportRepository.findByUserTypeAndPeriodStart(
