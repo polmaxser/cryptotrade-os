@@ -30,6 +30,16 @@ enum MarginType {
   CROSS
 }
 
+enum TradeSide {
+  LONG
+  SHORT
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+}
+
 enum DeFiPositionType {
   LIQUIDITY_POOL
   STAKING
@@ -342,7 +352,7 @@ model Trade {
 
   symbol String
 
-  side String
+  side TradeSide
 
   /// Free-text label — kept for backward compatibility with trades created before
   /// Strategy became a formal entity. New/edited trades should set strategyId instead.
@@ -368,7 +378,7 @@ model Trade {
 
   pnlPercent Decimal? @db.Decimal(10, 4)
 
-  status String @default("OPEN")
+  status TradeStatus @default(OPEN)
 
   notes String?
 

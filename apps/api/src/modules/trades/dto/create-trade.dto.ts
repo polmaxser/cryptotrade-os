@@ -1,15 +1,5 @@
 import { IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
-import { MarginType } from '@cryptotrade/database';
-
-export enum TradeSide {
-  LONG = 'LONG',
-  SHORT = 'SHORT',
-}
-
-export enum TradeStatus {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED',
-}
+import { MarginType, TradeSide, TradeStatus } from '@cryptotrade/database';
 
 export class CreateTradeDto {
   @IsString()
