@@ -7,6 +7,7 @@ import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
 import { useTradesQuery } from '@/hooks/use-trades-query';
 import { NewTradeDialog } from '@/components/trades';
 import { CoachInsightsWidget } from '@/components/coach';
+import { OnboardingEmptyState } from './onboarding-empty-state';
 import { PerformanceCard } from './performance-card';
 import { RecentTradesCard } from './recent-trades-card';
 import { RiskPerformanceCard } from './risk-performance-card';
@@ -30,6 +31,7 @@ export function Dashboard() {
 
   const isLoading = analyticsQuery.isLoading || tradesQuery.isLoading || portfoliosQuery.isLoading;
   const isError = analyticsQuery.isError || tradesQuery.isError || portfoliosQuery.isError;
+  const isNewUser = tradesQuery.data?.total === 0;
 
   return (
     <div className="relative">
@@ -68,6 +70,8 @@ export function Dashboard() {
           </div>
         ) : isError ? (
           <p className="text-muted-foreground py-12 text-center text-sm">{t('loadError')}</p>
+        ) : isNewUser ? (
+          <OnboardingEmptyState />
         ) : (
           <>
             <section>
@@ -100,17 +104,11 @@ export function Dashboard() {
             <CoachInsightsWidget />
 
             <section>
-              {tradesQuery.data!.items.length > 0 ? (
-                <RecentTradesCard
-                  trades={tradesQuery.data!.items}
-                  title={t('recentTrades.title')}
-                  openLabel={t('recentTrades.open')}
-                />
-              ) : (
-                <p className="text-muted-foreground py-8 text-center text-sm">
-                  {t('recentTrades.empty')}
-                </p>
-              )}
+              <RecentTradesCard
+                trades={tradesQuery.data!.items}
+                title={t('recentTrades.title')}
+                openLabel={t('recentTrades.open')}
+              />
             </section>
           </>
         )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { CandlestickChart, ChevronDown, LineChart, Wallet } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
   DropdownMenu,
@@ -11,53 +11,7 @@ import {
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
-
-type NavItem = {
-  href: string;
-  labelKey: string;
-};
-
-type NavGroup = {
-  key: string;
-  icon: typeof Wallet;
-  items: NavItem[];
-};
-
-const NAV_GROUPS: NavGroup[] = [
-  {
-    key: 'portfolio',
-    icon: Wallet,
-    items: [
-      { href: '/trades', labelKey: 'trades' },
-      { href: '/exchanges', labelKey: 'exchanges' },
-      { href: '/calendar', labelKey: 'calendar' },
-      { href: '/defi', labelKey: 'defi' },
-      { href: '/nft', labelKey: 'nft' },
-    ],
-  },
-  {
-    key: 'analytics',
-    icon: LineChart,
-    items: [
-      { href: '/journal', labelKey: 'journal' },
-      { href: '/notes', labelKey: 'notes' },
-      { href: '/coach', labelKey: 'coach' },
-      { href: '/reports', labelKey: 'reports' },
-      { href: '/strategies', labelKey: 'strategies' },
-      { href: '/backtests', labelKey: 'backtests' },
-    ],
-  },
-  {
-    key: 'markets',
-    icon: CandlestickChart,
-    items: [
-      { href: '/charts', labelKey: 'charts' },
-      { href: '/watchlist', labelKey: 'watchlist' },
-      { href: '/alerts', labelKey: 'alerts' },
-      { href: '/economic-calendar', labelKey: 'economicCalendar' },
-    ],
-  },
-];
+import { NAV_GROUPS } from './nav-groups';
 
 const TRIGGER_CLASS =
   'flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors outline-none';
@@ -74,7 +28,7 @@ export function TopNav() {
   }
 
   return (
-    <nav className="flex items-center gap-1 overflow-x-auto">
+    <nav className="hidden items-center gap-1 overflow-x-auto lg:flex">
       {NAV_GROUPS.map((group) => {
         const Icon = group.icon;
         const isActive = group.items.some((item) => pathname.startsWith(item.href));

@@ -16,6 +16,7 @@
     "system": "System",
     "logout": "Log out",
     "accountMenu": "Account menu",
+    "openMenu": "Open menu",
     "settings": "Settings",
     "workspaces": "Workspaces",
     "pricing": "Pricing",
@@ -684,6 +685,18 @@
     "title": "Dashboard",
     "subtitle": "Your trading command center",
     "loadError": "Couldn't load your dashboard data. Please try again later.",
+    "onboarding": {
+      "title": "Welcome to CryptoTrade OS",
+      "subtitle": "Connect an exchange to import your trade history, or log a trade manually to get started.",
+      "connectExchange": {
+        "title": "Connect an exchange",
+        "description": "Import your trade history from Binance, Bybit, OKX and more."
+      },
+      "logTrade": {
+        "title": "Log your first trade",
+        "description": "Add a trade manually to start tracking your performance."
+      }
+    },
     "performance": {
       "totalPnl": "Total PnL",
       "roi": "ROI",
