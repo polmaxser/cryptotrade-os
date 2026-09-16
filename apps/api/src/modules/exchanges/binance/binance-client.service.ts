@@ -6,6 +6,7 @@ import { CacheService } from '@/common/cache/cache.service';
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
+import { exchangeApiError } from '../utils/exchange-error';
 
 /** Prices move within this window, but not enough to meaningfully change a portfolio's USD-equivalent total. */
 const TICKER_PRICE_CACHE_TTL_SECONDS = 30;
@@ -311,7 +312,7 @@ export class BinanceClientService implements ExchangeClient {
 
     if (!response.ok) {
       const body = await response.text();
-      throw new ServiceUnavailableException(`Binance API error (${response.status}): ${body}`);
+      throw exchangeApiError('Binance', response.status, body);
     }
 
     return response.json() as Promise<T>;

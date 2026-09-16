@@ -4,6 +4,7 @@ import { createHmac } from 'node:crypto';
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
+import { exchangeApiError } from '../utils/exchange-error';
 
 const BYBIT_BASE_URL = 'https://api.bybit.com';
 const RECV_WINDOW_MS = '10000';
@@ -188,7 +189,7 @@ export class BybitClientService implements ExchangeClient {
 
     if (!response.ok) {
       const body = await response.text();
-      throw new ServiceUnavailableException(`Bybit API error (${response.status}): ${body}`);
+      throw exchangeApiError('Bybit', response.status, body);
     }
 
     const payload = (await response.json()) as BybitResponse<T>;
@@ -198,9 +199,7 @@ export class BybitClientService implements ExchangeClient {
         throw new UnauthorizedException('Bybit rejected these API credentials');
       }
 
-      throw new ServiceUnavailableException(
-        `Bybit API error (${payload.retCode}): ${payload.retMsg}`,
-      );
+      throw exchangeApiError('Bybit', payload.retCode, payload.retMsg);
     }
 
     return payload.result;

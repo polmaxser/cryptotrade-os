@@ -3,6 +3,7 @@ import { createHmac } from 'node:crypto';
 
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
+import { exchangeApiError } from '../utils/exchange-error';
 
 const OKX_BASE_URL = 'https://www.okx.com';
 const FILLS_LIMIT = '100';
@@ -158,13 +159,13 @@ export class OkxClientService implements ExchangeClient {
 
     if (!response.ok) {
       const body = await response.text();
-      throw new ServiceUnavailableException(`OKX API error (${response.status}): ${body}`);
+      throw exchangeApiError('OKX', response.status, body);
     }
 
     const payload = (await response.json()) as OkxResponse<T>;
 
     if (payload.code !== '0') {
-      throw new ServiceUnavailableException(`OKX API error (${payload.code}): ${payload.msg}`);
+      throw exchangeApiError('OKX', payload.code, payload.msg);
     }
 
     return payload.data;

@@ -4,6 +4,7 @@ import { createHash, createHmac } from 'node:crypto';
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
+import { exchangeApiError } from '../utils/exchange-error';
 
 const GATEIO_BASE_URL = 'https://api.gateio.ws';
 const API_PREFIX = '/api/v4';
@@ -210,7 +211,7 @@ export class GateioClientService implements ExchangeClient {
 
     if (!response.ok) {
       const body = await response.text();
-      throw new ServiceUnavailableException(`Gate.io API error (${response.status}): ${body}`);
+      throw exchangeApiError('Gate.io', response.status, body);
     }
 
     return response.json() as Promise<T>;

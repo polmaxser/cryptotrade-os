@@ -6,6 +6,7 @@ import { CacheService } from '@/common/cache/cache.service';
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
+import { exchangeApiError } from '../utils/exchange-error';
 
 /** Same rationale as Binance's ticker cache — see binance-client.service.ts. */
 const TICKER_PRICE_CACHE_TTL_SECONDS = 30;
@@ -303,7 +304,7 @@ export class KucoinClientService implements ExchangeClient {
 
     if (!response.ok) {
       const body = await response.text();
-      throw new ServiceUnavailableException(`KuCoin API error (${response.status}): ${body}`);
+      throw exchangeApiError('KuCoin', response.status, body);
     }
 
     const payload = (await response.json()) as KucoinResponse<T>;
@@ -313,9 +314,7 @@ export class KucoinClientService implements ExchangeClient {
         throw new UnauthorizedException('KuCoin rejected these API credentials');
       }
 
-      throw new ServiceUnavailableException(
-        `KuCoin API error (${payload.code}): ${payload.msg ?? 'unknown error'}`,
-      );
+      throw exchangeApiError('KuCoin', payload.code, payload.msg ?? 'unknown error');
     }
 
     return payload.data;

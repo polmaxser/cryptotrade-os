@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, ServiceUnavailableException } from '@n
 
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
+import { exchangeApiError } from '../utils/exchange-error';
 
 const HYPERLIQUID_INFO_URL = 'https://api.hyperliquid.xyz/info';
 const WALLET_ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
@@ -149,9 +150,7 @@ export class HyperliquidClientService implements ExchangeClient {
 
     if (!response.ok) {
       const responseBody = await response.text();
-      throw new ServiceUnavailableException(
-        `Hyperliquid API error (${response.status}): ${responseBody}`,
-      );
+      throw exchangeApiError('Hyperliquid', response.status, responseBody);
     }
 
     return response.json() as Promise<T>;
