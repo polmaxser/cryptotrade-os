@@ -40,6 +40,7 @@ export const NAV_GROUPS: NavGroup[] = [
     key: 'markets',
     icon: CandlestickChart,
     items: [
+      { href: '/market-overview', labelKey: 'marketOverview' },
       { href: '/charts', labelKey: 'charts' },
       { href: '/watchlist', labelKey: 'watchlist' },
       { href: '/alerts', labelKey: 'alerts' },

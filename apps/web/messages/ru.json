@@ -35,6 +35,7 @@
     "strategies": "Стратегии",
     "backtests": "Бэктестинг",
     "economicCalendar": "Экономический календарь",
+    "marketOverview": "Обзор рынка",
     "admin": "Панель администратора"
   },
   "auth": {
@@ -599,6 +600,92 @@
     "forecast": "Прогноз",
     "previous": "Предыдущее",
     "actual": "Факт"
+  },
+  "marketOverview": {
+    "title": "Обзор рынка",
+    "subtitle": "Состояние крипторынка и рынка США — картина дня, а не прогноз.",
+    "loadError": "Не удалось загрузить обзор рынка.",
+    "viewAll": "Полный обзор",
+    "updatedAt": "Обновлено {time}",
+    "fearGreedShort": "Индекс страха",
+    "dxy": "Индекс доллара (DXY)",
+    "us10y": "Доходность 10-летних облигаций США",
+    "disclaimer": "Это картина рынка на сегодня, посчитанная по простым правилам на основе публичных данных — не прогноз цены. «Риск ликвидаций» — эвристика на основе funding rate и позиционирования, а не настоящая карта ликвидаций (для неё нужен платный провайдер данных).",
+    "sentiment": {
+      "RISK_ON": "Risk-On",
+      "RISK_OFF": "Risk-Off",
+      "NEUTRAL": "Нейтрально"
+    },
+    "sections": {
+      "crypto": "Криптовалюты",
+      "usMarkets": "Рынок США"
+    },
+    "fearGreed": {
+      "title": "Индекс страха и жадности",
+      "unavailable": "Временно недоступно.",
+      "yesterday": "Вчера: {value}",
+      "extremeFear": "Крайний страх",
+      "extremeGreed": "Крайняя жадность"
+    },
+    "marketCap": {
+      "title": "Капитализация и доминация",
+      "unavailable": "Временно недоступно.",
+      "btcDominance": "Доминация BTC",
+      "ethDominance": "Доминация ETH",
+      "stablecoins": "Капитализация стейблкоинов"
+    },
+    "technicals": {
+      "unavailable": "Временно недоступно.",
+      "rsi14": "RSI (14)",
+      "trend": "Тренд",
+      "trendValue": {
+        "ABOVE_BOTH": "Выше SMA50/200",
+        "BELOW_BOTH": "Ниже SMA50/200",
+        "MIXED": "Смешанный"
+      },
+      "sma50": "SMA 50",
+      "sma200": "SMA 200"
+    },
+    "breadth": {
+      "title": "Широта рынка",
+      "unavailable": "Временно недоступно.",
+      "description": "{green} из топ-{total} монет в зелёной зоне (24ч)",
+      "topGainers": "Лидеры роста",
+      "topLosers": "Лидеры падения"
+    },
+    "derivatives": {
+      "title": "Деривативы BTC",
+      "description": "Funding rate, открытый интерес и позиционирование — эвристическая оценка риска ликвидаций, не настоящая карта ликвидаций.",
+      "unavailable": "Временно недоступно.",
+      "riskValue": {
+        "LOW": "Низкий риск ликвидаций",
+        "ELEVATED_LONG": "Повышенный риск ликвидации лонгов",
+        "ELEVATED_SHORT": "Повышенный риск ликвидации шортов"
+      },
+      "fundingRate": "Funding Rate (8ч)",
+      "openInterest": "Открытый интерес",
+      "longShortRatio": "Соотношение Long/Short",
+      "takerRatio": "Покупки/продажи тейкеров"
+    },
+    "onChain": {
+      "title": "Bitcoin On-Chain",
+      "unavailable": "Временно недоступно.",
+      "hashRate": "Хешрейт",
+      "difficulty": "Сложность сети",
+      "mempoolSize": "Размер mempool"
+    },
+    "vix": {
+      "title": "VIX",
+      "description": "«Индекс страха» Уолл-стрит — аналог индекса страха и жадности для рынка акций.",
+      "unavailable": "Временно недоступно.",
+      "calm": "Спокойно",
+      "fearful": "Страх"
+    },
+    "macroEvent": {
+      "title": "Следующее макро-событие",
+      "none": "В ближайшие 30 дней крупных событий нет.",
+      "inDays": "через {days, plural, =0 {сегодня} one {# день} few {# дня} many {# дней} other {# дней}}"
+    }
   },
   "admin": {
     "title": "Панель администратора",

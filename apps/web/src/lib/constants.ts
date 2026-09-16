@@ -43,4 +43,5 @@ export const QUERY_KEYS = {
   adminPromoCodes: ['admin', 'promo-codes'] as const,
   adminEconomicEvents: (from: string, to: string, category?: string) =>
     ['admin', 'economic-events', from, to, category ?? 'all'] as const,
+  marketOverview: ['market-overview'] as const,
 };

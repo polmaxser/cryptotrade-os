@@ -35,6 +35,7 @@
     "strategies": "Strategies",
     "backtests": "Backtesting",
     "economicCalendar": "Economic Calendar",
+    "marketOverview": "Market Overview",
     "admin": "Admin Panel"
   },
   "auth": {
@@ -599,6 +600,92 @@
     "forecast": "Forecast",
     "previous": "Previous",
     "actual": "Actual"
+  },
+  "marketOverview": {
+    "title": "Market Overview",
+    "subtitle": "Crypto + US market conditions — a snapshot of the day, not a forecast.",
+    "loadError": "Something went wrong while loading the market overview.",
+    "viewAll": "View full overview",
+    "updatedAt": "Updated {time}",
+    "fearGreedShort": "F&G",
+    "dxy": "US Dollar Index",
+    "us10y": "US 10Y Yield",
+    "disclaimer": "This is a same-day snapshot of market conditions, computed from public data by simple rules — not a price forecast. \"Liquidation risk\" is a heuristic based on funding rate and positioning, not an actual liquidation map (those require a paid data provider).",
+    "sentiment": {
+      "RISK_ON": "Risk-On",
+      "RISK_OFF": "Risk-Off",
+      "NEUTRAL": "Neutral"
+    },
+    "sections": {
+      "crypto": "Crypto",
+      "usMarkets": "US Markets"
+    },
+    "fearGreed": {
+      "title": "Fear & Greed",
+      "unavailable": "Currently unavailable.",
+      "yesterday": "Yesterday: {value}",
+      "extremeFear": "Extreme Fear",
+      "extremeGreed": "Extreme Greed"
+    },
+    "marketCap": {
+      "title": "Market Cap & Dominance",
+      "unavailable": "Currently unavailable.",
+      "btcDominance": "BTC Dominance",
+      "ethDominance": "ETH Dominance",
+      "stablecoins": "Stablecoin Cap"
+    },
+    "technicals": {
+      "unavailable": "Currently unavailable.",
+      "rsi14": "RSI (14)",
+      "trend": "Trend",
+      "trendValue": {
+        "ABOVE_BOTH": "Above SMA50/200",
+        "BELOW_BOTH": "Below SMA50/200",
+        "MIXED": "Mixed"
+      },
+      "sma50": "SMA 50",
+      "sma200": "SMA 200"
+    },
+    "breadth": {
+      "title": "Market Breadth",
+      "unavailable": "Currently unavailable.",
+      "description": "{green} of top {total} coins green (24h)",
+      "topGainers": "Top Gainers",
+      "topLosers": "Top Losers"
+    },
+    "derivatives": {
+      "title": "BTC Derivatives",
+      "description": "Funding, open interest and positioning — a heuristic liquidation-risk read, not a real liquidation map.",
+      "unavailable": "Currently unavailable.",
+      "riskValue": {
+        "LOW": "Low liquidation risk",
+        "ELEVATED_LONG": "Elevated long liquidation risk",
+        "ELEVATED_SHORT": "Elevated short liquidation risk"
+      },
+      "fundingRate": "Funding Rate (8h)",
+      "openInterest": "Open Interest",
+      "longShortRatio": "Long/Short Ratio",
+      "takerRatio": "Taker Buy/Sell"
+    },
+    "onChain": {
+      "title": "Bitcoin On-Chain",
+      "unavailable": "Currently unavailable.",
+      "hashRate": "Hash Rate",
+      "difficulty": "Difficulty",
+      "mempoolSize": "Mempool Size"
+    },
+    "vix": {
+      "title": "VIX",
+      "description": "Wall Street's \"fear gauge\" — the stock-market equivalent of Fear & Greed.",
+      "unavailable": "Currently unavailable.",
+      "calm": "Calm",
+      "fearful": "Fearful"
+    },
+    "macroEvent": {
+      "title": "Next Macro Event",
+      "none": "No major events in the next 30 days.",
+      "inDays": "in {days, plural, =0 {today} one {# day} other {# days}}"
+    }
   },
   "admin": {
     "title": "Admin Panel",

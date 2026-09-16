@@ -7,6 +7,7 @@ import { usePortfoliosQuery } from '@/hooks/use-portfolios-query';
 import { useTradesQuery } from '@/hooks/use-trades-query';
 import { NewTradeDialog } from '@/components/trades';
 import { CoachInsightsWidget } from '@/components/coach';
+import { MarketOverviewWidget } from '@/components/market-overview';
 import { OnboardingEmptyState } from './onboarding-empty-state';
 import { PerformanceCard } from './performance-card';
 import { RecentTradesCard } from './recent-trades-card';
@@ -71,9 +72,14 @@ export function Dashboard() {
         ) : isError ? (
           <p className="text-muted-foreground py-12 text-center text-sm">{t('loadError')}</p>
         ) : isNewUser ? (
-          <OnboardingEmptyState />
+          <>
+            <MarketOverviewWidget />
+            <OnboardingEmptyState />
+          </>
         ) : (
           <>
+            <MarketOverviewWidget />
+
             <section>
               <PerformanceCard
                 summary={analyticsQuery.data!}
