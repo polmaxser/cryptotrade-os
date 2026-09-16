@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
@@ -26,6 +27,8 @@ const PAID_PLAN_PRICE_CONFIG_KEY: Record<'STANDARD' | 'PREMIUM', string> = {
 
 @Injectable()
 export class BillingService {
+  private readonly logger = new Logger(BillingService.name);
+
   constructor(
     private readonly subscriptionRepository: SubscriptionRepository,
     private readonly promoCodeRepository: PromoCodeRepository,
@@ -264,6 +267,15 @@ export class BillingService {
       throw new BadRequestException(`Invalid webhook signature: ${(err as Error).message}`);
     }
 
+    const alreadyProcessed = await this.prisma.processedStripeEvent.findUnique({
+      where: { id: event.id },
+    });
+
+    if (alreadyProcessed) {
+      this.logger.log(`Skipping already-processed Stripe webhook event ${event.id}`);
+      return;
+    }
+
     switch (event.type) {
       case 'checkout.session.completed':
         await this.handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
@@ -276,6 +288,17 @@ export class BillingService {
         break;
       default:
         break;
+    }
+
+    try {
+      await this.prisma.processedStripeEvent.create({ data: { id: event.id } });
+    } catch (err) {
+      // A concurrent duplicate delivery already recorded this same event id
+      // between our check above and this write — both ran the same idempotent
+      // handler, so there's nothing to reconcile, just don't crash the request.
+      if (!(err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002')) {
+        throw err;
+      }
     }
   }
 

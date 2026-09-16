@@ -559,6 +559,19 @@ model PromoCodeRedemption {
   @@map("promo_code_redemptions")
 }
 
+/// Dedup record for Stripe webhook events — `id` is Stripe's own event id
+/// (e.g. "evt_..."), not a generated cuid. Stripe retries webhook deliveries
+/// on anything but a 2xx response, and can also occasionally send a
+/// duplicate for an event that already succeeded; this stops either from
+/// re-running the handler for an event we've already processed.
+model ProcessedStripeEvent {
+  id String @id
+
+  processedAt DateTime @default(now())
+
+  @@map("processed_stripe_events")
+}
+
 //////////////////////////////////////////////////////////////
 // JOURNAL
 //////////////////////////////////////////////////////////////
