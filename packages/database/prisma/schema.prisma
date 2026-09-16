@@ -893,3 +893,29 @@ model EconomicEvent {
   @@index([category])
   @@map("economic_events")
 }
+
+enum MarketSentiment {
+  RISK_ON
+  RISK_OFF
+  NEUTRAL
+}
+
+/// Global (not user-owned) daily snapshot of crypto + US-market indicators —
+/// one row per refresh (cron pre-warm or cache-miss on read), not upserted,
+/// so this doubles as a rough history. `data` holds every fetched indicator
+/// as one bag (funding rate, dominance, breadth, Yahoo Finance quotes, ...)
+/// rather than ~30 typed columns, same pattern as AiReport.metrics — this is
+/// read-heavy, not filtered/queried by individual metric.
+model MarketOverviewSnapshot {
+  id String @id @default(cuid())
+
+  capturedAt DateTime @default(now())
+
+  sentiment MarketSentiment
+  summary   String
+
+  data Json
+
+  @@index([capturedAt])
+  @@map("market_overview_snapshots")
+}

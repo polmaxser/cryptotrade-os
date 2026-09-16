@@ -42,6 +42,10 @@ export default () => ({
   redis: {
     url: process.env.REDIS_URL ?? 'redis://localhost:6379',
   },
+  /** Optional — CoinGecko's free "Demo" key raises the public rate limit; falls back to the (much tighter) anonymous limit if unset. */
+  coinGecko: {
+    apiKey: process.env.COINGECKO_API_KEY,
+  },
   aiCoach: {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
     anthropicModel: process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-5',
