@@ -12,6 +12,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,yml,yaml}\"",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
+    "test:e2e": "pnpm --filter @cryptotrade/api test:e2e",
     "db:generate": "pnpm --filter @cryptotrade/database db:generate",
     "db:migrate": "pnpm --filter @cryptotrade/database db:migrate",
     "db:push": "pnpm --filter @cryptotrade/database db:push",

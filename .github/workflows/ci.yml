@@ -29,11 +29,24 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       DATABASE_URL: postgresql://cryptotrade:cryptotrade@localhost:5432/cryptotrade?schema=public
+      REDIS_URL: redis://localhost:6379
       NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
       NEXT_PUBLIC_APP_URL: http://localhost:3000
+      # CI-only fixed test credentials — never used against a real database.
+      JWT_ACCESS_SECRET: ci-test-access-secret-not-for-production-use
+      ENCRYPTION_KEY: xxKrzW66EBOe2aHt2fjcYsbQIhzp/5eMo2bFgcWBjYQ=
 
     steps:
       - name: Checkout
@@ -67,6 +80,12 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+      - name: Apply database migrations
+        run: pnpm --filter @cryptotrade/database db:migrate:deploy
+
+      - name: E2E test
+        run: pnpm --filter @cryptotrade/api test:e2e
 
   build:
     name: Build
