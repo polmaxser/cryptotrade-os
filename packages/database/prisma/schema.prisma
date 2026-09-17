@@ -912,7 +912,10 @@ model MarketOverviewSnapshot {
   capturedAt DateTime @default(now())
 
   sentiment MarketSentiment
-  summary   String
+  /// Structured driver list (type + numeric params), not pre-rendered text —
+  /// this snapshot is global (one row for every locale), so the human-
+  /// readable summary is composed client-side from these via i18n.
+  drivers Json
 
   data Json
 

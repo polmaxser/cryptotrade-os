@@ -617,6 +617,22 @@
       "RISK_OFF": "Risk-Off",
       "NEUTRAL": "Neutral"
     },
+    "summaryNoData": "{label}: not enough data this run to point to a clear driver.",
+    "summaryWithDrivers": "{label}: {drivers}.",
+    "drivers": {
+      "FEAR_GREED_GREED": "crypto Fear & Greed at {value} (Greed)",
+      "FEAR_GREED_FEAR": "crypto Fear & Greed at {value} (Fear)",
+      "MARKET_CAP_UP": "crypto market cap +{value}% (24h)",
+      "MARKET_CAP_DOWN": "crypto market cap {value}% (24h)",
+      "BREADTH_GREEN": "{value}% of top {total} coins green",
+      "BREADTH_RED": "{value}% of top {total} coins green",
+      "LIQUIDATION_RISK_LONG": "crowded long positioning in BTC perps",
+      "LIQUIDATION_RISK_SHORT": "crowded short positioning in BTC perps",
+      "EQUITIES_UP": "US equities avg +{value}%",
+      "EQUITIES_DOWN": "US equities avg {value}%",
+      "VIX_LOW": "VIX low at {value}",
+      "VIX_HIGH": "VIX elevated at {value}"
+    },
     "sections": {
       "crypto": "Crypto",
       "usMarkets": "US Markets"
@@ -626,7 +642,14 @@
       "unavailable": "Currently unavailable.",
       "yesterday": "Yesterday: {value}",
       "extremeFear": "Extreme Fear",
-      "extremeGreed": "Extreme Greed"
+      "extremeGreed": "Extreme Greed",
+      "classification": {
+        "EXTREME_FEAR": "Extreme Fear",
+        "FEAR": "Fear",
+        "NEUTRAL": "Neutral",
+        "GREED": "Greed",
+        "EXTREME_GREED": "Extreme Greed"
+      }
     },
     "marketCap": {
       "title": "Market Cap & Dominance",

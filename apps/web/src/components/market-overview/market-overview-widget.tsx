@@ -7,6 +7,7 @@ import { DashboardCard, DashboardCardContent } from '@/components/dashboard';
 import { useMarketOverviewQuery } from '@/hooks/use-market-overview-query';
 import type { MarketSentiment } from '@/types/market-overview';
 import { formatSignedPercent } from '@/lib/market-overview/formatters';
+import { buildSentimentSummary } from '@/lib/market-overview/build-summary';
 
 const VARIANT: Record<MarketSentiment, 'success' | 'danger' | 'secondary'> = {
   RISK_ON: 'success',
@@ -23,7 +24,8 @@ export function MarketOverviewWidget() {
     return null;
   }
 
-  const { sentiment, summary, data } = query.data;
+  const { sentiment, drivers, data } = query.data;
+  const summary = buildSentimentSummary(sentiment, drivers, t);
   const btc = data.crypto.btc;
   const fearGreed = data.crypto.fearGreed;
   const sp500 = data.usMarkets.sp500;

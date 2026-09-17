@@ -617,6 +617,22 @@
       "RISK_OFF": "Risk-Off",
       "NEUTRAL": "Нейтрально"
     },
+    "summaryNoData": "{label}: недостаточно данных, чтобы выделить явный драйвер.",
+    "summaryWithDrivers": "{label}: {drivers}.",
+    "drivers": {
+      "FEAR_GREED_GREED": "индекс страха и жадности на {value} (жадность)",
+      "FEAR_GREED_FEAR": "индекс страха и жадности на {value} (страх)",
+      "MARKET_CAP_UP": "капитализация крипторынка +{value}% (24ч)",
+      "MARKET_CAP_DOWN": "капитализация крипторынка {value}% (24ч)",
+      "BREADTH_GREEN": "{value}% из топ-{total} монет в зелёной зоне",
+      "BREADTH_RED": "{value}% из топ-{total} монет в зелёной зоне",
+      "LIQUIDATION_RISK_LONG": "перегретые лонги по BTC-перпетуалам",
+      "LIQUIDATION_RISK_SHORT": "перегретые шорты по BTC-перпетуалам",
+      "EQUITIES_UP": "акции США в среднем +{value}%",
+      "EQUITIES_DOWN": "акции США в среднем {value}%",
+      "VIX_LOW": "VIX низкий, {value}",
+      "VIX_HIGH": "VIX повышенный, {value}"
+    },
     "sections": {
       "crypto": "Криптовалюты",
       "usMarkets": "Рынок США"
@@ -626,7 +642,14 @@
       "unavailable": "Временно недоступно.",
       "yesterday": "Вчера: {value}",
       "extremeFear": "Крайний страх",
-      "extremeGreed": "Крайняя жадность"
+      "extremeGreed": "Крайняя жадность",
+      "classification": {
+        "EXTREME_FEAR": "Крайний страх",
+        "FEAR": "Страх",
+        "NEUTRAL": "Нейтрально",
+        "GREED": "Жадность",
+        "EXTREME_GREED": "Крайняя жадность"
+      }
     },
     "marketCap": {
       "title": "Капитализация и доминация",

@@ -17,6 +17,7 @@ import {
   MarketOverviewData,
   MarketOverviewSnapshotDto,
   NextMacroEvent,
+  SentimentDriver,
 } from './types/market-overview-data';
 
 const CACHE_KEY = 'market-overview:latest';
@@ -66,12 +67,12 @@ export class MarketOverviewService {
 
   private async refreshSnapshot(): Promise<MarketOverviewSnapshotDto> {
     const data = await this.fetchAll();
-    const { sentiment, summary } = computeSentiment(data);
+    const { sentiment, drivers } = computeSentiment(data);
 
     const row = await this.prisma.marketOverviewSnapshot.create({
       data: {
         sentiment,
-        summary,
+        drivers: drivers as unknown as Prisma.InputJsonValue,
         data: data as unknown as Prisma.InputJsonValue,
       },
     });
@@ -215,7 +216,7 @@ export class MarketOverviewService {
     return {
       capturedAt: row.capturedAt.toISOString(),
       sentiment: row.sentiment,
-      summary: row.summary,
+      drivers: row.drivers as unknown as SentimentDriver[],
       data,
     };
   }

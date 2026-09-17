@@ -107,9 +107,37 @@ export interface MarketOverviewData {
 
 export type MarketSentiment = 'RISK_ON' | 'RISK_OFF' | 'NEUTRAL';
 
+/**
+ * Every recognized sentiment-driver type — the frontend maps each to a
+ * localized template (e.g. "crypto Fear & Greed at {value} (Greed)"). Kept
+ * as plain type+params rather than pre-rendered text because this snapshot
+ * is global (one row shared by every user, regardless of locale) — baking
+ * English text in here would leak into every other language's UI.
+ */
+export type SentimentDriverType =
+  | 'FEAR_GREED_GREED'
+  | 'FEAR_GREED_FEAR'
+  | 'MARKET_CAP_UP'
+  | 'MARKET_CAP_DOWN'
+  | 'BREADTH_GREEN'
+  | 'BREADTH_RED'
+  | 'LIQUIDATION_RISK_LONG'
+  | 'LIQUIDATION_RISK_SHORT'
+  | 'EQUITIES_UP'
+  | 'EQUITIES_DOWN'
+  | 'VIX_LOW'
+  | 'VIX_HIGH';
+
+export interface SentimentDriver {
+  type: SentimentDriverType;
+  score: 1 | -1;
+  value?: number;
+  total?: number;
+}
+
 export interface MarketOverviewSnapshotDto {
   capturedAt: string;
   sentiment: MarketSentiment;
-  summary: string;
+  drivers: SentimentDriver[];
   data: MarketOverviewData;
 }

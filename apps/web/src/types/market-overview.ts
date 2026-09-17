@@ -101,9 +101,30 @@ export interface MarketOverviewData {
 
 export type MarketSentiment = 'RISK_ON' | 'RISK_OFF' | 'NEUTRAL';
 
+export type SentimentDriverType =
+  | 'FEAR_GREED_GREED'
+  | 'FEAR_GREED_FEAR'
+  | 'MARKET_CAP_UP'
+  | 'MARKET_CAP_DOWN'
+  | 'BREADTH_GREEN'
+  | 'BREADTH_RED'
+  | 'LIQUIDATION_RISK_LONG'
+  | 'LIQUIDATION_RISK_SHORT'
+  | 'EQUITIES_UP'
+  | 'EQUITIES_DOWN'
+  | 'VIX_LOW'
+  | 'VIX_HIGH';
+
+export interface SentimentDriver {
+  type: SentimentDriverType;
+  score: 1 | -1;
+  value?: number;
+  total?: number;
+}
+
 export interface MarketOverviewSnapshot {
   capturedAt: string;
   sentiment: MarketSentiment;
-  summary: string;
+  drivers: SentimentDriver[];
   data: MarketOverviewData;
 }

@@ -34,7 +34,7 @@ export function MarketOverviewPage() {
         <>
           <SentimentBanner
             sentiment={query.data.sentiment}
-            summary={query.data.summary}
+            drivers={query.data.drivers}
             capturedAt={query.data.capturedAt}
           />
 

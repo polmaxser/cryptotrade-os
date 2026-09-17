@@ -1,4 +1,4 @@
-import { MarketOverviewData, MarketSentiment } from './types/market-overview-data';
+import { MarketOverviewData, MarketSentiment, SentimentDriver } from './types/market-overview-data';
 
 /**
  * A deterministic "current regime" read — Risk-On/Risk-Off/Neutral — built
@@ -10,52 +10,38 @@ import { MarketOverviewData, MarketSentiment } from './types/market-overview-dat
  */
 export function computeSentiment(data: MarketOverviewData): {
   sentiment: MarketSentiment;
-  summary: string;
+  drivers: SentimentDriver[];
 } {
-  const signals: { label: string; score: number }[] = [];
+  const drivers: SentimentDriver[] = [];
 
   const fearGreed = data.crypto.fearGreed;
   if (fearGreed) {
     if (fearGreed.value >= 55)
-      signals.push({ label: `crypto Fear & Greed at ${fearGreed.value} (Greed)`, score: 1 });
+      drivers.push({ type: 'FEAR_GREED_GREED', score: 1, value: fearGreed.value });
     else if (fearGreed.value <= 45)
-      signals.push({ label: `crypto Fear & Greed at ${fearGreed.value} (Fear)`, score: -1 });
+      drivers.push({ type: 'FEAR_GREED_FEAR', score: -1, value: fearGreed.value });
   }
 
   const marketCap = data.crypto.marketCap;
   if (marketCap) {
     if (marketCap.change24hPct >= 1)
-      signals.push({
-        label: `crypto market cap +${marketCap.change24hPct.toFixed(1)}% (24h)`,
-        score: 1,
-      });
+      drivers.push({ type: 'MARKET_CAP_UP', score: 1, value: marketCap.change24hPct });
     else if (marketCap.change24hPct <= -1)
-      signals.push({
-        label: `crypto market cap ${marketCap.change24hPct.toFixed(1)}% (24h)`,
-        score: -1,
-      });
+      drivers.push({ type: 'MARKET_CAP_DOWN', score: -1, value: marketCap.change24hPct });
   }
 
   const breadth = data.crypto.breadth;
   if (breadth && breadth.totalCount > 0) {
     const greenPct = (breadth.greenCount / breadth.totalCount) * 100;
     if (greenPct >= 60)
-      signals.push({
-        label: `${greenPct.toFixed(0)}% of top ${breadth.totalCount} coins green`,
-        score: 1,
-      });
+      drivers.push({ type: 'BREADTH_GREEN', score: 1, value: greenPct, total: breadth.totalCount });
     else if (greenPct <= 40)
-      signals.push({
-        label: `${greenPct.toFixed(0)}% of top ${breadth.totalCount} coins green`,
-        score: -1,
-      });
+      drivers.push({ type: 'BREADTH_RED', score: -1, value: greenPct, total: breadth.totalCount });
   }
 
   const risk = data.crypto.derivatives?.liquidationRisk;
-  if (risk === 'ELEVATED_LONG')
-    signals.push({ label: 'crowded long positioning in BTC perps', score: -1 });
-  else if (risk === 'ELEVATED_SHORT')
-    signals.push({ label: 'crowded short positioning in BTC perps', score: 1 });
+  if (risk === 'ELEVATED_LONG') drivers.push({ type: 'LIQUIDATION_RISK_LONG', score: -1 });
+  else if (risk === 'ELEVATED_SHORT') drivers.push({ type: 'LIQUIDATION_RISK_SHORT', score: 1 });
 
   const equityAvg = averageChangePct([
     data.usMarkets.sp500,
@@ -63,27 +49,25 @@ export function computeSentiment(data: MarketOverviewData): {
     data.usMarkets.dow,
   ]);
   if (equityAvg !== null) {
-    if (equityAvg >= 0.3)
-      signals.push({ label: `US equities avg +${equityAvg.toFixed(1)}%`, score: 1 });
+    if (equityAvg >= 0.3) drivers.push({ type: 'EQUITIES_UP', score: 1, value: equityAvg });
     else if (equityAvg <= -0.3)
-      signals.push({ label: `US equities avg ${equityAvg.toFixed(1)}%`, score: -1 });
+      drivers.push({ type: 'EQUITIES_DOWN', score: -1, value: equityAvg });
   }
 
   const vix = data.usMarkets.vix;
   if (vix) {
-    if (vix.price < 15) signals.push({ label: `VIX low at ${vix.price.toFixed(1)}`, score: 1 });
-    else if (vix.price > 25)
-      signals.push({ label: `VIX elevated at ${vix.price.toFixed(1)}`, score: -1 });
+    if (vix.price < 15) drivers.push({ type: 'VIX_LOW', score: 1, value: vix.price });
+    else if (vix.price > 25) drivers.push({ type: 'VIX_HIGH', score: -1, value: vix.price });
   }
 
-  const totalScore = signals.reduce((sum, s) => sum + s.score, 0);
+  const totalScore = drivers.reduce((sum, d) => sum + d.score, 0);
 
   let sentiment: MarketSentiment;
   if (totalScore >= 2) sentiment = 'RISK_ON';
   else if (totalScore <= -2) sentiment = 'RISK_OFF';
   else sentiment = 'NEUTRAL';
 
-  return { sentiment, summary: buildSummary(sentiment, signals) };
+  return { sentiment, drivers };
 }
 
 function averageChangePct(quotes: Array<{ changePct: number } | null>): number | null {
@@ -92,26 +76,4 @@ function averageChangePct(quotes: Array<{ changePct: number } | null>): number |
     .map((q) => q.changePct);
   if (values.length === 0) return null;
   return values.reduce((sum, v) => sum + v, 0) / values.length;
-}
-
-function buildSummary(
-  sentiment: MarketSentiment,
-  signals: { label: string; score: number }[],
-): string {
-  const label =
-    sentiment === 'RISK_ON' ? 'Risk-On' : sentiment === 'RISK_OFF' ? 'Risk-Off' : 'Neutral';
-
-  if (signals.length === 0) {
-    return `${label}: not enough data this run to point to a clear driver.`;
-  }
-
-  const sameDirection = signals.filter((s) =>
-    sentiment === 'RISK_ON' ? s.score > 0 : sentiment === 'RISK_OFF' ? s.score < 0 : true,
-  );
-  const drivers = (sameDirection.length > 0 ? sameDirection : signals)
-    .slice(0, 2)
-    .map((s) => s.label)
-    .join(', ');
-
-  return `${label}: ${drivers}.`;
 }

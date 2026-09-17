@@ -1,7 +1,8 @@
 import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
-import type { MarketSentiment } from '@/types/market-overview';
+import type { MarketSentiment, SentimentDriver } from '@/types/market-overview';
 import { DashboardCard, DashboardCardContent } from '@/components/dashboard';
+import { buildSentimentSummary } from '@/lib/market-overview/build-summary';
 
 const VARIANT: Record<MarketSentiment, 'success' | 'danger' | 'secondary'> = {
   RISK_ON: 'success',
@@ -11,14 +12,15 @@ const VARIANT: Record<MarketSentiment, 'success' | 'danger' | 'secondary'> = {
 
 export function SentimentBanner({
   sentiment,
-  summary,
+  drivers,
   capturedAt,
 }: {
   sentiment: MarketSentiment;
-  summary: string;
+  drivers: SentimentDriver[];
   capturedAt: string;
 }) {
   const t = useTranslations('marketOverview');
+  const summary = buildSentimentSummary(sentiment, drivers, t);
 
   return (
     <DashboardCard>
