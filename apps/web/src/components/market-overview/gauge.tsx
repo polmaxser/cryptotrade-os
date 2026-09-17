@@ -27,6 +27,7 @@ export function Gauge({ value, min, max, direction, minLabel, maxLabel }: GaugeP
     <div className="space-y-1.5">
       <div className="relative h-2.5 rounded-full" style={{ backgroundImage: gradient }}>
         <div
+          data-testid="gauge-marker"
           className="border-background absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 bg-white shadow"
           style={{ left: `${pct}%` }}
         />
