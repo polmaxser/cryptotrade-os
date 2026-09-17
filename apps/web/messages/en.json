@@ -610,6 +610,7 @@
     "fearGreedShort": "F&G",
     "dxy": "US Dollar Index",
     "us10y": "US 10Y Yield",
+    "volumeLabel": "Vol: {volume}",
     "disclaimer": "This is a same-day snapshot of market conditions, computed from public data by simple rules — not a price forecast. \"Liquidation risk\" is a heuristic based on funding rate and positioning, not an actual liquidation map (those require a paid data provider).",
     "sentiment": {
       "RISK_ON": "Risk-On",
@@ -630,6 +631,7 @@
     "marketCap": {
       "title": "Market Cap & Dominance",
       "unavailable": "Currently unavailable.",
+      "volume": "24h Vol: {volume} ({pct}% of cap)",
       "btcDominance": "BTC Dominance",
       "ethDominance": "ETH Dominance",
       "stablecoins": "Stablecoin Cap"
@@ -644,14 +646,19 @@
         "MIXED": "Mixed"
       },
       "sma50": "SMA 50",
-      "sma200": "SMA 200"
+      "sma200": "SMA 200",
+      "volume24h": "Volume (24h)",
+      "avgVolume30d": "Avg Volume (30d)",
+      "volumeSpike": "Volume {multiple}× average",
+      "volumeQuiet": "Quiet — {multiple}× average"
     },
     "breadth": {
       "title": "Market Breadth",
       "unavailable": "Currently unavailable.",
       "description": "{green} of top {total} coins green (24h)",
       "topGainers": "Top Gainers",
-      "topLosers": "Top Losers"
+      "topLosers": "Top Losers",
+      "topByVolume": "Top by Volume"
     },
     "derivatives": {
       "title": "BTC Derivatives",
@@ -665,14 +672,17 @@
       "fundingRate": "Funding Rate (8h)",
       "openInterest": "Open Interest",
       "longShortRatio": "Long/Short Ratio",
-      "takerRatio": "Taker Buy/Sell"
+      "takerRatio": "Taker Buy/Sell",
+      "platformVolume": "OKX 24h Volume (all markets)"
     },
     "onChain": {
       "title": "Bitcoin On-Chain",
       "unavailable": "Currently unavailable.",
       "hashRate": "Hash Rate",
       "difficulty": "Difficulty",
-      "mempoolSize": "Mempool Size"
+      "mempoolSize": "Mempool Size",
+      "txVolume": "Tx Volume (24h)",
+      "txCount": "Transactions (24h)"
     },
     "vix": {
       "title": "VIX",

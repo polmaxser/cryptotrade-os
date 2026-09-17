@@ -21,20 +21,28 @@ export function MarketCapCard({
         {marketCap === null ? (
           <p className="text-muted-foreground text-sm">{t('unavailable')}</p>
         ) : (
-          <div className="flex items-baseline justify-between">
-            <span className="text-2xl font-semibold tabular-nums">
-              {formatCompactUsd(marketCap.totalUsd)}
-            </span>
-            <span
-              className={
-                marketCap.change24hPct >= 0
-                  ? 'font-medium tabular-nums text-emerald-400'
-                  : 'font-medium tabular-nums text-red-400'
-              }
-            >
-              {formatSignedPercent(marketCap.change24hPct)}
-            </span>
-          </div>
+          <>
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xl font-semibold tabular-nums">
+                {formatCompactUsd(marketCap.totalUsd)}
+              </span>
+              <span
+                className={
+                  marketCap.change24hPct >= 0
+                    ? 'font-medium tabular-nums text-emerald-400'
+                    : 'font-medium tabular-nums text-red-400'
+                }
+              >
+                {formatSignedPercent(marketCap.change24hPct)}
+              </span>
+            </div>
+            <p className="text-muted-foreground text-xs">
+              {t('volume', {
+                volume: formatCompactUsd(marketCap.volume24hUsd),
+                pct: marketCap.volumeToMarketCapPct.toFixed(1),
+              })}
+            </p>
+          </>
         )}
 
         <div className="grid grid-cols-3 gap-3 border-t pt-3 text-sm">

@@ -56,6 +56,14 @@ export function DerivativesCard({ data }: { data: DerivativesData | null }) {
                   {data.btcTakerBuySellRatio !== null ? data.btcTakerBuySellRatio.toFixed(2) : '—'}
                 </p>
               </div>
+              <div>
+                <p className="text-muted-foreground text-xs">{t('platformVolume')}</p>
+                <p className="tabular-nums">
+                  {data.platformVolume24hUsd !== null
+                    ? formatCompactUsd(data.platformVolume24hUsd)
+                    : '—'}
+                </p>
+              </div>
             </div>
           </>
         )}

@@ -7,6 +7,8 @@ const STATS_URL = 'https://api.blockchain.info/stats';
 interface BlockchainInfoStats {
   hash_rate: number;
   difficulty: number;
+  estimated_transaction_volume_usd: number;
+  n_tx: number;
 }
 
 const MEMPOOL_URL = 'https://api.blockchain.info/charts/mempool-size?timespan=1days&format=json';
@@ -29,6 +31,8 @@ export class OnChainService {
       hashRate: stats?.hash_rate ?? null,
       difficulty: stats?.difficulty ?? null,
       mempoolSizeBytes: mempool,
+      estimatedTxVolumeUsd: stats?.estimated_transaction_volume_usd ?? null,
+      transactionCount: stats?.n_tx ?? null,
     };
   }
 

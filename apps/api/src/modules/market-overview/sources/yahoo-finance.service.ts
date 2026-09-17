@@ -11,6 +11,7 @@ interface YahooChartResponse {
       meta: {
         regularMarketPrice: number;
         regularMarketChangePercent: number;
+        regularMarketVolume?: number;
       };
     }> | null;
     error: unknown;
@@ -49,6 +50,7 @@ export class YahooFinanceService {
       return {
         price: meta.regularMarketPrice,
         changePct: meta.regularMarketChangePercent,
+        volume: meta.regularMarketVolume ?? null,
       };
     } catch (err) {
       this.logger.warn(

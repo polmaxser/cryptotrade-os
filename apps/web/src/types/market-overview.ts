@@ -1,6 +1,8 @@
 export interface IndexQuote {
   price: number;
   changePct: number;
+  /** null for VIX/DXY/10Y yield — a calculated index/rate, not something with a meaningful traded volume. */
+  volume: number | null;
 }
 
 export interface FearGreedData {
@@ -12,6 +14,8 @@ export interface FearGreedData {
 export interface CryptoMarketCapData {
   totalUsd: number;
   change24hPct: number;
+  volume24hUsd: number;
+  volumeToMarketCapPct: number;
 }
 
 export interface DominanceData {
@@ -26,12 +30,16 @@ export interface TechnicalReadout {
   sma50: number | null;
   sma200: number | null;
   trend: 'ABOVE_BOTH' | 'BELOW_BOTH' | 'MIXED' | null;
+  volume24hUsd: number | null;
+  avgVolume30dUsd: number | null;
+  volumeRatio: number | null;
 }
 
 export interface MarketMover {
   symbol: string;
   name: string;
   change24hPct: number;
+  volumeUsd: number;
 }
 
 export interface BreadthData {
@@ -39,6 +47,7 @@ export interface BreadthData {
   totalCount: number;
   topGainers: MarketMover[];
   topLosers: MarketMover[];
+  topByVolume: MarketMover[];
 }
 
 export type LiquidationRisk = 'ELEVATED_LONG' | 'ELEVATED_SHORT' | 'LOW';
@@ -48,6 +57,7 @@ export interface DerivativesData {
   btcOpenInterestUsd: number | null;
   btcLongShortRatio: number | null;
   btcTakerBuySellRatio: number | null;
+  platformVolume24hUsd: number | null;
   liquidationRisk: LiquidationRisk | null;
 }
 
@@ -55,6 +65,8 @@ export interface OnChainData {
   hashRate: number | null;
   difficulty: number | null;
   mempoolSizeBytes: number | null;
+  estimatedTxVolumeUsd: number | null;
+  transactionCount: number | null;
 }
 
 export interface NextMacroEvent {

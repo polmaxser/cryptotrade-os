@@ -24,10 +24,13 @@ const TOP_MOVERS_COUNT = 3;
  * 200-period SMA plus warm-up.
  */
 const DAILY_HISTORY_DAYS = 250;
+/** Window for the "is today's volume unusual" baseline — long enough to smooth out single noisy days, short enough to stay relevant. */
+const VOLUME_AVERAGE_WINDOW_DAYS = 30;
 
 interface CoinGeckoGlobal {
   data: {
     total_market_cap: { usd: number };
+    total_volume: { usd: number };
     market_cap_change_percentage_24h_usd: number;
     market_cap_percentage: { btc: number; eth: number };
   };
@@ -38,6 +41,7 @@ interface CoinGeckoMarketCoin {
   name: string;
   price_change_percentage_24h: number | null;
   market_cap: number | null;
+  total_volume: number | null;
 }
 
 @Injectable()
@@ -52,11 +56,15 @@ export class CryptoMarketService {
   } | null> {
     try {
       const payload = await this.getJson<CoinGeckoGlobal>('/global');
+      const totalUsd = payload.data.total_market_cap.usd;
+      const volume24hUsd = payload.data.total_volume.usd;
 
       return {
         marketCap: {
-          totalUsd: payload.data.total_market_cap.usd,
+          totalUsd,
           change24hPct: payload.data.market_cap_change_percentage_24h_usd,
+          volume24hUsd,
+          volumeToMarketCapPct: totalUsd > 0 ? (volume24hUsd / totalUsd) * 100 : 0,
         },
         dominance: {
           btcPct: payload.data.market_cap_percentage.btc,
@@ -78,21 +86,26 @@ export class CryptoMarketService {
       const withChange = coins.filter((c) => c.price_change_percentage_24h !== null);
       const greenCount = withChange.filter((c) => c.price_change_percentage_24h! > 0).length;
 
-      const sorted = [...withChange].sort(
+      const sortedByChange = [...withChange].sort(
         (a, b) => b.price_change_percentage_24h! - a.price_change_percentage_24h!,
       );
+      const sortedByVolume = [...coins]
+        .filter((c) => c.total_volume !== null)
+        .sort((a, b) => b.total_volume! - a.total_volume!);
 
       const toMover = (c: CoinGeckoMarketCoin): MarketMover => ({
         symbol: c.symbol.toUpperCase(),
         name: c.name,
-        change24hPct: c.price_change_percentage_24h!,
+        change24hPct: c.price_change_percentage_24h ?? 0,
+        volumeUsd: c.total_volume ?? 0,
       });
 
       return {
         greenCount,
         totalCount: withChange.length,
-        topGainers: sorted.slice(0, TOP_MOVERS_COUNT).map(toMover),
-        topLosers: sorted.slice(-TOP_MOVERS_COUNT).reverse().map(toMover),
+        topGainers: sortedByChange.slice(0, TOP_MOVERS_COUNT).map(toMover),
+        topLosers: sortedByChange.slice(-TOP_MOVERS_COUNT).reverse().map(toMover),
+        topByVolume: sortedByVolume.slice(0, TOP_MOVERS_COUNT).map(toMover),
       };
     } catch (err) {
       this.logger.warn(`Failed to fetch CoinGecko market breadth: ${(err as Error).message}`);
@@ -119,9 +132,10 @@ export class CryptoMarketService {
     priceUsd: number,
     change24hPct: number,
   ): Promise<TechnicalReadout> {
-    const chart = await this.getJson<{ prices: [number, number][] }>(
-      `/coins/${coinId}/market_chart?vs_currency=usd&days=${DAILY_HISTORY_DAYS}`,
-    );
+    const chart = await this.getJson<{
+      prices: [number, number][];
+      total_volumes: [number, number][];
+    }>(`/coins/${coinId}/market_chart?vs_currency=usd&days=${DAILY_HISTORY_DAYS}`);
 
     const closes = chart.prices.map(([, price]) => price);
     const sma50Series = sma(closes, 50);
@@ -139,7 +153,29 @@ export class CryptoMarketService {
       else trend = 'MIXED';
     }
 
-    return { priceUsd, change24hPct, rsi14, sma50, sma200, trend };
+    const volumes = chart.total_volumes.map(([, volume]) => volume);
+    const volume24hUsd = volumes[volumes.length - 1] ?? null;
+    const last30dVolumes = volumes.slice(-VOLUME_AVERAGE_WINDOW_DAYS);
+    const avgVolume30dUsd =
+      last30dVolumes.length > 0
+        ? last30dVolumes.reduce((sum, v) => sum + v, 0) / last30dVolumes.length
+        : null;
+    const volumeRatio =
+      volume24hUsd !== null && avgVolume30dUsd !== null && avgVolume30dUsd > 0
+        ? volume24hUsd / avgVolume30dUsd
+        : null;
+
+    return {
+      priceUsd,
+      change24hPct,
+      rsi14,
+      sma50,
+      sma200,
+      trend,
+      volume24hUsd,
+      avgVolume30dUsd,
+      volumeRatio,
+    };
   }
 
   /**

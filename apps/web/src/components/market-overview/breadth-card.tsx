@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import { DashboardCard, DashboardCardContent, DashboardCardHeader } from '@/components/dashboard';
 import type { BreadthData, MarketMover } from '@/types/market-overview';
-import { formatSignedPercent } from '@/lib/market-overview/formatters';
+import { formatCompactUsd, formatSignedPercent } from '@/lib/market-overview/formatters';
 
 function MoverRow({ mover }: { mover: MarketMover }) {
   return (
@@ -13,6 +13,18 @@ function MoverRow({ mover }: { mover: MarketMover }) {
         }
       >
         {formatSignedPercent(mover.change24hPct)}
+      </span>
+    </div>
+  );
+}
+
+/** Volume is the primary metric here rather than % change — this list answers "where's the money moving," independent of direction. */
+function VolumeMoverRow({ mover }: { mover: MarketMover }) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="font-mono">{mover.symbol}</span>
+      <span className="text-muted-foreground tabular-nums">
+        {formatCompactUsd(mover.volumeUsd)}
       </span>
     </div>
   );
@@ -45,7 +57,7 @@ export function BreadthCard({ data }: { data: BreadthData | null }) {
           <div className="h-full bg-emerald-500" style={{ width: `${greenPct}%` }} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="space-y-1.5">
             <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
               {t('topGainers')}
@@ -60,6 +72,14 @@ export function BreadthCard({ data }: { data: BreadthData | null }) {
             </p>
             {data.topLosers.map((m) => (
               <MoverRow key={m.symbol} mover={m} />
+            ))}
+          </div>
+          <div className="space-y-1.5">
+            <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+              {t('topByVolume')}
+            </p>
+            {data.topByVolume.map((m) => (
+              <VolumeMoverRow key={m.symbol} mover={m} />
             ))}
           </div>
         </div>

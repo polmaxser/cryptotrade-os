@@ -1,6 +1,8 @@
 export interface IndexQuote {
   price: number;
   changePct: number;
+  /** null for VIX/DXY/10Y yield — a calculated index/rate, not something with a meaningful traded volume. */
+  volume: number | null;
 }
 
 export interface FearGreedData {
@@ -12,6 +14,9 @@ export interface FearGreedData {
 export interface CryptoMarketCapData {
   totalUsd: number;
   change24hPct: number;
+  volume24hUsd: number;
+  /** Trading volume as a % of market cap over the last 24h — a liquidity/interest read: high means the market is actively trading, not just marking up on thin volume. */
+  volumeToMarketCapPct: number;
 }
 
 export interface DominanceData {
@@ -27,12 +32,17 @@ export interface TechnicalReadout {
   sma200: number | null;
   /** Where price sits relative to its own SMA50/SMA200 — a plain-English golden/death-cross-style read. */
   trend: 'ABOVE_BOTH' | 'BELOW_BOTH' | 'MIXED' | null;
+  volume24hUsd: number | null;
+  avgVolume30dUsd: number | null;
+  /** volume24hUsd / avgVolume30dUsd — a spike read: well above 1 means today's activity is unusually high relative to the recent baseline, in either direction the price is already moving. */
+  volumeRatio: number | null;
 }
 
 export interface MarketMover {
   symbol: string;
   name: string;
   change24hPct: number;
+  volumeUsd: number;
 }
 
 export interface BreadthData {
@@ -40,6 +50,8 @@ export interface BreadthData {
   totalCount: number;
   topGainers: MarketMover[];
   topLosers: MarketMover[];
+  /** Highest 24h volume among the same top-100 universe — "where the money is moving," independent of which direction price went. */
+  topByVolume: MarketMover[];
 }
 
 export type LiquidationRisk = 'ELEVATED_LONG' | 'ELEVATED_SHORT' | 'LOW';
@@ -49,6 +61,8 @@ export interface DerivativesData {
   btcOpenInterestUsd: number | null;
   btcLongShortRatio: number | null;
   btcTakerBuySellRatio: number | null;
+  /** Total trading volume across all of OKX's markets in the last 24h — a broad crypto-derivatives activity read, not BTC-specific like the fields above. */
+  platformVolume24hUsd: number | null;
   liquidationRisk: LiquidationRisk | null;
 }
 
@@ -56,6 +70,8 @@ export interface OnChainData {
   hashRate: number | null;
   difficulty: number | null;
   mempoolSizeBytes: number | null;
+  estimatedTxVolumeUsd: number | null;
+  transactionCount: number | null;
 }
 
 export interface NextMacroEvent {

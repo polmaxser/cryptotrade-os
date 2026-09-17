@@ -610,6 +610,7 @@
     "fearGreedShort": "Индекс страха",
     "dxy": "Индекс доллара (DXY)",
     "us10y": "Доходность 10-летних облигаций США",
+    "volumeLabel": "Объём: {volume}",
     "disclaimer": "Это картина рынка на сегодня, посчитанная по простым правилам на основе публичных данных — не прогноз цены. «Риск ликвидаций» — эвристика на основе funding rate и позиционирования, а не настоящая карта ликвидаций (для неё нужен платный провайдер данных).",
     "sentiment": {
       "RISK_ON": "Risk-On",
@@ -630,6 +631,7 @@
     "marketCap": {
       "title": "Капитализация и доминация",
       "unavailable": "Временно недоступно.",
+      "volume": "Объём 24ч: {volume} ({pct}% от капитализации)",
       "btcDominance": "Доминация BTC",
       "ethDominance": "Доминация ETH",
       "stablecoins": "Капитализация стейблкоинов"
@@ -644,14 +646,19 @@
         "MIXED": "Смешанный"
       },
       "sma50": "SMA 50",
-      "sma200": "SMA 200"
+      "sma200": "SMA 200",
+      "volume24h": "Объём (24ч)",
+      "avgVolume30d": "Средний объём (30д)",
+      "volumeSpike": "Объём ×{multiple} от среднего",
+      "volumeQuiet": "Затишье — ×{multiple} от среднего"
     },
     "breadth": {
       "title": "Широта рынка",
       "unavailable": "Временно недоступно.",
       "description": "{green} из топ-{total} монет в зелёной зоне (24ч)",
       "topGainers": "Лидеры роста",
-      "topLosers": "Лидеры падения"
+      "topLosers": "Лидеры падения",
+      "topByVolume": "Топ по объёму"
     },
     "derivatives": {
       "title": "Деривативы BTC",
@@ -665,14 +672,17 @@
       "fundingRate": "Funding Rate (8ч)",
       "openInterest": "Открытый интерес",
       "longShortRatio": "Соотношение Long/Short",
-      "takerRatio": "Покупки/продажи тейкеров"
+      "takerRatio": "Покупки/продажи тейкеров",
+      "platformVolume": "Объём OKX за 24ч (весь рынок)"
     },
     "onChain": {
       "title": "Bitcoin On-Chain",
       "unavailable": "Временно недоступно.",
       "hashRate": "Хешрейт",
       "difficulty": "Сложность сети",
-      "mempoolSize": "Размер mempool"
+      "mempoolSize": "Размер mempool",
+      "txVolume": "Объём транзакций (24ч)",
+      "txCount": "Транзакций (24ч)"
     },
     "vix": {
       "title": "VIX",

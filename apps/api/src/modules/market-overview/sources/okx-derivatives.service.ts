@@ -32,18 +32,21 @@ export class OkxDerivativesService {
   private readonly logger = new Logger(OkxDerivativesService.name);
 
   async fetch(): Promise<DerivativesData | null> {
-    const [fundingRate, openInterest, longShortRatio, takerVolume] = await Promise.all([
-      this.fetchFundingRate(),
-      this.fetchOpenInterest(),
-      this.fetchLongShortRatio(),
-      this.fetchTakerVolume(),
-    ]);
+    const [fundingRate, openInterest, longShortRatio, takerVolume, platformVolume] =
+      await Promise.all([
+        this.fetchFundingRate(),
+        this.fetchOpenInterest(),
+        this.fetchLongShortRatio(),
+        this.fetchTakerVolume(),
+        this.fetchPlatformVolume(),
+      ]);
 
     if (
       fundingRate === null &&
       openInterest === null &&
       longShortRatio === null &&
-      takerVolume === null
+      takerVolume === null &&
+      platformVolume === null
     ) {
       return null;
     }
@@ -53,6 +56,7 @@ export class OkxDerivativesService {
       btcOpenInterestUsd: openInterest,
       btcLongShortRatio: longShortRatio,
       btcTakerBuySellRatio: takerVolume,
+      platformVolume24hUsd: platformVolume,
       liquidationRisk: this.assessLiquidationRisk(fundingRate, longShortRatio),
     };
   }
@@ -143,6 +147,21 @@ export class OkxDerivativesService {
       return buyVol / sellVol;
     } catch (err) {
       this.logger.warn(`Failed to fetch OKX taker volume: ${(err as Error).message}`);
+      return null;
+    }
+  }
+
+  /** All of OKX's markets combined (spot + derivatives), not just BTC — the broadest single "how active is crypto trading right now" volume figure available for free. */
+  private async fetchPlatformVolume(): Promise<number | null> {
+    try {
+      const payload = await this.getJson<OkxEnvelope<Array<{ volUsd: string }>>>(
+        '/api/v5/market/platform-24-volume',
+      );
+
+      const vol = payload.data[0]?.volUsd;
+      return vol !== undefined ? Number(vol) : null;
+    } catch (err) {
+      this.logger.warn(`Failed to fetch OKX platform volume: ${(err as Error).message}`);
       return null;
     }
   }
