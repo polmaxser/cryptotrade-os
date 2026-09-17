@@ -1,9 +1,9 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
-import { createHmac } from 'node:crypto';
 
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { exchangeApiError } from '../utils/exchange-error';
+import { signOkxRequest } from '../utils/signing';
 
 const OKX_BASE_URL = 'https://www.okx.com';
 const FILLS_LIMIT = '100';
@@ -133,10 +133,7 @@ export class OkxClientService implements ExchangeClient {
     const requestPath = `${path}${queryString ? `?${queryString}` : ''}`;
     const timestamp = new Date().toISOString();
 
-    const signaturePayload = `${timestamp}GET${requestPath}`;
-    const signature = createHmac('sha256', credentials.apiSecret)
-      .update(signaturePayload)
-      .digest('base64');
+    const signature = signOkxRequest(credentials.apiSecret, timestamp, 'GET', requestPath);
 
     let response: globalThis.Response;
 

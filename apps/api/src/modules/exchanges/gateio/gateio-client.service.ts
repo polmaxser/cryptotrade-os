@@ -1,10 +1,10 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
-import { createHash, createHmac } from 'node:crypto';
 
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
 import { exchangeApiError } from '../utils/exchange-error';
+import { signGateioRequest } from '../utils/signing';
 
 const GATEIO_BASE_URL = 'https://api.gateio.ws';
 const API_PREFIX = '/api/v4';
@@ -174,18 +174,13 @@ export class GateioClientService implements ExchangeClient {
     const query = new URLSearchParams(params);
     const queryString = query.toString();
     const timestamp = Math.floor(Date.now() / 1000).toString();
-    const bodyHash = createHash('sha512').update('').digest('hex');
-
-    const signaturePayload = [
+    const signature = signGateioRequest(
+      credentials.apiSecret,
       method,
       `${API_PREFIX}${path}`,
       queryString,
-      bodyHash,
       timestamp,
-    ].join('\n');
-    const signature = createHmac('sha512', credentials.apiSecret)
-      .update(signaturePayload)
-      .digest('hex');
+    );
 
     let response: globalThis.Response;
 

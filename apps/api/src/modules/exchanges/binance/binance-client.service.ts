@@ -1,5 +1,4 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
-import { createHmac } from 'node:crypto';
 
 import { CacheService } from '@/common/cache/cache.service';
 
@@ -7,6 +6,7 @@ import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchan
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
 import { exchangeApiError } from '../utils/exchange-error';
+import { signBinanceQuery } from '../utils/signing';
 
 /** Prices move within this window, but not enough to meaningfully change a portfolio's USD-equivalent total. */
 const TICKER_PRICE_CACHE_TTL_SECONDS = 30;
@@ -291,9 +291,7 @@ export class BinanceClientService implements ExchangeClient {
       timestamp: Date.now().toString(),
       recvWindow: RECV_WINDOW_MS,
     });
-    const signature = createHmac('sha256', credentials.apiSecret)
-      .update(query.toString())
-      .digest('hex');
+    const signature = signBinanceQuery(credentials.apiSecret, query.toString());
     query.set('signature', signature);
 
     let response: globalThis.Response;

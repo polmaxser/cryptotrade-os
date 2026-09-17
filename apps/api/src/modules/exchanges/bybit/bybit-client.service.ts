@@ -1,10 +1,10 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
-import { createHmac } from 'node:crypto';
 
 import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchange-client';
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
 import { exchangeApiError } from '../utils/exchange-error';
+import { signBybitRequest } from '../utils/signing';
 
 const BYBIT_BASE_URL = 'https://api.bybit.com';
 const RECV_WINDOW_MS = '10000';
@@ -163,10 +163,13 @@ export class BybitClientService implements ExchangeClient {
     const queryString = query.toString();
     const timestamp = Date.now().toString();
 
-    const signaturePayload = `${timestamp}${credentials.apiKey}${RECV_WINDOW_MS}${queryString}`;
-    const signature = createHmac('sha256', credentials.apiSecret)
-      .update(signaturePayload)
-      .digest('hex');
+    const signature = signBybitRequest(
+      credentials.apiSecret,
+      timestamp,
+      credentials.apiKey,
+      RECV_WINDOW_MS,
+      queryString,
+    );
 
     let response: globalThis.Response;
 

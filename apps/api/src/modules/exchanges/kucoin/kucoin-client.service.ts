@@ -1,5 +1,4 @@
 import { Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
-import { createHmac } from 'node:crypto';
 
 import { CacheService } from '@/common/cache/cache.service';
 
@@ -7,6 +6,7 @@ import { ExchangeClient, ExchangeCredentials, FillsRange } from '../types/exchan
 import { NormalizedFill } from '../types/normalized-fill';
 import { chunkRange } from '../utils/date-range';
 import { exchangeApiError } from '../utils/exchange-error';
+import { signKucoinPassphrase, signKucoinRequest } from '../utils/signing';
 
 /** Same rationale as Binance's ticker cache — see binance-client.service.ts. */
 const TICKER_PRICE_CACHE_TTL_SECONDS = 30;
@@ -273,14 +273,11 @@ export class KucoinClientService implements ExchangeClient {
     const requestPath = `${path}${queryString ? `?${queryString}` : ''}`;
     const timestamp = Date.now().toString();
 
-    const signaturePayload = `${timestamp}GET${requestPath}`;
-    const signature = createHmac('sha256', credentials.apiSecret)
-      .update(signaturePayload)
-      .digest('base64');
-
-    const encryptedPassphrase = createHmac('sha256', credentials.apiSecret)
-      .update(credentials.apiPassphrase)
-      .digest('base64');
+    const signature = signKucoinRequest(credentials.apiSecret, timestamp, 'GET', requestPath);
+    const encryptedPassphrase = signKucoinPassphrase(
+      credentials.apiSecret,
+      credentials.apiPassphrase,
+    );
 
     let response: globalThis.Response;
 
